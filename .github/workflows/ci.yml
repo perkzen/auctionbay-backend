@@ -6,7 +6,7 @@ env:
   PORT: 3000
   NODE_ENV: test
   SWAGGER_PATH: docs
-  DATABASE_URL: postgres://postgres:postgres@localhost:5432/auctionbay
+  DATABASE_URL: ${{ secrets.DATABASE_URL }}
 
 jobs:
   postgres:
@@ -32,9 +32,6 @@ jobs:
 
       - name: Install Dependencies
         run: npm ci
-
-      - name: Wait for Postgres
-        run: dockerize -wait tcp://localhost:5432 -timeout 1m
 
       - name: Push schema to Postgres
         run: npm run push:ci
