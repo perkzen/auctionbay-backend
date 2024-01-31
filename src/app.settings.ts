@@ -20,6 +20,7 @@ const settings = {
       .get('NODE_ENV')
       .required()
       .asEnum(Object.values(Environment)),
+    swaggerPath: env.get('SWAGGER_PATH').default('docs').asString(),
   },
 };
 
