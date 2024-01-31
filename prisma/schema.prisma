@@ -1,0 +1,60 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  firstname String
+  lastname  String
+  password  String
+  imageUrl  String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  auctions Auction[]
+  bids     Bid[]
+
+  @@map("users")
+}
+
+model Auction {
+  id             String   @id @default(uuid())
+  imageUrl       String
+  title          String
+  description    String
+  starting_price Float
+  duration       Int
+  createdAt      DateTime @default(now())
+
+  ownerId String
+  owner   User   @relation(fields: [ownerId], references: [id])
+  Bid     Bid[]
+}
+
+model Bid {
+  id        Int      @id @default(autoincrement())
+  amount    Float
+  createdAt DateTime @default(now())
+
+  auctionId String
+  auction   Auction @relation(fields: [auctionId], references: [id])
+
+  bidderId String?
+  bidder   User?   @relation(fields: [bidderId], references: [id])
+}
+
+enum BidStatus {
+  OUTBID
+  IN_PROGRESS
+  WINNING
+  DONE
+}

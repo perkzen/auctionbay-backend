@@ -22,6 +22,9 @@ const settings = {
       .asEnum(Object.values(Environment)),
     swaggerPath: env.get('SWAGGER_PATH').default('docs').asString(),
   },
+  database: {
+    url: env.get('DATABASE_URL').required().asString(),
+  },
 };
 
 export default settings;
