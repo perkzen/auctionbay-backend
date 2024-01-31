@@ -21,6 +21,9 @@ const settings = {
       .required()
       .asEnum(Object.values(Environment)),
   },
+  database: {
+    url: env.get('DATABASE_URL').required().asString(),
+  },
 };
 
 export default settings;
