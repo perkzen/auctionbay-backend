@@ -19,6 +19,9 @@ jobs:
         with:
           node-version: 20.x
 
+      - name: Install Dependencies
+        run: npm install
+
       - name: Lint
         run: npm run lint
 
@@ -35,9 +38,6 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 20.x
-
-      - name: Install Dependencies
-        run: npm install
 
       - name: Build
         run: npm run build
