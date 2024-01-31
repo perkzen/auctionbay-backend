@@ -1,0 +1,19 @@
+services:
+  auctionbay_backend:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_NAME=auctionbay
+      - DB_USER=admin
+      - DB_PASSWORD=admin
+  postgres:
+    image: postgres:latest
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: auctionbay
