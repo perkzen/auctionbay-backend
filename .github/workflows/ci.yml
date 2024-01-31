@@ -51,9 +51,16 @@ jobs:
         with:
           node-version: 20.x
 
+      - name: Cache npm dependencies
+        uses: actions/cache@v3
+        with:
+          path: ${{ github.workspace }}/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
 
       - name: Lint
-
         run: npm run lint
 
   test:
@@ -68,6 +75,14 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 20.x
+
+      - name: Cache npm dependencies
+        uses: actions/cache@v3
+        with:
+          path: ${{ github.workspace }}/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
 
       - name: Test
         run: npm test
