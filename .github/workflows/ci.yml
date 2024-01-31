@@ -5,6 +5,7 @@ on: [ push, pull_request ]
 env:
   PORT: 3000
   NODE_ENV: test
+  SWAGGER_PATH: docs
 
 jobs:
 
