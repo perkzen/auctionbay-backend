@@ -5,30 +5,13 @@ on: [ push, pull_request ]
 env:
   PORT: 3000
   NODE_ENV: test
+  GITHUB_OUTPUT: ${{ runner.temp }}/github_output
+
 
 jobs:
-  lint:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v2
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: 20.x
-
-      - name: Install Dependencies
-        run: npm install
-
-      - name: Lint
-        run: npm run lint
-
 
   build:
     runs-on: ubuntu-latest
-    needs: lint
 
     steps:
       - name: Checkout Repository
@@ -39,8 +22,39 @@ jobs:
         with:
           node-version: 20.x
 
+      - name: Cache npm dependencies
+        uses: actions/cache@v2
+        with:
+          id: npm-cache
+          path: node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Install Dependencies
+        run: npm ci
+
       - name: Build
         run: npm run build
+
+
+  lint:
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20.x
+
+
+      - name: Lint
+
+        run: npm run lint
 
   test:
     runs-on: ubuntu-latest
