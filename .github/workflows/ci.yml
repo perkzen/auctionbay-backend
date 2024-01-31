@@ -5,8 +5,6 @@ on: [ push, pull_request ]
 env:
   PORT: 3000
   NODE_ENV: test
-  GITHUB_OUTPUT: ${{ runner.temp }}/github_output
-
 
 jobs:
 
@@ -25,15 +23,6 @@ jobs:
       - name: Install Dependencies
         run: npm ci
 
-      - name: Cache npm dependencies
-        uses: actions/cache@v2
-        with:
-          id: npm-cache
-          path: node_modules
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
-
       - name: Build
         run: npm run build
 
@@ -51,14 +40,8 @@ jobs:
         with:
           node-version: 20.x
 
-      - name: Cache npm dependencies
-        uses: actions/cache@v3
-        with:
-          path: ${{ github.workspace }}/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
-
+      - name: Install Dependencies
+        run: npm install
 
       - name: Lint
         run: npm run lint
@@ -76,13 +59,8 @@ jobs:
         with:
           node-version: 20.x
 
-      - name: Cache npm dependencies
-        uses: actions/cache@v3
-        with:
-          path: ${{ github.workspace }}/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
+      - name: Install Dependencies
+        run: npm install
 
       - name: Test
         run: npm test
