@@ -1,7 +1,6 @@
 import { Test, TestingModule, TestingModuleBuilder } from '@nestjs/testing';
 import { AuthService } from './auth.service';
 import { PrismaService } from '../prisma/prisma.service';
-import { UsersService } from '../users/users.service';
 import { SignupDTO } from './dtos/signup.dto';
 import { faker } from '@faker-js/faker';
 import { AuthModule } from './auth.module';
@@ -12,8 +11,7 @@ describe('AuthService', () => {
   let moduleRef: TestingModuleBuilder,
     authService: AuthService,
     app: TestingModule,
-    db: PrismaService,
-    userService: UsersService;
+    db: PrismaService;
 
   const signupDTO: SignupDTO = {
     firstname: faker.person.firstName(),
@@ -30,7 +28,6 @@ describe('AuthService', () => {
     app = await moduleRef.compile();
     authService = app.get<AuthService>(AuthService);
     db = app.get<PrismaService>(PrismaService);
-    userService = app.get<UsersService>(UsersService);
   });
 
   afterAll(async () => {
