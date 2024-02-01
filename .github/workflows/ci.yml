@@ -6,7 +6,6 @@ env:
   PORT: 3000
   NODE_ENV: test
   SWAGGER_PATH: docs
-  DATABASE_URL: ${{ secrets.DATABASE_URL }}
   JWT_SECRET: ${{ secrets.JWT_SECRET }}
   JWT_EXPIRATION: ${{ secrets.JWT_EXPIRATION }}
 
@@ -18,7 +17,7 @@ jobs:
         image: postgres:latest
         env:
           POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
-          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
           POSTGRES_DB: auctionbay
         ports:
           - 5432:5432
