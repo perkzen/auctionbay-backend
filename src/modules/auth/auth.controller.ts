@@ -10,8 +10,8 @@ import {
 import { LocalAuthGuard } from './guards/local-auth.guard';
 import { AuthService } from './auth.service';
 import { ApiBody, ApiTags } from '@nestjs/swagger';
-import { LoginDto } from './dtos/login.dto';
-import { SignupDto } from './dtos/signup.dto';
+import { LoginDTO } from './dtos/login.dto';
+import { SignupDTO } from './dtos/signup.dto';
 import { LoginRequest } from './auth.types';
 import { Public } from 'src/common/decorators/public.decorator';
 
@@ -21,7 +21,7 @@ import { Public } from 'src/common/decorators/public.decorator';
 export class AuthController {
   constructor(private authService: AuthService) {}
 
-  @ApiBody({ type: LoginDto })
+  @ApiBody({ type: LoginDTO })
   @HttpCode(HttpStatus.OK)
   @UseGuards(LocalAuthGuard)
   @Post('login')
@@ -30,7 +30,7 @@ export class AuthController {
   }
 
   @Post('signup')
-  async signup(@Body() data: SignupDto) {
+  async signup(@Body() data: SignupDTO) {
     return this.authService.register(data);
   }
 }

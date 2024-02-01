@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { JwtPayload, SanitizedUser } from './auth.types';
-import { SignupDto } from './dtos/signup.dto';
+import { SignupDTO } from './dtos/signup.dto';
 import { comparePasswords, hashPassword, sanitizeUser } from './auth.utils';
 
 @Injectable()
@@ -32,7 +32,7 @@ export class AuthService {
     };
   }
 
-  async register(data: SignupDto) {
+  async register(data: SignupDTO) {
     data.password = await hashPassword(data.password);
     const user = await this.usersService.create(data);
     return sanitizeUser(user);
