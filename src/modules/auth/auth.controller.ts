@@ -6,6 +6,7 @@ import {
   Body,
   HttpCode,
   HttpStatus,
+  Put,
 } from '@nestjs/common';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 import { AuthService } from './auth.service';
@@ -15,12 +16,12 @@ import { SignupDTO } from './dtos/signup.dto';
 import { LoginRequest } from './auth.types';
 import { Public } from 'src/common/decorators/public.decorator';
 
-@Public()
 @ApiTags('Authentication')
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
 
+  @Public()
   @ApiBody({ type: LoginDTO })
   @HttpCode(HttpStatus.OK)
   @UseGuards(LocalAuthGuard)
@@ -29,6 +30,7 @@ export class AuthController {
     return this.authService.login(req.user);
   }
 
+  @Public()
   @Post('signup')
   async signup(@Body() data: SignupDTO) {
     return this.authService.register(data);

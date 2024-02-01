@@ -1,9 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { JwtPayload, SanitizedUser } from './auth.types';
 import { SignupDTO } from './dtos/signup.dto';
 import { comparePasswords, hashPassword, sanitizeUser } from './auth.utils';
+import { UpdatePasswordDTO } from '../users/dtos/update-password.dto';
 
 @Injectable()
 export class AuthService {
@@ -16,7 +17,7 @@ export class AuthService {
     email: string,
     pass: string,
   ): Promise<SanitizedUser | null> {
-    const user = await this.usersService.findOne(email);
+    const user = await this.usersService.findByEmail(email);
 
     if (user && (await comparePasswords(pass, user.password))) {
       return sanitizeUser(user);

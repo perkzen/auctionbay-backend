@@ -12,7 +12,7 @@ datasource db {
 
 model User {
   id        String   @id @default(uuid())
-  email     String   @unique
+  email     String   @unique // Could set index here
   firstname String
   lastname  String
   password  String
