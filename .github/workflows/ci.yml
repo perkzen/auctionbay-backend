@@ -36,8 +36,8 @@ jobs:
 
       - name: Push schema to Postgres
         env:
-          DB_HOST: postgres
-          DATABASE_URL: postgresql://${{ secrets.POSTGRES_USER }}:${{ secrets.POSTGRES_USER }}@${{ env.DB_HOST }}:5432/auctionbay
+          DATABASE_URL: postgresql://admin:admin@postgres:5432/auctionbay?schema=public
+
         run: npm run push:ci
 
   build:
@@ -96,7 +96,5 @@ jobs:
 
       - name: Test
         env:
-          DB_HOST: postgres
-          DATABASE_URL: postgresql://${{ secrets.POSTGRES_USER }}:${{ secrets.POSTGRES_USER }}@${{ env.DB_HOST }}:5432/auctionbay
-
+          DATABASE_URL: postgresql://admin:admin@postgres:5432/auctionbay?schema=public
         run: npm run test:ci
