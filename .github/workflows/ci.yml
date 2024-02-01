@@ -79,3 +79,6 @@ jobs:
 
       - name: Run Unit Tests
         run: npm run test:ci
+
+      - name: Run End-2-End Tests
+        run: npm run test:e2e

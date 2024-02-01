@@ -32,7 +32,10 @@ export class UsersService {
     );
 
     if (!isCorrectPassword) {
-      throw new HttpException("Password doesn't match", HttpStatus.BAD_REQUEST);
+      throw new HttpException(
+        "Password doesn't match",
+        HttpStatus.UNAUTHORIZED,
+      );
     }
 
     const hashedPassword = await hashPassword(data.newPassword);
