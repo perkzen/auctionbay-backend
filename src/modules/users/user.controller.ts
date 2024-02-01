@@ -1,7 +1,6 @@
 import { Body, Controller, Get, HttpStatus, Put } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { JwtUser } from '../auth/auth.types';
 import { sanitizeUser } from '../auth/auth.utils';
 import { UpdatePasswordDTO } from './dtos/update-password.dto';
 import { User } from '../../common/decorators/user.decorator';
@@ -13,8 +12,8 @@ export class UserController {
 
   @ApiBearerAuth()
   @Get('me')
-  async me(@User() user: JwtUser) {
-    return sanitizeUser(await this.usersService.findByEmail(user.email));
+  async me(@User('email') email: string) {
+    return sanitizeUser(await this.usersService.findByEmail(email));
   }
 
   @ApiBearerAuth()

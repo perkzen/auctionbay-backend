@@ -33,7 +33,12 @@ describe('UsersService', () => {
   });
 
   afterAll(async () => {
-    await app.close();
+    db.user.deleteMany();
+
+    if (app) {
+      app.flushLogs();
+      await app.close();
+    }
   });
 
   it('should be defined', () => {
