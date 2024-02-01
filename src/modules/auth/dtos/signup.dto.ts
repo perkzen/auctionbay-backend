@@ -12,9 +12,9 @@ export class SignupDto {
 
   @ApiProperty()
   @IsString()
-  firstName: string;
+  firstname: string;
 
   @ApiProperty()
   @IsString()
-  lastName: string;
+  lastname: string;
 }
