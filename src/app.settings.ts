@@ -25,6 +25,7 @@ const settings = {
       .required()
       .asEnum(Object.values(Environment)),
     swaggerPath: env.get('SWAGGER_PATH').default('docs').asString(),
+    corsOrigin: env.get('CORS_ORIGIN').default('*').asString(),
   },
   database: {
     url: env.get('DATABASE_URL').required().asString(),

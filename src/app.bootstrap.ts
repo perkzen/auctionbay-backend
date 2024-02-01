@@ -1,5 +1,7 @@
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import helmet from 'helmet';
+import compression from 'compression';
 import settings from './app.settings';
 
 export const bootstrapSwagger = (app: INestApplication) => {
@@ -20,5 +22,12 @@ export const bootstrapSwagger = (app: INestApplication) => {
 
 export const bootstrapGlobalPipe = (app: INestApplication) => {
   app.useGlobalPipes(new ValidationPipe({ transform: true, whitelist: true }));
+  return app;
+};
+
+export const bootstrapMiddlewares = (app: INestApplication) => {
+  app.use(compression());
+  app.use(helmet());
+  app.enableCors({ origin: settings.app.corsOrigin });
   return app;
 };
