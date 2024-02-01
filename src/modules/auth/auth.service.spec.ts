@@ -6,12 +6,16 @@ import { faker } from '@faker-js/faker';
 import { AuthModule } from './auth.module';
 import { PrismaModule } from '../prisma/prisma.module';
 import { UsersModule } from '../users/users.module';
+import { UsersService } from '../users/users.service';
+import { User } from '@prisma/client';
 
 describe('AuthService', () => {
   let moduleRef: TestingModuleBuilder,
     authService: AuthService,
     app: TestingModule,
-    db: PrismaService;
+    db: PrismaService,
+    userService: UsersService,
+    user: User;
 
   const signupDTO: SignupDTO = {
     firstname: faker.person.firstName(),
@@ -27,7 +31,10 @@ describe('AuthService', () => {
 
     app = await moduleRef.compile();
     authService = app.get<AuthService>(AuthService);
+    userService = app.get<UsersService>(UsersService);
     db = app.get<PrismaService>(PrismaService);
+
+    user = await userService.create(signupDTO);
   });
 
   afterAll(async () => {
@@ -47,13 +54,15 @@ describe('AuthService', () => {
   });
 
   it('should register a user', async () => {
-    const user = await authService.register(signupDTO);
+    const newUser = { ...signupDTO, email: faker.internet.email() };
+
+    const user = await authService.register(newUser);
 
     expect(user).toBeDefined();
     expect(user).toHaveProperty('id');
-    expect(user).toHaveProperty('firstname', signupDTO.firstname);
-    expect(user).toHaveProperty('lastname', signupDTO.lastname);
-    expect(user).toHaveProperty('email', signupDTO.email);
+    expect(user).toHaveProperty('firstname', newUser.firstname);
+    expect(user).toHaveProperty('lastname', newUser.lastname);
+    expect(user).toHaveProperty('email', newUser.email);
   });
 
   it('should validate a user', async () => {
@@ -69,14 +78,17 @@ describe('AuthService', () => {
     expect(user).toHaveProperty('email', signupDTO.email);
   });
 
-  it('should login a user', async () => {
+  it('should fail to validate user', async () => {
     const user = await authService.validateUser(
-      signupDTO.email,
-      signupDTO.password,
+      faker.internet.email(),
+      faker.internet.password(),
     );
 
-    const token = await authService.login(user);
+    expect(user).toBeNull();
+  });
 
+  it('should login a user', async () => {
+    const token = await authService.login(user);
     expect(token).toBeDefined();
     expect(token).toHaveProperty('access_token');
   });
