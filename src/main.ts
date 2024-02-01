@@ -3,6 +3,8 @@ import { AppModule } from './app.module';
 import { Logger } from '@nestjs/common';
 import settings from './app.settings';
 import {
+  bootstrapGlobalFilters,
+  bootstrapGlobalInterceptors,
   bootstrapGlobalPipe,
   bootstrapMiddlewares,
   bootstrapSwagger,
@@ -13,6 +15,8 @@ async function bootstrap() {
 
   bootstrapSwagger(app);
   bootstrapGlobalPipe(app);
+  bootstrapGlobalFilters(app);
+  bootstrapGlobalInterceptors(app);
   bootstrapMiddlewares(app);
 
   await app.listen(settings.app.port);
