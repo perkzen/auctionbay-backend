@@ -18,7 +18,7 @@ jobs:
         image: postgres:latest
         env:
           POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
-          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_USER }}
           POSTGRES_DB: auctionbay
         ports:
           - 5432:5432
@@ -79,6 +79,9 @@ jobs:
   test:
     runs-on: ubuntu-latest
     needs: [ lint, build, postgres ]
+    env:
+      DB_HOST: postgres
+      DATABASE_URL: postgres://${{ secrets.POSTGRES_USER }}:${{ secrets.POSTGRES_USER }}@${{ env.DB_HOST }}:5432/auctionbay
 
     steps:
       - name: Checkout Repository
