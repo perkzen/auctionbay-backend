@@ -14,9 +14,12 @@ export class UsersService {
     });
   }
 
-  async create(data: SignupDTO) {
+  async create(user: SignupDTO) {
     return this.db.user.create({
-      data,
+      data: {
+        ...user,
+        password: await hashPassword(user.password),
+      },
     });
   }
 

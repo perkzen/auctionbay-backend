@@ -3,8 +3,8 @@ import { UsersService } from './users.service';
 import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { JwtUser } from '../auth/auth.types';
 import { sanitizeUser } from '../auth/auth.utils';
-import { User } from 'src/common/decorators/user.decorator';
 import { UpdatePasswordDTO } from './dtos/update-password.dto';
+import { User } from '../../common/decorators/user.decorator';
 
 @ApiTags('Users')
 @Controller('users')
