@@ -1,8 +1,11 @@
 import { Controller, Get, UseGuards } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { ApiBearerAuth } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { User } from 'src/common/decorators/user.decorator';
+import { JwtUser } from '../auth/auth.types';
 
+@ApiTags('Users')
 @Controller('users')
 export class UserController {
   constructor(private usersService: UsersService) {}
@@ -10,7 +13,8 @@ export class UserController {
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @Get('me')
-  async me() {
-    return await this.usersService.findOne('Emmy.Hintz17@yahoo.com');
+  async me(@User() user: JwtUser) {
+    return user;
+    // return await this.usersService.findOne('Emmy.Hintz17@yahoo.com');
   }
 }
