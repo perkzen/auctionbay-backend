@@ -1,10 +1,9 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { JwtPayload, SanitizedUser } from './auth.types';
 import { SignupDTO } from './dtos/signup.dto';
 import { comparePasswords, hashPassword, sanitizeUser } from './auth.utils';
-import { UpdatePasswordDTO } from '../users/dtos/update-password.dto';
 
 @Injectable()
 export class AuthService {
