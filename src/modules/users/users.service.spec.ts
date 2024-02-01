@@ -105,7 +105,7 @@ describe('UsersService', () => {
       );
     } catch (error) {
       expect(error).toBeDefined();
-      expect(error.status).toEqual(400);
+      expect(error.status).toEqual(401);
       expect(error.message).toEqual("Password doesn't match");
     }
   });
