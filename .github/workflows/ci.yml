@@ -78,7 +78,7 @@ jobs:
 
   test:
     runs-on: ubuntu-latest
-    needs: [ lint, build ]
+    needs: [ lint, build, postgres ]
 
     steps:
       - name: Checkout Repository
