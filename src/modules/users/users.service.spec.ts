@@ -33,7 +33,7 @@ describe('UsersService', () => {
   });
 
   afterAll(async () => {
-    db.user.deleteMany();
+    await db.user.deleteMany();
 
     if (app) {
       app.flushLogs();
