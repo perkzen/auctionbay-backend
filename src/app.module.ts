@@ -2,6 +2,9 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
+import { AuthModule } from './modules/auth/auth.module';
+import { UsersModule } from './modules/users/users.module';
+import { PrismaModule } from './modules/prisma/prisma.module';
 import settings from './app.settings';
 
 @Module({
@@ -11,6 +14,9 @@ import settings from './app.settings';
       isGlobal: true,
       load: [() => settings],
     }),
+    AuthModule,
+    UsersModule,
+    PrismaModule,
   ],
   controllers: [AppController],
   providers: [AppService],

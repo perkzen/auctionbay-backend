@@ -1,5 +1,6 @@
 import * as env from 'env-var';
 import * as dotenv from 'dotenv';
+import * as process from 'process';
 
 export enum Environment {
   DEVELOPMENT = 'development',
@@ -7,7 +8,10 @@ export enum Environment {
   TEST = 'test',
 }
 
-const currEnv = process.env.NODE_ENV?.trim() || Environment.DEVELOPMENT;
+const currEnv =
+  Object.values(Environment).includes(
+    process.env.NODE_ENV?.trim() as Environment,
+  ) || Environment.DEVELOPMENT;
 
 dotenv.config({
   path: `${process.cwd()}/.env.${currEnv}`,
@@ -24,6 +28,10 @@ const settings = {
   },
   database: {
     url: env.get('DATABASE_URL').required().asString(),
+  },
+  jwt: {
+    secret: env.get('JWT_SECRET').required().asString(),
+    expiresIn: env.get('JWT_EXPIRATION').default('1d').asString(),
   },
 };
 
