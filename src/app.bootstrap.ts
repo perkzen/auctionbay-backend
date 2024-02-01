@@ -1,6 +1,8 @@
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import settings from './app.settings';
+import { ExceptionFilter } from './common/filters/exception.filter';
+import { HttpAdapterHost } from '@nestjs/core';
 
 export const bootstrapSwagger = (app: INestApplication) => {
   const config = new DocumentBuilder()
@@ -20,5 +22,11 @@ export const bootstrapSwagger = (app: INestApplication) => {
 
 export const bootstrapGlobalPipe = (app: INestApplication) => {
   app.useGlobalPipes(new ValidationPipe({ transform: true, whitelist: true }));
+  return app;
+};
+
+export const bootstrapGlobalFilters = (app: INestApplication) => {
+  const adapterHost = app.get(HttpAdapterHost);
+  app.useGlobalFilters(new ExceptionFilter(adapterHost));
   return app;
 };
