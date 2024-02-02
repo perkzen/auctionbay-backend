@@ -37,6 +37,11 @@ describe('UsersController', () => {
     await app.init();
   });
 
+  afterAll(async () => {
+    await db.$disconnect();
+    await app.close();
+  });
+
   beforeEach(async () => {
     user = await authService.register(signupDTO);
     const res = await authService.login(user);
