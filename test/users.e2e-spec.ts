@@ -66,7 +66,7 @@ describe('UsersController', () => {
   describe('/users/update-password (PUT)', () => {
     it('should fail because user is not logged in', () => {
       return request(app.getHttpServer())
-        .put('/users/update-password')
+        .put('/users/me/update-password')
         .send({
           oldPassword: signupDTO.password,
           newPassword: 'newPassword',
@@ -80,7 +80,7 @@ describe('UsersController', () => {
     });
     it('should fail because old password is incorrect', () => {
       return request(app.getHttpServer())
-        .put('/users/update-password')
+        .put('/users/me/update-password')
         .set('Authorization', `Bearer ${access_token}`)
         .send({
           oldPassword: 'wrongPassword',
@@ -91,7 +91,7 @@ describe('UsersController', () => {
     });
     it('should update password successfully', async () => {
       request(app.getHttpServer())
-        .put('/users/update-password')
+        .put('/users/me/update-password')
         .set('Authorization', `Bearer ${access_token}`)
         .send({
           oldPassword: signupDTO.password,
