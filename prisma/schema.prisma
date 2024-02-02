@@ -9,15 +9,15 @@ datasource db {
 
 model User {
   id        String    @id @default(uuid())
-  email     String    @unique // this could be indexed
+  email     String    @unique
   firstname String
   lastname  String
   password  String
   imageUrl  String?
-  auctions  Auction[]
-  bids      Bid[]
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
+  auctions  Auction[]
+  bids      Bid[]
 
   @@map("users")
 }
@@ -28,13 +28,13 @@ model Auction {
   title         String
   description   String
   startingPrice Int
-  status        AuctionStatus // this could be indexed
+  status        AuctionStatus
   endsAt        DateTime
   ownerId       String
-  owner         User          @relation(fields: [ownerId], references: [id])
-  bids          Bid[]
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
+  owner         User          @relation(fields: [ownerId], references: [id])
+  bids          Bid[]
 
   @@map("auctions")
 }
@@ -42,15 +42,12 @@ model Auction {
 model Bid {
   id        String    @id @default(uuid())
   amount    Int
-  status    BidStatus // this could be indexed
   createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-
+  status    BidStatus
   auctionId String
-  auction   Auction @relation(fields: [auctionId], references: [id])
-
-  bidderId String
-  bidder   User   @relation(fields: [bidderId], references: [id])
+  bidderId  String
+  auction   Auction   @relation(fields: [auctionId], references: [id])
+  bidder    User      @relation(fields: [bidderId], references: [id])
 
   @@map("bids")
 }
