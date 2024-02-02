@@ -4,7 +4,7 @@ import { CreateAuctionDTO } from './dtos/create-auction.dto';
 import { AuctionsModule } from './auctions.module';
 import { AuctionsService } from './auctions.service';
 import { PrismaModule } from '../prisma/prisma.module';
-import { Auction } from '@prisma/client';
+import { Auction, Bid } from '@prisma/client';
 
 describe('AuctionsController', () => {
   let moduleRef: TestingModuleBuilder,
@@ -23,10 +23,19 @@ describe('AuctionsController', () => {
     createdAt: new Date(),
   };
 
+  const bidData: Bid = {
+    amount: 100,
+    auctionId: '123',
+    bidderId: '123',
+    createdAt: new Date(),
+    id: '123',
+  };
+
   const auctionsServiceMock = {
     create: jest.fn().mockResolvedValue(auctionData),
     update: jest.fn().mockResolvedValue(auctionData),
     list: jest.fn().mockResolvedValue([auctionData]),
+    bid: jest.fn().mockResolvedValue(bidData),
   };
 
   beforeAll(async () => {
@@ -102,5 +111,17 @@ describe('AuctionsController', () => {
 
     expect(auctions).toEqual([auctionData]);
     expect(auctionsServiceMock.list).toHaveBeenCalled();
+  });
+
+  it('should bid on an auction', async () => {
+    const bid = await controller.bid('123', '123', { amount: 100 });
+    expect(bid).toEqual(bidData);
+  });
+  it('should fail to bid on an auction', async () => {
+    try {
+      await controller.bid('123', '123', { amount: 0 });
+    } catch (e) {
+      expect(e.message).toEqual('Invalid bid amount');
+    }
   });
 });

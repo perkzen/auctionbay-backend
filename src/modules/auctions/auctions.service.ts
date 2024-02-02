@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateAuctionDTO } from './dtos/create-auction.dto';
-import { Auction, AuctionStatus } from '@prisma/client';
+import { Auction, AuctionStatus, Bid } from '@prisma/client';
 import { UpdateAuctionDTO } from './dtos/update-auction.dto';
 
 @Injectable()
@@ -34,6 +34,16 @@ export class AuctionsService {
       },
       orderBy: {
         createdAt: 'desc',
+      },
+    });
+  }
+
+  async bid(auctionId: string, bidderId: string, amount: number): Promise<Bid> {
+    return this.db.bid.create({
+      data: {
+        amount,
+        auctionId,
+        bidderId,
       },
     });
   }

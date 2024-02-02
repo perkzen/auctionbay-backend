@@ -3,7 +3,7 @@ import { UsersService } from './users.service';
 import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { sanitizeUser } from '../auth/auth.utils';
 import { UpdatePasswordDTO } from './dtos/update-password.dto';
-import { User } from '../../common/decorators/user.decorator';
+import { User } from '../../common/decorators';
 
 @ApiTags('Users')
 @Controller('users')
@@ -21,7 +21,7 @@ export class UserController {
     status: HttpStatus.OK,
     description: 'Password updated successfully',
   })
-  @Put('update-password')
+  @Put('me/update-password')
   async changePassword(
     @Body() data: UpdatePasswordDTO,
     @User('email') email: string,

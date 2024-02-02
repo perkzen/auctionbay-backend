@@ -48,6 +48,7 @@ describe('AuctionsService', () => {
   });
 
   afterAll(async () => {
+    await db.bid.deleteMany();
     await db.auction.deleteMany();
     await db.user.deleteMany();
 
@@ -103,6 +104,18 @@ describe('AuctionsService', () => {
   it('should fail to update an auction with invalid data', async () => {
     try {
       await auctionsService.update(auction, 'invalidAuctionId');
+    } catch (error) {
+      expect(error).toBeDefined();
+    }
+  });
+
+  it('should bid on an auction', async () => {
+    await auctionsService.bid(auction.id, userId, 200);
+  });
+
+  it('should fail to bid on an auction with invalid data', async () => {
+    try {
+      await auctionsService.bid('invalidAuctionId', userId, 200);
     } catch (error) {
       expect(error).toBeDefined();
     }
