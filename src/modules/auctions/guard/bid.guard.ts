@@ -3,11 +3,8 @@ import {
   CanActivate,
   ExecutionContext,
   Injectable,
-  NotFoundException,
 } from '@nestjs/common';
-import { PrismaService } from '../../prisma/prisma.service';
 import { AuctionStatus } from '@prisma/client';
-import { AuctionNotFoundException } from '../exceptions/auction-not-found.exception';
 import { AuctionsService } from '../auctions.service';
 
 @Injectable()

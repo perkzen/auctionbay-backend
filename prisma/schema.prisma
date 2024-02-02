@@ -9,15 +9,15 @@ datasource db {
 
 model User {
   id        String    @id @default(uuid())
-  email     String    @unique
+  email     String    @unique // this could be indexed
   firstname String
   lastname  String
   password  String
   imageUrl  String?
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
   auctions  Auction[]
   bids      Bid[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 
   @@map("users")
 }
@@ -42,8 +42,9 @@ model Auction {
 model Bid {
   id        String    @id @default(uuid())
   amount    Int
-  createdAt DateTime  @default(now())
   status    BidStatus // this could be indexed
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 
   auctionId String
   auction   Auction @relation(fields: [auctionId], references: [id])
