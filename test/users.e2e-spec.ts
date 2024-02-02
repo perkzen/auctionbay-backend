@@ -34,17 +34,16 @@ describe('UsersController', () => {
     db = app.get<PrismaService>(PrismaService);
     authService = app.get<AuthService>(AuthService);
 
-    await app.init();
-  });
-
-  beforeEach(async () => {
     user = await authService.register(signupDTO);
     const res = await authService.login(user);
     access_token = res.access_token;
+
+    await app.init();
   });
 
-  afterEach(async () => {
+  afterAll(async () => {
     await db.user.deleteMany();
+    await app.close();
   });
 
   describe('/users/me (GET)', () => {
@@ -90,8 +89,8 @@ describe('UsersController', () => {
         .expect(401)
         .expect({ statusCode: 401, message: "Password doesn't match" });
     });
-    it('should update password successfully', () => {
-      return request(app.getHttpServer())
+    it('should update password successfully', async () => {
+      request(app.getHttpServer())
         .put('/users/update-password')
         .set('Authorization', `Bearer ${access_token}`)
         .send({

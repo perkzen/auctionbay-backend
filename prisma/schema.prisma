@@ -27,17 +27,21 @@ model User {
 }
 
 model Auction {
-  id             String   @id @default(uuid())
-  imageUrl       String
-  title          String
-  description    String
-  starting_price Float
-  duration       Int
-  createdAt      DateTime @default(now())
+  id            String        @id @default(uuid())
+  imageUrl      String
+  title         String
+  description   String
+  startingPrice Float
+  duration      Int
+  createdAt     DateTime      @default(now())
+  status        AuctionStatus
+  // endsAt        DateTime probably better to calculate this on the fly with duration
 
   ownerId String
   owner   User   @relation(fields: [ownerId], references: [id])
   Bid     Bid[]
+
+  @@map("auctions")
 }
 
 model Bid {
@@ -50,6 +54,8 @@ model Bid {
 
   bidderId String?
   bidder   User?   @relation(fields: [bidderId], references: [id])
+
+  @@map("bids")
 }
 
 enum BidStatus {
@@ -57,4 +63,10 @@ enum BidStatus {
   IN_PROGRESS
   WINNING
   DONE
+}
+
+enum AuctionStatus {
+  ACTIVE
+  CLOSED
+  // CANCELLED
 }

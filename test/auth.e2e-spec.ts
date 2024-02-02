@@ -32,7 +32,6 @@ describe('AuthController (e2e)', () => {
 
   afterAll(async () => {
     await db.user.deleteMany();
-    await db.$disconnect();
     await app.close();
   });
 
