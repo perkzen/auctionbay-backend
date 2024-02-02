@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -11,17 +8,15 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(uuid())
-  email     String   @unique // Could set index here
+  id        String    @id @default(uuid())
+  email     String    @unique
   firstname String
   lastname  String
   password  String
   imageUrl  String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  auctions Auction[]
-  bids     Bid[]
+  auctions  Auction[]
+  bids      Bid[]
+  createdAt DateTime  @default(now())
 
   @@map("users")
 }
@@ -32,41 +27,40 @@ model Auction {
   title         String
   description   String
   startingPrice Int
-  duration      Int
-  createdAt     DateTime      @default(now())
   status        AuctionStatus
-  // endsAt        DateTime probably better to calculate this on the fly with duration
-
-  ownerId String
-  owner   User   @relation(fields: [ownerId], references: [id])
-  Bid     Bid[]
+  endsAt        DateTime
+  bids          Bid[]
+  ownerId       String
+  owner         User          @relation(fields: [ownerId], references: [id])
+  createdAt     DateTime      @default(now())
 
   @@map("auctions")
 }
 
 model Bid {
-  id        String   @id @default(uuid())
+  id        String    @id @default(uuid())
   amount    Int
-  createdAt DateTime @default(now())
-
+  status    BidStatus
   auctionId String
-  auction   Auction @relation(fields: [auctionId], references: [id])
-
-  bidderId String?
-  bidder   User?   @relation(fields: [bidderId], references: [id])
+  bidderId  String
+  auction   Auction   @relation(fields: [auctionId], references: [id])
+  bidder    User      @relation(fields: [bidderId], references: [id])
+  createdAt DateTime  @default(now())
 
   @@map("bids")
 }
 
 enum BidStatus {
   OUTBID
-  IN_PROGRESS
   WINNING
-  DONE
+  WON
+
+  @@map("bid_status")
 }
 
 enum AuctionStatus {
   ACTIVE
   CLOSED
-  // CANCELLED
+
+  @@map("auction_status")
 }

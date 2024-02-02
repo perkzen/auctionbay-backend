@@ -1,4 +1,4 @@
-import { IsEnum, IsPositive, IsString, Length } from 'class-validator';
+import { IsDate, IsEnum, IsPositive, IsString, Length } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { AuctionStatus } from '@prisma/client';
 
@@ -22,8 +22,8 @@ export class CreateAuctionDTO {
   startingPrice: number;
 
   @ApiProperty()
-  @IsPositive()
-  duration: number;
+  @IsDate()
+  endsAt: Date;
 
   @ApiProperty({ required: false })
   @IsEnum(AuctionStatus, {

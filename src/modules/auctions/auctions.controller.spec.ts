@@ -4,7 +4,7 @@ import { CreateAuctionDTO } from './dtos/create-auction.dto';
 import { AuctionsModule } from './auctions.module';
 import { AuctionsService } from './auctions.service';
 import { PrismaModule } from '../prisma/prisma.module';
-import { Auction, Bid } from '@prisma/client';
+import { Auction, Bid, BidStatus } from '@prisma/client';
 
 describe('AuctionsController', () => {
   let moduleRef: TestingModuleBuilder,
@@ -16,7 +16,7 @@ describe('AuctionsController', () => {
     description: 'Test Description',
     startingPrice: 100,
     imageUrl: 'https://test.com/image.jpg',
-    duration: 60,
+    endsAt: new Date(),
     status: 'ACTIVE',
     ownerId: '123',
     id: '123',
@@ -28,6 +28,7 @@ describe('AuctionsController', () => {
     auctionId: '123',
     bidderId: '123',
     createdAt: new Date(),
+    status: BidStatus.WINNING,
     id: '123',
   };
 
@@ -68,7 +69,7 @@ describe('AuctionsController', () => {
       description: 'Test Description',
       startingPrice: 100,
       imageUrl: 'https://test.com/image.jpg',
-      duration: 60,
+      endsAt: new Date(),
     };
     const auction = await controller.create(data, '123');
 
@@ -82,7 +83,7 @@ describe('AuctionsController', () => {
       description: 'Test Description',
       startingPrice: 100,
       imageUrl: 'https://test.com/image.jpg',
-      duration: 60,
+      endsAt: new Date(),
     };
     const auction = await controller.update(data, '123');
 
@@ -96,7 +97,7 @@ describe('AuctionsController', () => {
       description: 'Test Description',
       startingPrice: 100,
       imageUrl: 'https://test.com/image.jpg',
-      duration: 60,
+      endsAt: new Date(),
     };
     try {
       await controller.update(data, '1233');
