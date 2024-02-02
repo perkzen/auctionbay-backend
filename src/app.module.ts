@@ -7,6 +7,7 @@ import { UsersModule } from './modules/users/users.module';
 import { PrismaModule } from './modules/prisma/prisma.module';
 import { AuctionsModule } from './modules/auctions/auctions.module';
 import settings from './app.settings';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import settings from './app.settings';
       isGlobal: true,
       load: [() => settings],
     }),
+    ScheduleModule.forRoot(),
     AuthModule,
     UsersModule,
     PrismaModule,

@@ -2,7 +2,7 @@ import { Test, TestingModule, TestingModuleBuilder } from '@nestjs/testing';
 import { AuctionsService } from './auctions.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateAuctionDTO } from './dtos/create-auction.dto';
-import { Auction } from '@prisma/client';
+import { Auction, BidStatus } from '@prisma/client';
 import { UsersModule } from '../users/users.module';
 import { PrismaModule } from '../prisma/prisma.module';
 import { UsersService } from '../users/users.service';
@@ -19,7 +19,7 @@ describe('AuctionsService', () => {
   const auctionDTO: CreateAuctionDTO = {
     title: 'Test Auction',
     description: 'Test Description',
-    duration: 1,
+    endsAt: new Date(),
     imageUrl: 'https://test.com/image.jpg',
     startingPrice: 100,
   };
@@ -71,7 +71,7 @@ describe('AuctionsService', () => {
     expect(newAuction).toBeDefined();
     expect(newAuction.title).toEqual(auctionDTO.title);
     expect(newAuction.description).toEqual(auctionDTO.description);
-    expect(newAuction.duration).toEqual(auctionDTO.duration);
+    expect(newAuction.endsAt).toEqual(auctionDTO.endsAt);
     expect(newAuction.imageUrl).toEqual(auctionDTO.imageUrl);
     expect(newAuction.startingPrice).toEqual(auctionDTO.startingPrice);
   });
@@ -119,5 +119,89 @@ describe('AuctionsService', () => {
     } catch (error) {
       expect(error).toBeDefined();
     }
+  });
+  it('should throw error if user bids twice in a row', async () => {
+    try {
+      await auctionsService.bid(auction.id, userId, 300);
+    } catch (e) {
+      expect(e).toBeDefined();
+      expect(e.message).toEqual('You are already the highest bidder');
+    }
+  });
+  it('should throw error if bid amount is less than the current bid', async () => {
+    try {
+      await auctionsService.bid(auction.id, userId, 100);
+    } catch (e) {
+      expect(e).toBeDefined();
+      expect(e.message).toEqual('Bid amount must be greater than the last bid');
+    }
+  });
+  it('should update bid statuses when new bid is placed', async () => {
+    const newUserId = (
+      await userService.create({
+        firstname: 'Test',
+        lastname: 'User',
+        email: 'test@mail.com',
+        password: '',
+      })
+    ).id;
+
+    await auctionsService.bid(auction.id, newUserId, 300);
+
+    const updatedAuction = await db.auction.findUnique({
+      where: {
+        id: auction.id,
+      },
+      include: {
+        bids: true,
+      },
+    });
+
+    expect(updatedAuction).toBeDefined();
+
+    const winningBid = updatedAuction.bids.find(
+      (bid) => bid.status === BidStatus.WINNING,
+    );
+    const outbidBids = updatedAuction.bids.filter(
+      (bid) => bid.status === BidStatus.OUTBID,
+    );
+
+    expect(winningBid).toBeDefined();
+    expect(winningBid.amount).toEqual(300);
+    expect(outbidBids).toBeDefined();
+    expect(outbidBids.length).toBeGreaterThan(0);
+  });
+
+  it("should update auction statuses when they're closed and set the last bit to won", async () => {
+    const newAuction = await auctionsService.create(auctionDTO, userId);
+    const newUserId = (
+      await userService.create({
+        firstname: 'Test',
+        lastname: 'User',
+        email: 'test2@mail.com',
+        password: '',
+      })
+    ).id;
+
+    await auctionsService.bid(newAuction.id, newUserId, 200);
+
+    await auctionsService.updateAuctionStatuses();
+
+    const updatedAuction = await db.auction.findUnique({
+      where: {
+        id: newAuction.id,
+      },
+      include: {
+        bids: true,
+      },
+    });
+
+    const bids = updatedAuction.bids;
+
+    expect(updatedAuction).toBeDefined();
+    expect(updatedAuction.status).toEqual('CLOSED');
+    expect(bids).toBeDefined();
+    expect(bids.length).toBeGreaterThan(0);
+    expect(bids![0].status).toEqual(BidStatus.WON);
   });
 });

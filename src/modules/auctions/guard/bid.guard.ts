@@ -7,25 +7,19 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { AuctionStatus } from '@prisma/client';
+import { AuctionNotFoundException } from '../exceptions/auction-not-found.exception';
+import { AuctionsService } from '../auctions.service';
 
 @Injectable()
 export class BidGuard implements CanActivate {
-  constructor(private readonly db: PrismaService) {}
+  constructor(private readonly auctionService: AuctionsService) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
     const auctionId = request.params.id;
     const bidderId = request.user.userId;
 
-    const auction = await this.db.auction.findUnique({
-      where: {
-        id: auctionId,
-      },
-    });
-
-    if (!auction) {
-      throw new NotFoundException('Auction not found');
-    }
+    const auction = await this.auctionService.findById(auctionId);
 
     if (auction.status !== AuctionStatus.ACTIVE) {
       throw new BadRequestException('Auction is not active');

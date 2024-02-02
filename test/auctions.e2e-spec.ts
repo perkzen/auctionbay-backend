@@ -81,7 +81,7 @@ describe('AuctionsController', () => {
           title: faker.commerce.productName(),
           description: faker.commerce.productDescription(),
           startingPrice: 100,
-          duration: 60,
+          endsAt: new Date(),
           imageUrl: faker.image.url(),
         },
         user.id,
@@ -103,7 +103,7 @@ describe('AuctionsController', () => {
         title: faker.commerce.productName(),
         description: faker.commerce.productDescription(),
         startingPrice: 100,
-        duration: 60,
+        endsAt: new Date(),
         imageUrl: faker.image.url(),
       };
 
@@ -126,7 +126,7 @@ describe('AuctionsController', () => {
           title: faker.commerce.productName(),
           description: faker.commerce.productDescription(),
           startingPrice: 100,
-          duration: 60,
+          endsAt: new Date(),
           imageUrl: faker.image.url(),
         },
         user.id,
@@ -139,7 +139,7 @@ describe('AuctionsController', () => {
           title: faker.commerce.productName(),
           description: faker.commerce.productDescription(),
           startingPrice: 100,
-          duration: 60,
+          endsAt: new Date(),
           imageUrl: faker.image.url(),
         })
         .expect(200);
@@ -156,7 +156,7 @@ describe('AuctionsController', () => {
           title: faker.commerce.productName(),
           description: faker.commerce.productDescription(),
           startingPrice: 100,
-          duration: 60,
+          endsAt: new Date(),
           imageUrl: faker.image.url(),
         })
         .expect(401);
@@ -170,7 +170,7 @@ describe('AuctionsController', () => {
           title: faker.commerce.productName(),
           description: faker.commerce.productDescription(),
           startingPrice: 100,
-          duration: 60,
+          endsAt: new Date(),
           imageUrl: faker.image.url(),
         },
         user.id,
@@ -206,7 +206,7 @@ describe('AuctionsController', () => {
           title: faker.commerce.productName(),
           description: faker.commerce.productDescription(),
           startingPrice: 100,
-          duration: 60,
+          endsAt: new Date(),
           imageUrl: faker.image.url(),
         },
         user.id,
@@ -240,7 +240,7 @@ describe('AuctionsController', () => {
           title: faker.commerce.productName(),
           description: faker.commerce.productDescription(),
           startingPrice: 100,
-          duration: 60,
+          endsAt: new Date(),
           imageUrl: faker.image.url(),
         },
         newUserId,
