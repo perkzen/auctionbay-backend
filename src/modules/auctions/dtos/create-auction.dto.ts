@@ -1,4 +1,4 @@
-import { IsDecimal, IsPositive, IsString, Length } from 'class-validator';
+import { IsPositive, IsString, Length } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateAuctionDTO {
