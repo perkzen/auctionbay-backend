@@ -38,10 +38,6 @@ describe('AuctionsController', () => {
     authService = app.get<AuthService>(AuthService);
     auctionService = app.get<AuctionsService>(AuctionsService);
 
-    user = await authService.register(signupDTO);
-    const res = await authService.login(user);
-    access_token = res.access_token;
-
     await app.init();
   });
 
@@ -59,8 +55,15 @@ describe('AuctionsController', () => {
     expect(access_token).toBeDefined();
   });
 
+  beforeEach(async () => {
+    user = await authService.register(signupDTO);
+    const res = await authService.login(user);
+    access_token = res.access_token;
+  });
+
   afterEach(async () => {
     await db.auction.deleteMany();
+    await db.user.deleteMany();
   });
 
   describe('/auctions (GET)', () => {
