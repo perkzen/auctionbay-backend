@@ -75,7 +75,7 @@ jobs:
         run: npm ci
 
       - name: Push Prisma schema to database
-        run: npm run prisma:push
+        run: npx prisma db push
 
       - name: Run Unit Tests
         run: npm run test:ci
