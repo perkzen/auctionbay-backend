@@ -11,7 +11,9 @@ import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuctionsService } from './auctions.service';
 import { CreateAuctionDTO } from './dtos/create-auction.dto';
 import { Public, User } from '../../common/decorators';
-import { AuctionOwner } from './guard/auction-owner.guard';
+import { AuctionOwnerGuard } from './guard/auction-owner.guard';
+import { BidGuard } from './guard/bid.guard';
+import { CreateBidDTO } from './dtos/create-bid.dto';
 
 @ApiTags('Auctions')
 @Controller('auctions')
@@ -36,9 +38,21 @@ export class AuctionsController {
 
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Updates an auction' })
-  @UseGuards(AuctionOwner)
+  @UseGuards(AuctionOwnerGuard)
   @Put(':id')
   async update(@Body() data: CreateAuctionDTO, @Param('id') auctionId: string) {
     return this.auctionsService.update(data, auctionId);
+  }
+
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Bids on an auction' })
+  @UseGuards(BidGuard)
+  @Post(':id/bid')
+  async bid(
+    @Param('id') auctionId: string,
+    @User('userId') bidderId: string,
+    @Body() { amount }: CreateBidDTO,
+  ) {
+    return this.auctionsService.bid(auctionId, bidderId, amount);
   }
 }

@@ -21,7 +21,7 @@ export class UserController {
     status: HttpStatus.OK,
     description: 'Password updated successfully',
   })
-  @Put('update-password')
+  @Put('me/update-password')
   async changePassword(
     @Body() data: UpdatePasswordDTO,
     @User('email') email: string,

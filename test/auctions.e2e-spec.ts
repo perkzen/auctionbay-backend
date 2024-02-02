@@ -11,6 +11,7 @@ import { UsersModule } from '../src/modules/users/users.module';
 import * as request from 'supertest';
 import { AuctionsModule } from '../src/modules/auctions/auctions.module';
 import { AuctionsService } from '../src/modules/auctions/auctions.service';
+import { AuctionStatus } from '@prisma/client';
 
 describe('AuctionsController', () => {
   let app: INestApplication,
@@ -62,6 +63,7 @@ describe('AuctionsController', () => {
   });
 
   afterEach(async () => {
+    await db.bid.deleteMany();
     await db.auction.deleteMany();
     await db.user.deleteMany();
   });
@@ -158,6 +160,99 @@ describe('AuctionsController', () => {
           imageUrl: faker.image.url(),
         })
         .expect(401);
+    });
+  });
+
+  describe('/auctions/:id/bid (POST)', () => {
+    it('should not allow owner do bid on his auction', async () => {
+      const auction = await auctionService.create(
+        {
+          title: faker.commerce.productName(),
+          description: faker.commerce.productDescription(),
+          startingPrice: 100,
+          duration: 60,
+          imageUrl: faker.image.url(),
+        },
+        user.id,
+      );
+
+      return request(app.getHttpServer())
+        .post(`/auctions/${auction.id}/bid`)
+        .set('Authorization', `Bearer ${access_token}`)
+        .send({ amount: 200 })
+        .expect(400)
+        .expect({
+          message: 'Owner cannot bid on their own auction',
+          error: 'Bad Request',
+          statusCode: 400,
+        });
+    });
+
+    it("should not allow to bid on auction that doesn't exist", async () => {
+      return request(app.getHttpServer())
+        .post(`/auctions/1/bid`)
+        .set('Authorization', `Bearer ${access_token}`)
+        .send({ amount: 200 })
+        .expect(404)
+        .expect({
+          message: 'Auction not found',
+          error: 'Not Found',
+          statusCode: 404,
+        });
+    });
+    it("it should not allow to bid on auction that isn't active", async () => {
+      const auction = await auctionService.create(
+        {
+          title: faker.commerce.productName(),
+          description: faker.commerce.productDescription(),
+          startingPrice: 100,
+          duration: 60,
+          imageUrl: faker.image.url(),
+        },
+        user.id,
+      );
+
+      await auctionService.update({ status: AuctionStatus.CLOSED }, auction.id);
+
+      return request(app.getHttpServer())
+        .post(`/auctions/${auction.id}/bid`)
+        .set('Authorization', `Bearer ${access_token}`)
+        .send({ amount: 200 })
+        .expect(400)
+        .expect({
+          message: 'Auction is not active',
+          error: 'Bad Request',
+          statusCode: 400,
+        });
+    });
+    it('should fail because of missing authorization header', async () => {
+      return request(app.getHttpServer()).post('/auctions/1/bid').expect(401);
+    });
+    it('should bid on an auction', async () => {
+      const newUserId = (
+        await authService.register({
+          ...signupDTO,
+          email: faker.internet.email(),
+        })
+      ).id;
+      const newAuction = await auctionService.create(
+        {
+          title: faker.commerce.productName(),
+          description: faker.commerce.productDescription(),
+          startingPrice: 100,
+          duration: 60,
+          imageUrl: faker.image.url(),
+        },
+        newUserId,
+      );
+
+      expect(newAuction).toBeDefined();
+
+      return request(app.getHttpServer())
+        .post(`/auctions/${newAuction.id}/bid`)
+        .set('Authorization', `Bearer ${access_token}`)
+        .send({ amount: 200 })
+        .expect(201);
     });
   });
 });

@@ -29,7 +29,8 @@
     "prisma:reset": "dotenv -e .env.development npx prisma migrate reset --skip-seed",
     "prisma:push": "dotenv -e .env.development npx prisma db push",
     "prisma:pull": "dotenv -e .env.development npx prisma db pull",
-    "push:ci": "npx prisma db push"
+    "push:ci": "npx prisma db push",
+    "prisma:push:test": "dotenv -e .env.test npx prisma db push"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",

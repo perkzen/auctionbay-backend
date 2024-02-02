@@ -31,7 +31,7 @@ model Auction {
   imageUrl      String
   title         String
   description   String
-  startingPrice Float
+  startingPrice Int
   duration      Int
   createdAt     DateTime      @default(now())
   status        AuctionStatus
@@ -45,8 +45,8 @@ model Auction {
 }
 
 model Bid {
-  id        Int      @id @default(autoincrement())
-  amount    Float
+  id        String   @id @default(uuid())
+  amount    Int
   createdAt DateTime @default(now())
 
   auctionId String
