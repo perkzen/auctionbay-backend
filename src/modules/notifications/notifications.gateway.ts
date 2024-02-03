@@ -6,7 +6,6 @@ import {
   OnGatewayInit,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { AuctionsService } from '../auctions/auctions.service';
 import { NotificationEvent } from './events/notification.events';
 import { AuthWsMiddleware } from '../auth/middlewares/auth-ws.middleware';
 import { Logger, UseGuards } from '@nestjs/common';
