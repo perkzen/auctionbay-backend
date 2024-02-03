@@ -1,3 +1,3 @@
-export enum WsEvent {
+export enum NotificationEvent {
   AUCTION_WON = 'auction-won',
 }

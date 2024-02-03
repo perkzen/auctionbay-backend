@@ -6,13 +6,13 @@ import {
   OnGatewayInit,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { AuctionsService } from './auctions.service';
-import settings from '../../app.settings';
-import { WsEvent } from '../../common/constants/ws-events';
+import { AuctionsService } from '../auctions/auctions.service';
+import { NotificationEvent } from './events/notification.events';
 import { AuthWsMiddleware } from '../auth/middlewares/auth-ws.middleware';
 import { Logger, UseGuards } from '@nestjs/common';
 import { AuthenticatedSocket } from '../auth/auth.types';
 import { WsJwtGuard } from '../auth/guards/ws-jwt.guard';
+import settings from '../../app.settings';
 
 @WebSocketGateway({
   transport: ['websocket'],
@@ -21,13 +21,15 @@ import { WsJwtGuard } from '../auth/guards/ws-jwt.guard';
   },
 })
 @UseGuards(WsJwtGuard)
-export class AuctionGateway
+export class NotificationsGateway
   implements OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit
 {
   @WebSocketServer()
   server: Server;
 
   private readonly connections = new Map<string, Socket>();
+
+  private readonly logger: Logger = new Logger(NotificationsGateway.name);
 
   constructor(
     private readonly auctionsService: AuctionsService,
@@ -40,12 +42,15 @@ export class AuctionGateway
 
   async handleConnection(client: AuthenticatedSocket) {
     this.connections.set(client.userId, client);
-    Logger.log(`User connected: ${client.userId}`, 'AuctionGateway');
+    this.logger.log(`User connected: ${client.userId}`, 'NotificationsGateway');
   }
 
   handleDisconnect(client: AuthenticatedSocket) {
     this.connections.delete(client.userId);
-    Logger.log(`User disconnected: ${client.userId}`, 'AuctionGateway');
+    this.logger.log(
+      `User disconnected: ${client.userId}`,
+      'NotificationsGateway',
+    );
   }
 
   async notifyWinner(wonBidsIds: string[]) {
@@ -57,7 +62,11 @@ export class AuctionGateway
 
       if (!socket) continue;
 
-      this.server.to(socket.id).emit(WsEvent.AUCTION_WON, winner);
+      this.server.to(socket.id).emit(NotificationEvent.AUCTION_WON, winner);
+      this.logger.log(
+        `Notified user ${winnerId} about winning auction`,
+        'NotificationsGateway',
+      );
     }
   }
 }
