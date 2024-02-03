@@ -8,15 +8,32 @@ import { CreateAuctionDTO } from './dtos/create-auction.dto';
 import { Auction, AuctionStatus, Bid, BidStatus } from '@prisma/client';
 import { UpdateAuctionDTO } from './dtos/update-auction.dto';
 import { WonBid } from './types/won-bid.type';
+import { Multer } from 'multer';
+import { UploadService } from '../upload/upload.service';
+import { tr } from '@faker-js/faker';
 
 @Injectable()
 export class AuctionsService {
-  constructor(private readonly db: PrismaService) {}
+  constructor(
+    private readonly db: PrismaService,
+    private readonly uploadService: UploadService,
+  ) {}
 
-  async create(data: CreateAuctionDTO, ownerId: string): Promise<Auction> {
+  async create(
+    data: CreateAuctionDTO,
+    ownerId: string,
+    image: Express.Multer.File,
+  ) {
+    const imageUrl = await this.uploadService.upload(image);
+
+    if (!imageUrl) {
+      throw new BadRequestException('Failed to create auction');
+    }
+
     return this.db.auction.create({
       data: {
         ...data,
+        imageUrl: imageUrl,
         status: AuctionStatus.ACTIVE,
         ownerId,
       },

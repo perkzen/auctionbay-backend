@@ -34,6 +34,14 @@ const settings = {
     secret: env.get('JWT_SECRET').required().asString(),
     expiresIn: env.get('JWT_EXPIRATION').default('1d').asString(),
   },
+  aws: {
+    s3: {
+      region: env.get('AWS_S3_REGION').default('eu-central-1').asString(),
+      bucket: env.get('AWS_S3_BUCKET_NAME').default('bucket').asString(),
+    },
+    accessKeyId: env.get('AWS_ACCESS_KEY_ID').required().asString(),
+    secretAccessKey: env.get('AWS_SECRET_ACCESS_KEY').required().asString(),
+  },
 };
 
 export default settings;

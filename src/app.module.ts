@@ -9,6 +9,7 @@ import { AuctionsModule } from './modules/auctions/auctions.module';
 import settings from './app.settings';
 import { ScheduleModule } from '@nestjs/schedule';
 import { NotificationsModule } from './modules/notifications/notifications.module';
+import { UploadModule } from './modules/upload/upload.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { NotificationsModule } from './modules/notifications/notifications.modul
     PrismaModule,
     AuctionsModule,
     NotificationsModule,
+    UploadModule,
   ],
   controllers: [AppController],
   providers: [AppService],
