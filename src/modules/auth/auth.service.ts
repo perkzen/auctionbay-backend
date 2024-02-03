@@ -42,4 +42,10 @@ export class AuthService {
     const user = await this.usersService.create(data);
     return sanitizeUser(user);
   }
+
+  async verifyToken(token: string): Promise<SanitizedUser | null> {
+    const decoded: JwtPayload = await this.jwtService.verifyAsync(token);
+    const user = await this.usersService.findByEmail(decoded.email);
+    return user ? sanitizeUser(user) : null;
+  }
 }

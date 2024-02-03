@@ -6,6 +6,7 @@ import { Auction, BidStatus } from '@prisma/client';
 import { UsersModule } from '../users/users.module';
 import { PrismaModule } from '../prisma/prisma.module';
 import { UsersService } from '../users/users.service';
+import { faker } from '@faker-js/faker';
 
 describe('AuctionsService', () => {
   let moduleRef: TestingModuleBuilder,
@@ -37,10 +38,10 @@ describe('AuctionsService', () => {
 
     userId = (
       await userService.create({
-        firstname: 'Test',
-        lastname: 'User',
-        email: '',
-        password: '',
+        firstname: faker.person.firstName(),
+        lastname: faker.person.lastName(),
+        email: faker.internet.email(),
+        password: faker.internet.password(),
       })
     ).id;
 
@@ -48,10 +49,6 @@ describe('AuctionsService', () => {
   });
 
   afterAll(async () => {
-    await db.bid.deleteMany();
-    await db.auction.deleteMany();
-    await db.user.deleteMany();
-
     if (app) {
       app.flushLogs();
       await app.close();
@@ -139,10 +136,10 @@ describe('AuctionsService', () => {
   it('should update bid statuses when new bid is placed', async () => {
     const newUserId = (
       await userService.create({
-        firstname: 'Test',
-        lastname: 'User',
-        email: 'test@mail.com',
-        password: '',
+        firstname: faker.person.firstName(),
+        lastname: faker.person.lastName(),
+        email: faker.internet.email(),
+        password: faker.internet.password(),
       })
     ).id;
 
@@ -176,10 +173,10 @@ describe('AuctionsService', () => {
     const newAuction = await auctionsService.create(auctionDTO, userId);
     const newUserId = (
       await userService.create({
-        firstname: 'Test',
-        lastname: 'User',
-        email: 'test2@mail.com',
-        password: '',
+        firstname: faker.person.firstName(),
+        lastname: faker.person.lastName(),
+        email: faker.internet.email(),
+        password: faker.internet.password(),
       })
     ).id;
 
@@ -203,5 +200,44 @@ describe('AuctionsService', () => {
     expect(bids).toBeDefined();
     expect(bids.length).toBeGreaterThan(0);
     expect(bids![0].status).toEqual(BidStatus.WON);
+  });
+  it('should find winners of auctions', async () => {
+    const newAuctionDTO: CreateAuctionDTO = {
+      title: 'Test Auction 2',
+      description: 'Test Description 2',
+      endsAt: new Date(),
+      imageUrl: 'https://test.com/image.jpg',
+      startingPrice: 10,
+    };
+
+    const newUserId = (
+      await userService.create({
+        firstname: faker.person.firstName(),
+        lastname: faker.person.lastName(),
+        email: faker.internet.email(),
+        password: faker.internet.password(),
+      })
+    ).id;
+
+    const newAuction = await auctionsService.create(newAuctionDTO, newUserId);
+
+    expect(newAuction).toBeDefined();
+    expect(newAuction.id).toBeDefined();
+
+    await auctionsService.bid(newAuction.id, userId, 200);
+    await auctionsService.updateAuctionStatuses();
+
+    const wonBids = (
+      await db.bid.findMany({
+        where: {
+          auctionId: newAuction.id,
+          status: BidStatus.WON,
+        },
+      })
+    ).map((bid) => bid.id);
+
+    const winners = await auctionsService.findWonBids(wonBids);
+    expect(winners).toBeDefined();
+    expect(winners.length).toBeGreaterThan(0);
   });
 });

@@ -1,17 +1,24 @@
 import { Injectable } from '@nestjs/common';
-import { Interval } from '@nestjs/schedule';
+import { Cron } from '@nestjs/schedule';
 import { AuctionsService } from './auctions.service';
 import { Logger } from '@nestjs/common';
-
-const EVERY_MINUTE = 1000 * 60;
+import { NotificationsGateway } from '../notifications/notifications.gateway';
 
 @Injectable()
 export class AuctionsJob {
-  constructor(private readonly auctionsService: AuctionsService) {}
+  constructor(
+    private readonly auctionsService: AuctionsService,
+    private readonly notifications: NotificationsGateway,
+  ) {}
 
-  @Interval(EVERY_MINUTE)
+  @Cron('* * * * *')
   async checkAuctions() {
-    const count = await this.auctionsService.updateAuctionStatuses();
+    const { count, wonBids: wonBidsIds } =
+      await this.auctionsService.updateAuctionStatuses();
+
+    const wonBids = await this.auctionsService.findWonBids(wonBidsIds);
+
+    await this.notifications.notifyWinners(wonBids);
     Logger.log(`Updated statuses ${count} auctions`, 'AuctionsJob');
   }
 }

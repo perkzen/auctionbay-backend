@@ -38,8 +38,6 @@ describe('AuthService', () => {
   });
 
   afterAll(async () => {
-    await db.user.deleteMany();
-
     if (app) {
       app.flushLogs();
       await app.close();
@@ -91,5 +89,21 @@ describe('AuthService', () => {
     const token = await authService.login(user);
     expect(token).toBeDefined();
     expect(token).toHaveProperty('access_token');
+  });
+  it("should validate a user's token", async () => {
+    const { access_token } = await authService.login(user);
+    const verifiedUser = await authService.verifyToken(access_token);
+    expect(verifiedUser).toBeDefined();
+    expect(verifiedUser).toHaveProperty('id');
+    expect(verifiedUser).toHaveProperty('firstname', signupDTO.firstname);
+    expect(verifiedUser).toHaveProperty('lastname', signupDTO.lastname);
+    expect(verifiedUser).toHaveProperty('email', signupDTO.email);
+  });
+  it('should fail to validate a user token', async () => {
+    try {
+      await authService.verifyToken(faker.string.uuid());
+    } catch (e) {
+      expect(e).toBeDefined();
+    }
   });
 });

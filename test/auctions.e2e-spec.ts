@@ -12,6 +12,7 @@ import * as request from 'supertest';
 import { AuctionsModule } from '../src/modules/auctions/auctions.module';
 import { AuctionsService } from '../src/modules/auctions/auctions.service';
 import { AuctionStatus } from '@prisma/client';
+import { cleanupDatabase } from './utils/cleanup-database';
 
 describe('AuctionsController', () => {
   let app: INestApplication,
@@ -43,8 +44,7 @@ describe('AuctionsController', () => {
   });
 
   afterAll(async () => {
-    await db.user.deleteMany();
-    await db.auction.deleteMany();
+    await cleanupDatabase(db);
     await app.close();
   });
 

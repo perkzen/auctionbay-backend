@@ -31,7 +31,7 @@ model Auction {
   endsAt        DateTime
   bids          Bid[]
   ownerId       String
-  owner         User          @relation(fields: [ownerId], references: [id])
+  owner         User          @relation(fields: [ownerId], references: [id], onDelete: Cascade)
   createdAt     DateTime      @default(now())
 
   @@map("auctions")
@@ -43,8 +43,8 @@ model Bid {
   status    BidStatus
   auctionId String
   bidderId  String
-  auction   Auction   @relation(fields: [auctionId], references: [id])
-  bidder    User      @relation(fields: [bidderId], references: [id])
+  auction   Auction   @relation(fields: [auctionId], references: [id], onDelete: Cascade)
+  bidder    User      @relation(fields: [bidderId], references: [id], onDelete: Cascade)
   createdAt DateTime  @default(now())
 
   @@map("bids")

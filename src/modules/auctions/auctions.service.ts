@@ -7,6 +7,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { CreateAuctionDTO } from './dtos/create-auction.dto';
 import { Auction, AuctionStatus, Bid, BidStatus } from '@prisma/client';
 import { UpdateAuctionDTO } from './dtos/update-auction.dto';
+import { WonBid } from './types/won-bid.type';
 
 @Injectable()
 export class AuctionsService {
@@ -81,26 +82,38 @@ export class AuctionsService {
     }
 
     return this.db.$transaction(async (tx) => {
-      const bid = await tx.bid.create({
-        data: {
-          amount,
-          status: BidStatus.WINNING,
-          auctionId,
-          bidderId,
-        },
-      });
-
-      await tx.bid.updateMany({
-        where: {
-          auctionId,
-          id: {
-            not: bid.id,
+      const createBid = async (
+        amount: number,
+        auctionId: string,
+        bidderId: string,
+      ) => {
+        return tx.bid.create({
+          data: {
+            amount,
+            status: BidStatus.WINNING,
+            auctionId,
+            bidderId,
           },
-        },
-        data: {
-          status: BidStatus.OUTBID,
-        },
-      });
+        });
+      };
+
+      const updateBidStatuses = async (winningBidId: string) => {
+        await tx.bid.updateMany({
+          where: {
+            auctionId,
+            id: {
+              not: winningBidId,
+            },
+          },
+          data: {
+            status: BidStatus.OUTBID,
+          },
+        });
+      };
+
+      const bid = await createBid(amount, auctionId, bidderId);
+
+      await updateBidStatuses(bid.id);
 
       return bid;
     });
@@ -108,55 +121,95 @@ export class AuctionsService {
 
   async updateAuctionStatuses() {
     return this.db.$transaction(async (tx) => {
-      const updatedCount = (
-        await tx.auction.updateMany({
+      const closeBids = async (): Promise<number> => {
+        return (
+          await tx.auction.updateMany({
+            where: {
+              status: AuctionStatus.ACTIVE,
+              endsAt: {
+                lte: new Date(),
+              },
+            },
+            data: {
+              status: AuctionStatus.CLOSED,
+            },
+          })
+        ).count;
+      };
+
+      const findClosedAuctions = async () => {
+        return tx.auction.findMany({
           where: {
-            status: AuctionStatus.ACTIVE,
-            endsAt: {
-              lte: new Date(),
+            status: AuctionStatus.CLOSED,
+            bids: {
+              none: {
+                status: BidStatus.WON,
+              },
+            },
+          },
+          include: {
+            bids: {
+              orderBy: {
+                amount: 'desc',
+              },
+              take: 1,
+            },
+          },
+        });
+      };
+
+      const setWonBids = async (wonBids: string[]) => {
+        await tx.bid.updateMany({
+          where: {
+            id: {
+              in: wonBids,
             },
           },
           data: {
-            status: AuctionStatus.CLOSED,
+            status: BidStatus.WON,
           },
-        })
-      ).count;
+        });
+      };
 
-      const closedAuctions = await tx.auction.findMany({
-        where: {
-          status: AuctionStatus.CLOSED,
-          bids: {
-            none: {
-              status: BidStatus.WON,
-            },
-          },
-        },
-        include: {
-          bids: {
-            orderBy: {
-              amount: 'desc',
-            },
-            take: 1,
-          },
-        },
-      });
+      const numberOfClosedBids = await closeBids();
+
+      const closedAuctions = await findClosedAuctions();
 
       const lastBids = closedAuctions
         .map((auction) => auction.bids[0]?.id)
         .filter(Boolean);
 
-      await tx.bid.updateMany({
-        where: {
-          id: {
-            in: lastBids,
+      await setWonBids(lastBids);
+
+      return { count: numberOfClosedBids, wonBids: lastBids, closedAuctions };
+    });
+  }
+
+  async findWonBids(wonBids: string[]): Promise<WonBid[]> {
+    return this.db.bid.findMany({
+      where: {
+        id: {
+          in: wonBids,
+        },
+      },
+      select: {
+        id: true,
+        amount: true,
+        bidder: {
+          select: {
+            id: true,
+            email: true,
+            firstname: true,
+            lastname: true,
           },
         },
-        data: {
-          status: BidStatus.WON,
+        auction: {
+          select: {
+            id: true,
+            title: true,
+          },
         },
-      });
-
-      return updatedCount;
+      },
     });
   }
 }
