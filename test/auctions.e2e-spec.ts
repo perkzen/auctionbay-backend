@@ -13,6 +13,8 @@ import { AuctionsModule } from '../src/modules/auctions/auctions.module';
 import { AuctionsService } from '../src/modules/auctions/auctions.service';
 import { AuctionStatus } from '@prisma/client';
 import { cleanupDatabase } from './utils/cleanup-database';
+import { UploadModule } from '../src/modules/upload/upload.module';
+import { UploadService } from '../src/modules/upload/upload.service';
 
 describe('AuctionsController', () => {
   let app: INestApplication,
@@ -29,10 +31,23 @@ describe('AuctionsController', () => {
     password: faker.internet.password(),
   };
 
+  const uploadServiceMock = {
+    upload: jest.fn().mockResolvedValue(faker.image.url()),
+  };
+
   beforeAll(async () => {
     const moduleFixture = await Test.createTestingModule({
-      imports: [AuctionsModule, AuthModule, UsersModule, PrismaModule],
-    }).compile();
+      imports: [
+        AuctionsModule,
+        AuthModule,
+        UsersModule,
+        PrismaModule,
+        UploadModule,
+      ],
+    })
+      .overrideProvider(UploadService)
+      .useValue(uploadServiceMock)
+      .compile();
 
     app = moduleFixture.createNestApplication();
 
@@ -82,9 +97,9 @@ describe('AuctionsController', () => {
           description: faker.commerce.productDescription(),
           startingPrice: 100,
           endsAt: new Date(),
-          imageUrl: faker.image.url(),
         },
         user.id,
+        null,
       );
 
       return request(app.getHttpServer())
@@ -127,9 +142,9 @@ describe('AuctionsController', () => {
           description: faker.commerce.productDescription(),
           startingPrice: 100,
           endsAt: new Date(),
-          imageUrl: faker.image.url(),
         },
         user.id,
+        null,
       );
 
       return request(app.getHttpServer())
@@ -171,9 +186,9 @@ describe('AuctionsController', () => {
           description: faker.commerce.productDescription(),
           startingPrice: 100,
           endsAt: new Date(),
-          imageUrl: faker.image.url(),
         },
         user.id,
+        null,
       );
 
       return request(app.getHttpServer())
@@ -207,9 +222,9 @@ describe('AuctionsController', () => {
           description: faker.commerce.productDescription(),
           startingPrice: 100,
           endsAt: new Date(),
-          imageUrl: faker.image.url(),
         },
         user.id,
+        null,
       );
 
       await auctionService.update({ status: AuctionStatus.CLOSED }, auction.id);
@@ -241,9 +256,9 @@ describe('AuctionsController', () => {
           description: faker.commerce.productDescription(),
           startingPrice: 100,
           endsAt: new Date(),
-          imageUrl: faker.image.url(),
         },
         newUserId,
+        null,
       );
 
       expect(newAuction).toBeDefined();

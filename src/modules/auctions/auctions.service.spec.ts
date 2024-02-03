@@ -7,6 +7,8 @@ import { UsersModule } from '../users/users.module';
 import { PrismaModule } from '../prisma/prisma.module';
 import { UsersService } from '../users/users.service';
 import { faker } from '@faker-js/faker';
+import { UploadService } from '../upload/upload.service';
+import { UploadModule } from '../upload/upload.module';
 
 describe('AuctionsService', () => {
   let moduleRef: TestingModuleBuilder,
@@ -21,15 +23,20 @@ describe('AuctionsService', () => {
     title: 'Test Auction',
     description: 'Test Description',
     endsAt: new Date(),
-    imageUrl: 'https://test.com/image.jpg',
     startingPrice: 100,
+  };
+
+  const uploadServiceMock = {
+    upload: jest.fn().mockResolvedValue(faker.image.url()),
   };
 
   beforeAll(async () => {
     moduleRef = Test.createTestingModule({
-      imports: [PrismaModule, UsersModule],
+      imports: [PrismaModule, UsersModule, UploadModule],
       providers: [AuctionsService],
-    });
+    })
+      .overrideProvider(UploadService)
+      .useValue(uploadServiceMock);
 
     app = await moduleRef.compile();
     auctionsService = app.get<AuctionsService>(AuctionsService);
@@ -45,7 +52,7 @@ describe('AuctionsService', () => {
       })
     ).id;
 
-    auction = await auctionsService.create(auctionDTO, userId);
+    auction = await auctionsService.create(auctionDTO, userId, null);
   });
 
   afterAll(async () => {
@@ -63,19 +70,18 @@ describe('AuctionsService', () => {
   });
 
   it('should create an auction', async () => {
-    const newAuction = await auctionsService.create(auctionDTO, userId);
+    const newAuction = await auctionsService.create(auctionDTO, userId, null);
 
     expect(newAuction).toBeDefined();
     expect(newAuction.title).toEqual(auctionDTO.title);
     expect(newAuction.description).toEqual(auctionDTO.description);
     expect(newAuction.endsAt).toEqual(auctionDTO.endsAt);
-    expect(newAuction.imageUrl).toEqual(auctionDTO.imageUrl);
     expect(newAuction.startingPrice).toEqual(auctionDTO.startingPrice);
   });
 
   it('should fail to create an auction with invalid data', async () => {
     try {
-      await auctionsService.create(auction, 'invalidUserId');
+      await auctionsService.create(auction, 'invalidUserId', null);
     } catch (error) {
       expect(error).toBeDefined();
     }
@@ -170,7 +176,7 @@ describe('AuctionsService', () => {
   });
 
   it("should update auction statuses when they're closed and set the last bit to won", async () => {
-    const newAuction = await auctionsService.create(auctionDTO, userId);
+    const newAuction = await auctionsService.create(auctionDTO, userId, null);
     const newUserId = (
       await userService.create({
         firstname: faker.person.firstName(),
@@ -206,7 +212,6 @@ describe('AuctionsService', () => {
       title: 'Test Auction 2',
       description: 'Test Description 2',
       endsAt: new Date(),
-      imageUrl: 'https://test.com/image.jpg',
       startingPrice: 10,
     };
 
@@ -219,7 +224,11 @@ describe('AuctionsService', () => {
       })
     ).id;
 
-    const newAuction = await auctionsService.create(newAuctionDTO, newUserId);
+    const newAuction = await auctionsService.create(
+      newAuctionDTO,
+      newUserId,
+      null,
+    );
 
     expect(newAuction).toBeDefined();
     expect(newAuction.id).toBeDefined();

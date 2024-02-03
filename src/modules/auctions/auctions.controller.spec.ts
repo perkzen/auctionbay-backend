@@ -68,13 +68,12 @@ describe('AuctionsController', () => {
       title: 'Test Auction',
       description: 'Test Description',
       startingPrice: 100,
-      imageUrl: 'https://test.com/image.jpg',
       endsAt: new Date(),
     };
-    const auction = await controller.create(data, '123');
+    const auction = await controller.create(data, '123', null);
 
     expect(auction).toEqual(auctionData);
-    expect(auctionsServiceMock.create).toHaveBeenCalledWith(data, '123');
+    expect(auctionsServiceMock.create).toHaveBeenCalledWith(data, '123', null);
   });
 
   it('should update an auction', async () => {
@@ -82,7 +81,6 @@ describe('AuctionsController', () => {
       title: 'Test Auction',
       description: 'Test Description',
       startingPrice: 100,
-      imageUrl: 'https://test.com/image.jpg',
       endsAt: new Date(),
     };
     const auction = await controller.update(data, '123');
@@ -96,7 +94,6 @@ describe('AuctionsController', () => {
       title: 'Test Auction',
       description: 'Test Description',
       startingPrice: 100,
-      imageUrl: 'https://test.com/image.jpg',
       endsAt: new Date(),
     };
     try {
