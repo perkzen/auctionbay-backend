@@ -103,7 +103,7 @@ describe('AuthService', () => {
   });
   it('should fail to validate a user token', async () => {
     try {
-      const verifiedUser = await authService.verifyToken(faker.string.uuid());
+      await authService.verifyToken(faker.string.uuid());
     } catch (e) {
       expect(e).toBeDefined();
     }
