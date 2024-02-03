@@ -6,6 +6,7 @@ import { Auction, BidStatus } from '@prisma/client';
 import { UsersModule } from '../users/users.module';
 import { PrismaModule } from '../prisma/prisma.module';
 import { UsersService } from '../users/users.service';
+import { faker } from '@faker-js/faker';
 
 describe('AuctionsService', () => {
   let moduleRef: TestingModuleBuilder,
@@ -39,7 +40,7 @@ describe('AuctionsService', () => {
       await userService.create({
         firstname: 'Test',
         lastname: 'User',
-        email: '',
+        email: faker.internet.email(),
         password: '',
       })
     ).id;
@@ -141,7 +142,7 @@ describe('AuctionsService', () => {
       await userService.create({
         firstname: 'Test',
         lastname: 'User',
-        email: 'test@mail.com',
+        email: faker.internet.email(),
         password: '',
       })
     ).id;
@@ -178,7 +179,7 @@ describe('AuctionsService', () => {
       await userService.create({
         firstname: 'Test',
         lastname: 'User',
-        email: 'test2@mail.com',
+        email: faker.internet.email(),
         password: '',
       })
     ).id;
@@ -203,5 +204,32 @@ describe('AuctionsService', () => {
     expect(bids).toBeDefined();
     expect(bids.length).toBeGreaterThan(0);
     expect(bids![0].status).toEqual(BidStatus.WON);
+  });
+  it('should find winners of auctions', async () => {
+    const newAuction = await auctionsService.create(auctionDTO, userId);
+    const newUserId = (
+      await userService.create({
+        firstname: 'Test',
+        lastname: 'User',
+        email: faker.internet.email(),
+        password: '',
+      })
+    ).id;
+
+    await auctionsService.bid(newAuction.id, newUserId, 200);
+    await auctionsService.updateAuctionStatuses();
+
+    const wonBids = (
+      await db.bid.findMany({
+        where: {
+          auctionId: newAuction.id,
+          status: BidStatus.WON,
+        },
+      })
+    ).map((bid) => bid.id);
+
+    const winners = await auctionsService.findWonBids(wonBids);
+    expect(winners).toBeDefined();
+    expect(winners.length).toBeGreaterThan(0);
   });
 });

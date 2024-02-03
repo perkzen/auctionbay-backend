@@ -156,7 +156,35 @@ export class AuctionsService {
         },
       });
 
-      return updatedCount;
+      return { count: updatedCount, wonBids: lastBids, closedAuctions };
+    });
+  }
+
+  async findWonBids(wonBids: string[]) {
+    return this.db.bid.findMany({
+      where: {
+        id: {
+          in: wonBids,
+        },
+      },
+      select: {
+        id: true,
+        amount: true,
+        bidder: {
+          select: {
+            id: true,
+            email: true,
+            firstname: true,
+            lastname: true,
+          },
+        },
+        auction: {
+          select: {
+            id: true,
+            title: true,
+          },
+        },
+      },
     });
   }
 }
