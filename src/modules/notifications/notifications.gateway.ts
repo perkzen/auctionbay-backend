@@ -26,7 +26,7 @@ export class NotificationsGateway
   implements OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit
 {
   @WebSocketServer()
-  server: Server<{}, EmitEvents>;
+  server: Server<unknown, EmitEvents>;
 
   private readonly connections = new Map<string, Socket>();
 
