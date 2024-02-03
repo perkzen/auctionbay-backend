@@ -8,6 +8,10 @@ env:
   SWAGGER_PATH: docs
   JWT_SECRET: ${{ secrets.JWT_SECRET }}
   JWT_EXPIRATION: ${{ secrets.JWT_EXPIRATION }}
+  AWS_S3_REGION: eu-central-1
+  AWS_S3_BUCKET_NAME: auctionbay-bucket
+  AWS_ACCESS_KEY_ID: test
+  AWS_SECRET_ACCESS_KEY: test
 
 jobs:
   build:
