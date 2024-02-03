@@ -161,7 +161,7 @@ export class AuctionsService {
         await tx.bid.updateMany({
           where: {
             id: {
-              in: lastBids,
+              in: wonBids,
             },
           },
           data: {
