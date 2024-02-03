@@ -10,6 +10,7 @@ import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { APP_GUARD } from '@nestjs/core';
 import settings from '../../app.settings';
 import { AuthWsMiddleware } from './middlewares/auth-ws.middleware';
+import { WsJwtGuard } from './guards/ws-jwt.guard';
 
 @Module({
   imports: [
@@ -25,12 +26,13 @@ import { AuthWsMiddleware } from './middlewares/auth-ws.middleware';
     LocalStrategy,
     JwtStrategy,
     AuthWsMiddleware,
+    WsJwtGuard,
     {
       provide: APP_GUARD,
       useClass: JwtAuthGuard,
     },
   ],
   controllers: [AuthController],
-  exports: [AuthWsMiddleware],
+  exports: [AuthWsMiddleware, AuthService],
 })
 export class AuthModule {}

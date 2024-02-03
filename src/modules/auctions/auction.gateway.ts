@@ -10,8 +10,9 @@ import { AuctionsService } from './auctions.service';
 import settings from '../../app.settings';
 import { WsEvent } from '../../common/constants/ws-events';
 import { AuthWsMiddleware } from '../auth/middlewares/auth-ws.middleware';
-import { Logger } from '@nestjs/common';
+import { Logger, UseGuards } from '@nestjs/common';
 import { AuthenticatedSocket } from '../auth/auth.types';
+import { WsJwtGuard } from '../auth/guards/ws-jwt.guard';
 
 @WebSocketGateway({
   transport: ['websocket'],
@@ -19,6 +20,7 @@ import { AuthenticatedSocket } from '../auth/auth.types';
     origin: settings.app.corsOrigin,
   },
 })
+@UseGuards(WsJwtGuard)
 export class AuctionGateway
   implements OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit
 {
