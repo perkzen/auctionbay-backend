@@ -38,8 +38,6 @@ describe('AuthService', () => {
   });
 
   afterAll(async () => {
-    await db.user.deleteMany();
-
     if (app) {
       app.flushLogs();
       await app.close();

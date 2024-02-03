@@ -38,10 +38,10 @@ describe('AuctionsService', () => {
 
     userId = (
       await userService.create({
-        firstname: 'Test',
-        lastname: 'User',
+        firstname: faker.person.firstName(),
+        lastname: faker.person.lastName(),
         email: faker.internet.email(),
-        password: '',
+        password: faker.internet.password(),
       })
     ).id;
 
@@ -49,10 +49,6 @@ describe('AuctionsService', () => {
   });
 
   afterAll(async () => {
-    await db.bid.deleteMany();
-    await db.auction.deleteMany();
-    await db.user.deleteMany();
-
     if (app) {
       app.flushLogs();
       await app.close();
@@ -140,10 +136,10 @@ describe('AuctionsService', () => {
   it('should update bid statuses when new bid is placed', async () => {
     const newUserId = (
       await userService.create({
-        firstname: 'Test',
-        lastname: 'User',
+        firstname: faker.person.firstName(),
+        lastname: faker.person.lastName(),
         email: faker.internet.email(),
-        password: '',
+        password: faker.internet.password(),
       })
     ).id;
 
@@ -177,10 +173,10 @@ describe('AuctionsService', () => {
     const newAuction = await auctionsService.create(auctionDTO, userId);
     const newUserId = (
       await userService.create({
-        firstname: 'Test',
-        lastname: 'User',
+        firstname: faker.person.firstName(),
+        lastname: faker.person.lastName(),
         email: faker.internet.email(),
-        password: '',
+        password: faker.internet.password(),
       })
     ).id;
 
@@ -206,17 +202,29 @@ describe('AuctionsService', () => {
     expect(bids![0].status).toEqual(BidStatus.WON);
   });
   it('should find winners of auctions', async () => {
-    const newAuction = await auctionsService.create(auctionDTO, userId);
+    const newAuctionDTO: CreateAuctionDTO = {
+      title: 'Test Auction 2',
+      description: 'Test Description 2',
+      endsAt: new Date(),
+      imageUrl: 'https://test.com/image.jpg',
+      startingPrice: 10,
+    };
+
     const newUserId = (
       await userService.create({
-        firstname: 'Test',
-        lastname: 'User',
+        firstname: faker.person.firstName(),
+        lastname: faker.person.lastName(),
         email: faker.internet.email(),
-        password: '',
+        password: faker.internet.password(),
       })
     ).id;
 
-    await auctionsService.bid(newAuction.id, newUserId, 200);
+    const newAuction = await auctionsService.create(newAuctionDTO, newUserId);
+
+    expect(newAuction).toBeDefined();
+    expect(newAuction.id).toBeDefined();
+
+    await auctionsService.bid(newAuction.id, userId, 200);
     await auctionsService.updateAuctionStatuses();
 
     const wonBids = (
