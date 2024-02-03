@@ -13,9 +13,12 @@ export class AuctionsJob {
 
   @Cron('* * * * *')
   async checkAuctions() {
-    const { count, wonBids } =
+    const { count, wonBids: wonBidsIds } =
       await this.auctionsService.updateAuctionStatuses();
-    await this.notifications.notifyWinner(wonBids);
+
+    const wonBids = await this.auctionsService.findWonBids(wonBidsIds);
+
+    await this.notifications.notifyWinners(wonBids);
     Logger.log(`Updated statuses ${count} auctions`, 'AuctionsJob');
   }
 }

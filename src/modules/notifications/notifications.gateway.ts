@@ -13,6 +13,8 @@ import { Logger, UseGuards } from '@nestjs/common';
 import { AuthenticatedSocket } from '../auth/auth.types';
 import { WsJwtGuard } from '../auth/guards/ws-jwt.guard';
 import settings from '../../app.settings';
+import { WonBid } from '../auctions/types/won-bid.type';
+import { EmitEvents } from './types/notification-server.types';
 
 @WebSocketGateway({
   transport: ['websocket'],
@@ -25,16 +27,13 @@ export class NotificationsGateway
   implements OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit
 {
   @WebSocketServer()
-  server: Server;
+  server: Server<{}, EmitEvents>;
 
   private readonly connections = new Map<string, Socket>();
 
   private readonly logger: Logger = new Logger(NotificationsGateway.name);
 
-  constructor(
-    private readonly auctionsService: AuctionsService,
-    private readonly wsMiddleware: AuthWsMiddleware,
-  ) {}
+  constructor(private readonly wsMiddleware: AuthWsMiddleware) {}
 
   afterInit() {
     this.server.use(this.wsMiddleware.run());
@@ -53,16 +52,14 @@ export class NotificationsGateway
     );
   }
 
-  async notifyWinner(wonBidsIds: string[]) {
-    const wonBids = await this.auctionsService.findWonBids(wonBidsIds);
-
-    for (const winner of wonBids) {
-      const winnerId = winner.bidder.id;
+  async notifyWinners(wonBids: WonBid[]) {
+    for (const wonBid of wonBids) {
+      const winnerId = wonBid.bidder.id;
       const socket = this.connections.get(winnerId);
 
       if (!socket) continue;
 
-      this.server.to(socket.id).emit(NotificationEvent.AUCTION_WON, winner);
+      this.server.to(socket.id).emit(NotificationEvent.AUCTION_WON, wonBid);
       this.logger.log(
         `Notified user ${winnerId} about winning auction`,
         'NotificationsGateway',

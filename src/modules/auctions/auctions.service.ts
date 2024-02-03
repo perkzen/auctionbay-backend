@@ -7,6 +7,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { CreateAuctionDTO } from './dtos/create-auction.dto';
 import { Auction, AuctionStatus, Bid, BidStatus } from '@prisma/client';
 import { UpdateAuctionDTO } from './dtos/update-auction.dto';
+import { WonBid } from './types/won-bid.type';
 
 @Injectable()
 export class AuctionsService {
@@ -184,7 +185,7 @@ export class AuctionsService {
     });
   }
 
-  async findWonBids(wonBids: string[]) {
+  async findWonBids(wonBids: string[]): Promise<WonBid[]> {
     return this.db.bid.findMany({
       where: {
         id: {
