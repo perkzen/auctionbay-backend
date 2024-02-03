@@ -9,6 +9,7 @@ import { faker } from '@faker-js/faker';
 import { SanitizedUser } from '../src/modules/auth/auth.types';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
+import { cleanupDatabase } from './utils/cleanup-database';
 
 describe('UsersController', () => {
   let app: INestApplication,
@@ -42,7 +43,7 @@ describe('UsersController', () => {
   });
 
   afterAll(async () => {
-    await db.user.deleteMany();
+    await cleanupDatabase(db);
     await app.close();
   });
 
