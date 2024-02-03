@@ -1,10 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { Interval } from '@nestjs/schedule';
+import { Cron } from '@nestjs/schedule';
 import { AuctionsService } from './auctions.service';
 import { Logger } from '@nestjs/common';
 import { AuctionGateway } from './auction.gateway';
-
-const EVERY_MINUTE = 1000 * 60;
 
 @Injectable()
 export class AuctionsJob {
@@ -13,7 +11,7 @@ export class AuctionsJob {
     private readonly auctionGateway: AuctionGateway,
   ) {}
 
-  @Interval(EVERY_MINUTE)
+  @Cron('* * * * *')
   async checkAuctions() {
     const { count, wonBids } =
       await this.auctionsService.updateAuctionStatuses();
