@@ -14,19 +14,26 @@ export class UploadService {
 
   private readonly logger = new Logger(UploadService.name);
 
-  getImageUrl(name: string) {
+  getFileUrl(name: string) {
     return `https://${settings.aws.s3.bucket}.s3.${settings.aws.s3.region}.amazonaws.com/${name}`;
   }
 
+  generateFileName(name: string) {
+    return `${name}-${Date.now()}`;
+  }
+
   async upload(file: Express.Multer.File): Promise<string | null> {
+    const fileName = this.generateFileName(file.originalname);
+
     try {
       await this.s3.putObject({
         Bucket: settings.aws.s3.bucket,
-        Key: file.originalname,
+        Key: fileName,
         Body: file.buffer,
         ContentType: file.mimetype,
       });
-      return this.getImageUrl(file.originalname);
+
+      return this.getFileUrl(fileName);
     } catch (e) {
       this.logger.error(e);
     }
