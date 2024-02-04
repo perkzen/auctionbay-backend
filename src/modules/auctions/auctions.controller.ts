@@ -19,8 +19,6 @@ import { AuctionsService } from './auctions.service';
 import { CreateAuctionDTO } from './dtos/create-auction.dto';
 import { Public, User } from '../../common/decorators';
 import { AuctionOwnerGuard } from './guard/auction-owner.guard';
-import { BidGuard } from './guard/bid.guard';
-import { CreateBidDTO } from './dtos/create-bid.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UploadedImage } from '../../common/decorators/uploaded-image.decorator';
 
@@ -72,17 +70,5 @@ export class AuctionsController {
   @Put(':id')
   async update(@Body() data: CreateAuctionDTO, @Param('id') auctionId: string) {
     return this.auctionsService.update(data, auctionId);
-  }
-
-  @ApiBearerAuth()
-  @ApiOperation({ summary: 'Bids on an auction' })
-  @UseGuards(BidGuard)
-  @Post(':id/bid')
-  async bid(
-    @Param('id') auctionId: string,
-    @User('userId') bidderId: string,
-    @Body() { amount }: CreateBidDTO,
-  ) {
-    return this.auctionsService.bid(auctionId, bidderId, amount);
   }
 }
