@@ -1,14 +1,12 @@
 services:
   auctionbay_backend:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
     ports:
-      - "8000:8000"
-    environment:
-      - DB_HOST=postgres
-      - DB_PORT=5432
-      - DB_NAME=auctionbay
-      - DB_USER=admin
-      - DB_PASSWORD=admin
+      - "8001:8000"
+    env_file:
+      - .env.development
   postgres:
     image: postgres:latest
     ports:
