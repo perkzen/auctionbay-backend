@@ -19,6 +19,6 @@ export class AuctionsJob {
     const wonBids = await this.auctionsService.findWonBids(wonBidsIds);
 
     await this.notifications.notifyWinners(wonBids);
-    Logger.log(`Updated statuses ${count} auctions`, 'AuctionsJob');
+    Logger.log(`Closed ${count} auctions`, 'AuctionsJob');
   }
 }
