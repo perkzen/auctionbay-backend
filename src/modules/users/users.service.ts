@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { SignupDTO } from '../auth/dtos/signup.dto';
 import { UpdatePasswordDTO } from './dtos/update-password.dto';
-import { comparePasswords, hashPassword } from '../auth/auth.utils';
+import { comparePasswords, hashPassword } from '../auth/utils/auth.utils';
 
 @Injectable()
 export class UsersService {

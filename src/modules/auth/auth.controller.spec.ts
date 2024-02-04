@@ -6,7 +6,7 @@ import { UsersModule } from '../users/users.module';
 import { PrismaModule } from '../prisma/prisma.module';
 import { SignupDTO } from './dtos/signup.dto';
 import { AuthService } from './auth.service';
-import { LoginRequest } from './auth.types';
+import { LoginRequest } from './types/auth.types';
 
 describe('AuthController', () => {
   let moduleRef: TestingModuleBuilder,

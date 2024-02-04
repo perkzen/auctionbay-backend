@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
-import { AuctionsService } from './auctions.service';
+import { AuctionsService } from '../services/auctions.service';
 import { Logger } from '@nestjs/common';
-import { NotificationsGateway } from '../notifications/notifications.gateway';
-import { BidsService } from '../bids/bids.service';
+import { NotificationsGateway } from '../../notifications/notifications.gateway';
+import { BidsService } from '../services/bids.service';
 
 @Injectable()
 export class AuctionsJob {

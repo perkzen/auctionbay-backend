@@ -1,11 +1,9 @@
 import { Test, TestingModule, TestingModuleBuilder } from '@nestjs/testing';
-import { PrismaModule } from '../prisma/prisma.module';
+import { PrismaModule } from '../../prisma/prisma.module';
 import { Bid, BidStatus } from '@prisma/client';
 import { BidsController } from './bids.controller';
-import { BidsModule } from './bids.module';
-import { BidsService } from './bids.service';
-import { AuctionsModule } from '../auctions/auctions.module';
-import { forwardRef } from '@nestjs/common';
+import { BidsService } from '../services/bids.service';
+import { AuctionsModule } from '../auctions.module';
 
 describe('BidsController', () => {
   let moduleRef: TestingModuleBuilder,
@@ -27,11 +25,7 @@ describe('BidsController', () => {
 
   beforeAll(async () => {
     moduleRef = Test.createTestingModule({
-      imports: [
-        forwardRef(() => BidsModule),
-        forwardRef(() => AuctionsModule),
-        PrismaModule,
-      ],
+      imports: [AuctionsModule, PrismaModule],
       providers: [BidsService],
     })
       .overrideProvider(BidsService)

@@ -1,16 +1,16 @@
 import { Test, TestingModule, TestingModuleBuilder } from '@nestjs/testing';
 import { BidsService } from './bids.service';
-import { AuctionsService } from '../auctions/auctions.service';
-import { PrismaService } from '../prisma/prisma.service';
-import { UsersService } from '../users/users.service';
+import { AuctionsService } from './auctions.service';
+import { PrismaService } from '../../prisma/prisma.service';
+import { UsersService } from '../../users/users.service';
 import { Auction, BidStatus } from '@prisma/client';
-import { CreateAuctionDTO } from '../auctions/dtos/create-auction.dto';
+import { CreateAuctionDTO } from '../dtos/create-auction.dto';
 import { faker } from '@faker-js/faker';
-import { PrismaModule } from '../prisma/prisma.module';
-import { UsersModule } from '../users/users.module';
-import { UploadModule } from '../upload/upload.module';
-import { UploadService } from '../upload/upload.service';
-import { AuctionsModule } from '../auctions/auctions.module';
+import { PrismaModule } from '../../prisma/prisma.module';
+import { UsersModule } from '../../users/users.module';
+import { UploadModule } from '../../upload/upload.module';
+import { UploadService } from '../../upload/upload.service';
+import { AuctionsModule } from '../auctions.module';
 
 describe('BidsService', () => {
   let moduleRef: TestingModuleBuilder,

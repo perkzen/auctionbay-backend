@@ -1,5 +1,5 @@
 import { INestApplication } from '@nestjs/common';
-import { SanitizedUser } from '../src/modules/auth/auth.types';
+import { SanitizedUser } from '../src/modules/auth/types/auth.types';
 import { PrismaService } from '../src/modules/prisma/prisma.service';
 import { AuthService } from '../src/modules/auth/auth.service';
 import { faker } from '@faker-js/faker';
@@ -10,7 +10,7 @@ import { AuthModule } from '../src/modules/auth/auth.module';
 import { UsersModule } from '../src/modules/users/users.module';
 import * as request from 'supertest';
 import { AuctionsModule } from '../src/modules/auctions/auctions.module';
-import { AuctionsService } from '../src/modules/auctions/auctions.service';
+import { AuctionsService } from '../src/modules/auctions/services/auctions.service';
 import { AuctionStatus } from '@prisma/client';
 import { cleanupDatabase } from './utils/cleanup-database';
 import { UploadModule } from '../src/modules/upload/upload.module';

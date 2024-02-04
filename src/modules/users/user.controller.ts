@@ -1,7 +1,7 @@
 import { Body, Controller, Get, HttpStatus, Put } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { sanitizeUser } from '../auth/auth.utils';
+import { sanitizeUser } from '../auth/utils/auth.utils';
 import { UpdatePasswordDTO } from './dtos/update-password.dto';
 import { User } from '../../common/decorators';
 

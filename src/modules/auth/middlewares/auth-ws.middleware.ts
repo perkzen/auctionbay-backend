@@ -1,7 +1,7 @@
 import { AuthService } from '../auth.service';
 import { WsException } from '@nestjs/websockets';
 import { Injectable } from '@nestjs/common';
-import { AuthenticatedSocket, SocketMiddleware } from '../auth.types';
+import { AuthenticatedSocket, SocketMiddleware } from '../types/auth.types';
 
 @Injectable()
 export class AuthWsMiddleware {

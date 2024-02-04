@@ -1,5 +1,5 @@
 import { User } from '@prisma/client';
-import { SanitizedUser } from './auth.types';
+import { SanitizedUser } from '../types/auth.types';
 import * as bcrypt from 'bcrypt';
 
 export const sanitizeUser = (user: User): SanitizedUser => {

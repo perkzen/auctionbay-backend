@@ -1,9 +1,9 @@
 import { Test, TestingModule, TestingModuleBuilder } from '@nestjs/testing';
 import { AuctionsController } from './auctions.controller';
-import { CreateAuctionDTO } from './dtos/create-auction.dto';
-import { AuctionsModule } from './auctions.module';
-import { AuctionsService } from './auctions.service';
-import { PrismaModule } from '../prisma/prisma.module';
+import { CreateAuctionDTO } from '../dtos/create-auction.dto';
+import { AuctionsModule } from '../auctions.module';
+import { AuctionsService } from '../services/auctions.service';
+import { PrismaModule } from '../../prisma/prisma.module';
 import { Auction } from '@prisma/client';
 
 describe('AuctionsController', () => {
