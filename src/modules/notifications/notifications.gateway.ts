@@ -9,7 +9,7 @@ import { Server, Socket } from 'socket.io';
 import { NotificationEvent } from './events/notification.events';
 import { AuthWsMiddleware } from '../auth/middlewares/auth-ws.middleware';
 import { Logger, UseGuards } from '@nestjs/common';
-import { AuthenticatedSocket } from '../auth/auth.types';
+import { AuthenticatedSocket } from '../auth/types/auth.types';
 import { WsJwtGuard } from '../auth/guards/ws-jwt.guard';
 import settings from '../../app.settings';
 import { WonBid } from '../auctions/types/won-bid.type';

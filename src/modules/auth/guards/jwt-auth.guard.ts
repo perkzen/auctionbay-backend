@@ -4,7 +4,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { SanitizedUser } from '../auth.types';
+import { SanitizedUser } from '../types/auth.types';
 import { IS_PUBLIC_KEY } from '../../../common/decorators';
 import { Reflector } from '@nestjs/core';
 

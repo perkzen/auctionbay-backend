@@ -5,9 +5,9 @@ import {
   Injectable,
 } from '@nestjs/common';
 import { AuctionStatus } from '@prisma/client';
-import { AuctionsService } from '../../auctions/auctions.service';
-import { CreateBidDTO } from '../../auctions/dtos/create-bid.dto';
-import { BidsService } from '../bids.service';
+import { AuctionsService } from '../services/auctions.service';
+import { CreateBidDTO } from '../dtos/create-bid.dto';
+import { BidsService } from '../services/bids.service';
 
 @Injectable()
 export class CanBidGuard implements CanActivate {

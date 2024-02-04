@@ -6,7 +6,7 @@ import { AuthService } from '../src/modules/auth/auth.service';
 import { AuthModule } from '../src/modules/auth/auth.module';
 import { SignupDTO } from '../src/modules/auth/dtos/signup.dto';
 import { faker } from '@faker-js/faker';
-import { SanitizedUser } from '../src/modules/auth/auth.types';
+import { SanitizedUser } from '../src/modules/auth/types/auth.types';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { cleanupDatabase } from './utils/cleanup-database';

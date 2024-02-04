@@ -3,11 +3,11 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
-import { CreateAuctionDTO } from './dtos/create-auction.dto';
+import { PrismaService } from '../../prisma/prisma.service';
+import { CreateAuctionDTO } from '../dtos/create-auction.dto';
 import { Auction, AuctionStatus, BidStatus } from '@prisma/client';
-import { UpdateAuctionDTO } from './dtos/update-auction.dto';
-import { UploadService } from '../upload/upload.service';
+import { UpdateAuctionDTO } from '../dtos/update-auction.dto';
+import { UploadService } from '../../upload/upload.service';
 
 @Injectable()
 export class AuctionsService {

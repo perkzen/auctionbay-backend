@@ -1,9 +1,9 @@
 import { Body, Controller, Param, Post, UseGuards } from '@nestjs/common';
-import { BidsService } from './bids.service';
+import { BidsService } from '../services/bids.service';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { CanBidGuard } from './guards/can-bid.guard';
-import { User } from '../../common/decorators';
-import { CreateBidDTO } from '../auctions/dtos/create-bid.dto';
+import { CanBidGuard } from '../guard/can-bid.guard';
+import { User } from '../../../common/decorators';
+import { CreateBidDTO } from '../dtos/create-bid.dto';
 
 @ApiTags('Auctions')
 @Controller('auctions')

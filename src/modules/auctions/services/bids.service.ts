@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
-import { WonBid } from '../auctions/types/won-bid.type';
+import { PrismaService } from '../../prisma/prisma.service';
+import { WonBid } from '../types/won-bid.type';
 import { Bid, BidStatus } from '@prisma/client';
 
 @Injectable()

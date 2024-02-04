@@ -12,7 +12,7 @@ import { AuthService } from './auth.service';
 import { ApiBody, ApiTags } from '@nestjs/swagger';
 import { LoginDTO } from './dtos/login.dto';
 import { SignupDTO } from './dtos/signup.dto';
-import { LoginRequest } from './auth.types';
+import { LoginRequest } from './types/auth.types';
 import { Public } from '../../common/decorators';
 
 @ApiTags('Authentication')
