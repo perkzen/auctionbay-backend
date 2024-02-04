@@ -6,7 +6,7 @@ import {
   MaxFileSizeValidator,
   FileTypeValidator,
 } from '@nestjs/common';
-import { MAX_FILE_SIZE } from '../constants/app.constants'; // Create this validator
+import { ALLOWED_IMAGE_TYPES, MAX_FILE_SIZE } from '../constants/app.constants';
 
 @Injectable()
 export class UploadedFileValidationPipe implements PipeTransform {
@@ -21,7 +21,7 @@ export class UploadedFileValidationPipe implements PipeTransform {
         message: 'Maximum file size is 2MB.',
       }),
       new FileTypeValidator({
-        fileType: '.(png|jpeg|jpg)',
+        fileType: ALLOWED_IMAGE_TYPES,
       }),
     ];
 
