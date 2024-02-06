@@ -91,8 +91,8 @@ describe('AuthService', () => {
     expect(token).toHaveProperty('access_token');
   });
   it("should validate a user's token", async () => {
-    const { access_token } = await authService.login(user);
-    const verifiedUser = await authService.verifyToken(access_token);
+    const { accessToken } = await authService.login(user);
+    const verifiedUser = await authService.verifyToken(accessToken);
     expect(verifiedUser).toBeDefined();
     expect(verifiedUser).toHaveProperty('id');
     expect(verifiedUser).toHaveProperty('firstname', signupDTO.firstname);

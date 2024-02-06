@@ -39,7 +39,7 @@ describe('AuthController', () => {
   };
 
   const authServiceMock = {
-    login: jest.fn().mockResolvedValue({ access_token: faker.string.uuid() }),
+    login: jest.fn().mockResolvedValue({ accessToken: faker.string.uuid() }),
     register: jest.fn().mockResolvedValue(userData),
     validateUser: jest.fn().mockResolvedValue(userData),
     refreshToken: jest.fn().mockResolvedValue(refreshTokenResponse),
@@ -79,7 +79,7 @@ describe('AuthController', () => {
 
   it('should login a user', async () => {
     const user = await controller.login(loginReq);
-    expect(user).toEqual({ access_token: expect.any(String) });
+    expect(user).toEqual({ accessToken: expect.any(String) });
     expect(authServiceMock.login).toHaveBeenCalledWith(loginReq);
   });
   it("should refresh a user's token", async () => {

@@ -66,7 +66,7 @@ describe('AuthController (e2e)', () => {
         })
         .expect(200)
         .expect((res) => {
-          expect(res.body).toHaveProperty('access_token');
+          expect(res.body).toHaveProperty('accessToken');
         });
     });
   });
