@@ -29,8 +29,8 @@ export class AuthService {
     const payload: JwtPayload = { email: user.email, sub: user.id };
     return {
       ...user,
-      access_token: await this.jwtService.signAsync(payload),
-      refresh_token: await this.jwtService.signAsync(payload, {
+      accessToken: await this.jwtService.signAsync(payload),
+      refreshToken: await this.jwtService.signAsync(payload, {
         expiresIn: '7d',
       }),
     };
