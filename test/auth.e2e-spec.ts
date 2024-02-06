@@ -101,4 +101,35 @@ describe('AuthController (e2e)', () => {
         });
     });
   });
+
+  describe('/auth/refresh-token (POST)', () => {
+    it('should fail because token is invalid', () => {
+      return request(app.getHttpServer())
+        .post('/auth/refresh-token')
+        .send({
+          refresh_token: 'invalid',
+        })
+        .expect(401);
+    });
+  });
+  it('should refresh token successfully', async () => {
+    const user = await userService.create(signupDto);
+    const loginRes = await request(app.getHttpServer())
+      .post('/auth/login')
+      .send({
+        email: user.email,
+        password: signupDto.password,
+      });
+
+    return request(app.getHttpServer())
+      .post('/auth/refresh-token')
+      .send({
+        refresh_token: loginRes.body.refresh_token,
+      })
+      .expect(201)
+      .expect((res) => {
+        expect(res.body).toHaveProperty('access_token');
+        expect(res.body).toHaveProperty('refresh_token');
+      });
+  });
 });

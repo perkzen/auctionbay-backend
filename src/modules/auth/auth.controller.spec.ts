@@ -6,7 +6,7 @@ import { UsersModule } from '../users/users.module';
 import { PrismaModule } from '../prisma/prisma.module';
 import { SignupDTO } from './dtos/signup.dto';
 import { AuthService } from './auth.service';
-import { LoginRequest } from './types/auth.types';
+import { SanitizedUser } from './types/auth.types';
 
 describe('AuthController', () => {
   let moduleRef: TestingModuleBuilder,
@@ -14,13 +14,11 @@ describe('AuthController', () => {
     app: TestingModule;
 
   const loginReq = {
-    user: {
-      id: faker.string.uuid(),
-      email: faker.internet.email(),
-      firstname: faker.person.firstName(),
-      lastname: faker.person.lastName(),
-    },
-  } as LoginRequest;
+    id: faker.string.uuid(),
+    email: faker.internet.email(),
+    firstname: faker.person.firstName(),
+    lastname: faker.person.lastName(),
+  } as SanitizedUser;
 
   const signupDTO: SignupDTO = {
     firstname: faker.person.firstName(),
@@ -35,12 +33,19 @@ describe('AuthController', () => {
     firstname: faker.person.firstName(),
     lastname: faker.person.lastName(),
   };
+  const refreshTokenResponse = {
+    access_token: faker.string.uuid(),
+    refresh_token: faker.string.uuid(),
+  };
 
   const authServiceMock = {
     login: jest.fn().mockResolvedValue({ access_token: faker.string.uuid() }),
     register: jest.fn().mockResolvedValue(userData),
     validateUser: jest.fn().mockResolvedValue(userData),
-  };
+    refreshToken: jest.fn().mockResolvedValue(refreshTokenResponse),
+  } as jest.Mocked<
+    Pick<AuthService, 'login' | 'register' | 'validateUser' | 'refreshToken'>
+  >;
 
   beforeAll(async () => {
     moduleRef = Test.createTestingModule({
@@ -75,6 +80,13 @@ describe('AuthController', () => {
   it('should login a user', async () => {
     const user = await controller.login(loginReq);
     expect(user).toEqual({ access_token: expect.any(String) });
-    expect(authServiceMock.login).toHaveBeenCalledWith(loginReq.user);
+    expect(authServiceMock.login).toHaveBeenCalledWith(loginReq);
+  });
+  it("should refresh a user's token", async () => {
+    const user = await controller.refreshToken({
+      userId: userData.id,
+      email: userData.email,
+    });
+    expect(user).toEqual(refreshTokenResponse);
   });
 });

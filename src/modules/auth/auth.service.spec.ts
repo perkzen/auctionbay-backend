@@ -106,4 +106,23 @@ describe('AuthService', () => {
       expect(e).toBeDefined();
     }
   });
+  it("should fail to refresh a user's token", async () => {
+    try {
+      await authService.refreshToken({
+        userId: faker.string.uuid(),
+        email: faker.internet.email(),
+      });
+    } catch (e) {
+      expect(e).toBeDefined();
+    }
+  });
+  it('should refresh a user token', async () => {
+    const token = await authService.refreshToken({
+      email: user.email,
+      userId: user.id,
+    });
+    expect(token).toBeDefined();
+    expect(token).toHaveProperty('access_token');
+    expect(token).toHaveProperty('refresh_token');
+  });
 });
