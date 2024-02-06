@@ -88,11 +88,11 @@ describe('AuthService', () => {
   it('should login a user', async () => {
     const token = await authService.login(user);
     expect(token).toBeDefined();
-    expect(token).toHaveProperty('access_token');
+    expect(token).toHaveProperty('accessToken');
   });
   it("should validate a user's token", async () => {
-    const { access_token } = await authService.login(user);
-    const verifiedUser = await authService.verifyToken(access_token);
+    const { accessToken } = await authService.login(user);
+    const verifiedUser = await authService.verifyToken(accessToken);
     expect(verifiedUser).toBeDefined();
     expect(verifiedUser).toHaveProperty('id');
     expect(verifiedUser).toHaveProperty('firstname', signupDTO.firstname);

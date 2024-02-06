@@ -66,7 +66,7 @@ describe('AuthController (e2e)', () => {
         })
         .expect(200)
         .expect((res) => {
-          expect(res.body).toHaveProperty('access_token');
+          expect(res.body).toHaveProperty('accessToken');
         });
     });
   });
@@ -124,7 +124,7 @@ describe('AuthController (e2e)', () => {
     return request(app.getHttpServer())
       .post('/auth/refresh-token')
       .send({
-        refreshToken: loginRes.body.refresh_token,
+        refreshToken: loginRes.body.refreshToken,
       })
       .expect(201)
       .expect((res) => {

@@ -74,7 +74,7 @@ describe('AuctionsController', () => {
   beforeEach(async () => {
     user = await authService.register(signupDTO);
     const res = await authService.login(user);
-    access_token = res.access_token;
+    access_token = res.accessToken;
   });
 
   afterEach(async () => {
