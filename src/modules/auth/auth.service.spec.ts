@@ -122,7 +122,7 @@ describe('AuthService', () => {
       userId: user.id,
     });
     expect(token).toBeDefined();
-    expect(token).toHaveProperty('access_token');
-    expect(token).toHaveProperty('refresh_token');
+    expect(token).toHaveProperty('accessToken');
+    expect(token).toHaveProperty('refreshToken');
   });
 });

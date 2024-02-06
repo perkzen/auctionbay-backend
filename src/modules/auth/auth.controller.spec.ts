@@ -34,8 +34,8 @@ describe('AuthController', () => {
     lastname: faker.person.lastName(),
   };
   const refreshTokenResponse = {
-    access_token: faker.string.uuid(),
-    refresh_token: faker.string.uuid(),
+    accessToken: faker.string.uuid(),
+    refreshToken: faker.string.uuid(),
   };
 
   const authServiceMock = {
