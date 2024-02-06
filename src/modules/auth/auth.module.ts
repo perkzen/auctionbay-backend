@@ -11,6 +11,7 @@ import { APP_GUARD } from '@nestjs/core';
 import settings from '../../app.settings';
 import { AuthWsMiddleware } from './middlewares/auth-ws.middleware';
 import { WsJwtGuard } from './guards/ws-jwt.guard';
+import { RefreshTokenStrategy } from './strategies/refresh-token.strategy';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { WsJwtGuard } from './guards/ws-jwt.guard';
   providers: [
     AuthService,
     LocalStrategy,
+    RefreshTokenStrategy,
     JwtStrategy,
     AuthWsMiddleware,
     WsJwtGuard,
