@@ -107,7 +107,7 @@ describe('AuthController (e2e)', () => {
       return request(app.getHttpServer())
         .post('/auth/refresh-token')
         .send({
-          refresh_token: 'invalid',
+          refreshToken: 'invalid',
         })
         .expect(401);
     });
@@ -124,12 +124,12 @@ describe('AuthController (e2e)', () => {
     return request(app.getHttpServer())
       .post('/auth/refresh-token')
       .send({
-        refresh_token: loginRes.body.refresh_token,
+        refreshToken: loginRes.body.refresh_token,
       })
       .expect(201)
       .expect((res) => {
-        expect(res.body).toHaveProperty('access_token');
-        expect(res.body).toHaveProperty('refresh_token');
+        expect(res.body).toHaveProperty('accessToken');
+        expect(res.body).toHaveProperty('refreshToken');
       });
   });
 });
