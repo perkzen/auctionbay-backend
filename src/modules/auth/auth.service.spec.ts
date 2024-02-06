@@ -88,7 +88,7 @@ describe('AuthService', () => {
   it('should login a user', async () => {
     const token = await authService.login(user);
     expect(token).toBeDefined();
-    expect(token).toHaveProperty('access_token');
+    expect(token).toHaveProperty('accessToken');
   });
   it("should validate a user's token", async () => {
     const { accessToken } = await authService.login(user);

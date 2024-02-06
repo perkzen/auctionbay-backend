@@ -124,7 +124,7 @@ describe('AuthController (e2e)', () => {
     return request(app.getHttpServer())
       .post('/auth/refresh-token')
       .send({
-        refreshToken: loginRes.body.refresh_token,
+        refreshToken: loginRes.body.refreshToken,
       })
       .expect(201)
       .expect((res) => {
