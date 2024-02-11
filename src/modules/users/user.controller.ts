@@ -13,8 +13,8 @@ export class UserController {
 
   @ApiBearerAuth()
   @Get('me')
-  async me(@User('email') email: string) {
-    return sanitizeUser(await this.usersService.findByEmail(email));
+  async me(@User('userId') userId: string) {
+    return sanitizeUser(await this.usersService.findById(userId));
   }
 
   @ApiBearerAuth()
@@ -25,9 +25,9 @@ export class UserController {
   @Put('me')
   async updateProfile(
     @Body() data: UpdateProfileDTO,
-    @User('email') email: string,
+    @User('userId') userId: string,
   ) {
-    return this.usersService.updateProfile(data, email);
+    return this.usersService.updateProfile(data, userId);
   }
 
   @ApiBearerAuth()
@@ -38,8 +38,8 @@ export class UserController {
   @Put('me/update-password')
   async changePassword(
     @Body() data: UpdatePasswordDTO,
-    @User('email') email: string,
+    @User('userId') userId: string,
   ) {
-    return this.usersService.updatePassword(data, email);
+    return this.usersService.updatePassword(data, userId);
   }
 }

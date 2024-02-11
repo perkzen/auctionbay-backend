@@ -15,6 +15,12 @@ export class UsersService {
     });
   }
 
+  async findById(id: string) {
+    return this.db.user.findUnique({
+      where: { id },
+    });
+  }
+
   async create(user: SignupDTO) {
     return this.db.user.create({
       data: {
@@ -24,9 +30,9 @@ export class UsersService {
     });
   }
 
-  async updateProfile(data: UpdateProfileDTO, email: string) {
+  async updateProfile(data: UpdateProfileDTO, userId: string) {
     return this.db.user.update({
-      where: { email },
+      where: { id: userId },
       data,
       select: {
         email: true,
@@ -36,8 +42,8 @@ export class UsersService {
     });
   }
 
-  async updatePassword(data: UpdatePasswordDTO, email: string) {
-    const user = await this.findByEmail(email);
+  async updatePassword(data: UpdatePasswordDTO, userId: string) {
+    const user = await this.findById(userId);
 
     const isCorrectPassword = await comparePasswords(
       data.oldPassword,
@@ -54,7 +60,7 @@ export class UsersService {
     const hashedPassword = await hashPassword(data.newPassword);
 
     await this.db.user.update({
-      where: { email },
+      where: { id: userId },
       data: { password: hashedPassword },
     });
   }
