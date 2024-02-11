@@ -78,9 +78,7 @@ describe('AuctionsController', () => {
   });
 
   afterEach(async () => {
-    await db.bid.deleteMany();
-    await db.auction.deleteMany();
-    await db.user.deleteMany();
+    await cleanupDatabase(db);
   });
 
   describe('/auctions (GET)', () => {
