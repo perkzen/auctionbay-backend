@@ -21,6 +21,7 @@ describe('UserController', () => {
     create: jest.fn().mockResolvedValue(userData),
     updatePassword: jest.fn().mockResolvedValue({}),
     updateProfile: jest.fn().mockResolvedValue(userData),
+    findById: jest.fn().mockResolvedValue(userData),
   };
 
   beforeAll(async () => {
@@ -47,11 +48,11 @@ describe('UserController', () => {
     expect(moduleRef).toBeDefined();
   });
 
-  it('should find a user by email', async () => {
-    const user = await controller.me(userData.email);
+  it('should find a user by id', async () => {
+    const user = await controller.me(userData.id);
 
     expect(user).toEqual(userData);
-    expect(userServiceMock.findByEmail).toHaveBeenCalledWith(userData.email);
+    expect(userServiceMock.findById).toHaveBeenCalledWith(userData.id);
   });
 
   it('should update a user password', async () => {

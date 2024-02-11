@@ -85,7 +85,7 @@ describe('UsersService', () => {
         oldPassword,
         newPassword,
       },
-      testUser.email,
+      testUser.id,
     );
   });
 
@@ -99,7 +99,7 @@ describe('UsersService', () => {
           oldPassword,
           newPassword,
         },
-        testUser.email,
+        testUser.id,
       );
     } catch (error) {
       expect(error).toBeDefined();
@@ -127,12 +127,12 @@ describe('UsersService', () => {
     const updateProfileDTO = {
       firstname: faker.person.firstName(),
       lastname: faker.person.lastName(),
-      email: testUser.email,
+      email: faker.internet.email(),
     };
 
     const user = await usersService.updateProfile(
       updateProfileDTO,
-      testUser.email,
+      testUser.id,
     );
 
     expect(user).toBeDefined();

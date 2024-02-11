@@ -121,7 +121,7 @@ describe('UsersController (e2e)', () => {
       const updatedUser = {
         firstname: faker.person.firstName(),
         lastname: faker.person.lastName(),
-        email: faker.internet.email(),
+        email: user.email,
       };
 
       return request(app.getHttpServer())
