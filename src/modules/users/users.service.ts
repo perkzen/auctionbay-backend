@@ -3,6 +3,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { SignupDTO } from '../auth/dtos/signup.dto';
 import { UpdatePasswordDTO } from './dtos/update-password.dto';
 import { comparePasswords, hashPassword } from '../auth/utils/auth.utils';
+import { UpdateProfileDTO } from './dtos/update-profile.dto';
 
 @Injectable()
 export class UsersService {
@@ -19,6 +20,18 @@ export class UsersService {
       data: {
         ...user,
         password: await hashPassword(user.password),
+      },
+    });
+  }
+
+  async updateProfile(data: UpdateProfileDTO, email: string) {
+    return this.db.user.update({
+      where: { email },
+      data,
+      select: {
+        email: true,
+        firstname: true,
+        lastname: true,
       },
     });
   }

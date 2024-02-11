@@ -107,4 +107,37 @@ describe('UsersService', () => {
       expect(error.message).toEqual("Password doesn't match");
     }
   });
+  it("should fail to update a user's profile", async () => {
+    const updateProfileDTO = {
+      firstname: faker.person.firstName(),
+      lastname: faker.person.lastName(),
+      email: faker.internet.email(),
+    };
+
+    try {
+      await usersService.updateProfile(
+        updateProfileDTO,
+        faker.internet.email(),
+      );
+    } catch (error) {
+      expect(error).toBeDefined();
+    }
+  });
+  it('should update a user profile', async () => {
+    const updateProfileDTO = {
+      firstname: faker.person.firstName(),
+      lastname: faker.person.lastName(),
+      email: testUser.email,
+    };
+
+    const user = await usersService.updateProfile(
+      updateProfileDTO,
+      testUser.email,
+    );
+
+    expect(user).toBeDefined();
+    expect(user.firstname).toEqual(updateProfileDTO.firstname);
+    expect(user.lastname).toEqual(updateProfileDTO.lastname);
+    expect(user.email).toEqual(updateProfileDTO.email);
+  });
 });

@@ -11,7 +11,7 @@ import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { cleanupDatabase } from './utils/cleanup-database';
 
-describe('UsersController', () => {
+describe('UsersController (e2e)', () => {
   let app: INestApplication,
     access_token: string,
     db: PrismaService,
@@ -99,6 +99,37 @@ describe('UsersController', () => {
           newPassword: faker.internet.password(),
         })
         .expect(200);
+    });
+  });
+  describe('/users/me (PUT)', () => {
+    it('should fail because user is not logged in', () => {
+      return request(app.getHttpServer())
+        .put('/users/me')
+        .send({
+          firstname: faker.person.firstName(),
+          lastname: faker.person.lastName(),
+          email: user.email,
+        })
+        .expect(401)
+        .expect({
+          message: "You don't have access to this",
+          error: 'Unauthorized',
+          statusCode: 401,
+        });
+    });
+    it('should update user profile', async () => {
+      const updatedUser = {
+        firstname: faker.person.firstName(),
+        lastname: faker.person.lastName(),
+        email: faker.internet.email(),
+      };
+
+      return request(app.getHttpServer())
+        .put('/users/me')
+        .set('Authorization', `Bearer ${access_token}`)
+        .send(updatedUser)
+        .expect(200)
+        .expect(updatedUser);
     });
   });
 });
