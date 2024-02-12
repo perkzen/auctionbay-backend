@@ -3,6 +3,7 @@ import { UserController } from './user.controller';
 import { faker } from '@faker-js/faker';
 import { UsersModule } from './users.module';
 import { UsersService } from './users.service';
+import { UploadService } from '../upload/upload.service';
 
 describe('UserController', () => {
   let moduleRef: TestingModuleBuilder,
@@ -14,6 +15,7 @@ describe('UserController', () => {
     email: faker.internet.email(),
     firstname: faker.person.firstName(),
     lastname: faker.person.lastName(),
+    imageUrl: faker.image.url(),
   };
 
   const userServiceMock = {
@@ -22,6 +24,9 @@ describe('UserController', () => {
     updatePassword: jest.fn().mockResolvedValue({}),
     updateProfile: jest.fn().mockResolvedValue(userData),
     findById: jest.fn().mockResolvedValue(userData),
+    updateProfilePicture: jest
+      .fn()
+      .mockResolvedValue({ imageUrl: userData.imageUrl }),
   };
 
   beforeAll(async () => {
@@ -114,5 +119,19 @@ describe('UserController', () => {
     );
 
     expect(user).toEqual(userData);
+  });
+  it("should fail to update a user's profile picture", async () => {
+    userServiceMock.updateProfilePicture.mockRejectedValueOnce(
+      new Error('error'),
+    );
+
+    await expect(
+      controller.updateProfilePicture(null, userData.email),
+    ).rejects.toThrow('error');
+  });
+  it('should update a user profile picture', async () => {
+    const user = await controller.updateProfilePicture(null, userData.email);
+
+    expect(user).toEqual({ imageUrl: userData.imageUrl });
   });
 });

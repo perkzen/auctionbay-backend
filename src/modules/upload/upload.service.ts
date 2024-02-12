@@ -14,12 +14,16 @@ export class UploadService {
 
   private readonly logger = new Logger(UploadService.name);
 
-  getFileUrl(name: string) {
+  private getFileUrl(name: string) {
     return `https://${settings.aws.s3.bucket}.s3.${settings.aws.s3.region}.amazonaws.com/${name}`;
   }
 
-  generateFileName(name: string) {
+  private generateFileName(name: string) {
     return `${name}-${Date.now()}`;
+  }
+
+  private extractFileName(url: string) {
+    return url.split('/').pop();
   }
 
   async upload(file: Express.Multer.File): Promise<string | null> {
@@ -38,5 +42,18 @@ export class UploadService {
       this.logger.error(e);
     }
     return null;
+  }
+
+  async delete(url: string) {
+    const name = this.extractFileName(url);
+
+    try {
+      await this.s3.deleteObject({
+        Bucket: settings.aws.s3.bucket,
+        Key: name,
+      });
+    } catch (e) {
+      this.logger.error(e);
+    }
   }
 }

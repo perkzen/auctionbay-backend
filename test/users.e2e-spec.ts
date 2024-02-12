@@ -10,6 +10,8 @@ import { SanitizedUser } from '../src/modules/auth/types/auth.types';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { cleanupDatabase } from './utils/cleanup-database';
+import { UploadModule } from '../src/modules/upload/upload.module';
+import { UploadService } from '../src/modules/upload/upload.service';
 
 describe('UsersController (e2e)', () => {
   let app: INestApplication,
@@ -25,10 +27,19 @@ describe('UsersController (e2e)', () => {
     password: faker.internet.password(),
   };
 
+  const imageUrl = faker.image.url();
+
+  const uploadServiceMock = {
+    upload: jest.fn().mockResolvedValue(imageUrl),
+  };
+
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [AuthModule, UsersModule, PrismaModule],
-    }).compile();
+      imports: [AuthModule, UsersModule, PrismaModule, UploadModule],
+    })
+      .overrideProvider(UploadService)
+      .useValue(uploadServiceMock)
+      .compile();
 
     app = moduleFixture.createNestApplication();
 
@@ -130,6 +141,34 @@ describe('UsersController (e2e)', () => {
         .send(updatedUser)
         .expect(200)
         .expect(updatedUser);
+    });
+  });
+  describe('/users/me/update-profile-picture (PUT)', () => {
+    it('should fail because user is not logged in', () => {
+      return request(app.getHttpServer())
+        .put('/users/me/update-profile-picture')
+        .expect(401)
+        .expect({
+          message: "You don't have access to this",
+          error: 'Unauthorized',
+          statusCode: 401,
+        });
+    });
+    it('should fail to update user profile picture', async () => {
+      uploadServiceMock.upload.mockResolvedValueOnce(null);
+
+      return request(app.getHttpServer())
+        .put('/users/me/update-profile-picture')
+        .set('Authorization', `Bearer ${access_token}`)
+        .attach('image', null)
+        .expect(400);
+    });
+    it('should update user profile picture', async () => {
+      return request(app.getHttpServer())
+        .put('/users/me/update-profile-picture')
+        .set('Authorization', `Bearer ${access_token}`)
+        .attach('image', null)
+        .expect(200);
     });
   });
 });
