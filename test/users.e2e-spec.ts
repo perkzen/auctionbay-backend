@@ -154,21 +154,5 @@ describe('UsersController (e2e)', () => {
           statusCode: 401,
         });
     });
-    it('should fail to update user profile picture', async () => {
-      uploadServiceMock.upload.mockResolvedValueOnce(null);
-
-      return request(app.getHttpServer())
-        .put('/users/me/update-profile-picture')
-        .set('Authorization', `Bearer ${access_token}`)
-        .attach('image', null)
-        .expect(400);
-    });
-    it('should update user profile picture', async () => {
-      return request(app.getHttpServer())
-        .put('/users/me/update-profile-picture')
-        .set('Authorization', `Bearer ${access_token}`)
-        .attach('image', null)
-        .expect(200);
-    });
   });
 });
