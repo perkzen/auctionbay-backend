@@ -6,6 +6,8 @@ import { PrismaModule } from '../prisma/prisma.module';
 import { faker } from '@faker-js/faker';
 import { SignupDTO } from '../auth/dtos/signup.dto';
 import { User } from '@prisma/client';
+import { UploadModule } from '../upload/upload.module';
+import { UploadService } from '../upload/upload.service';
 
 describe('UsersService', () => {
   let moduleRef: TestingModuleBuilder,
@@ -21,10 +23,18 @@ describe('UsersService', () => {
     password: faker.internet.password(),
   };
 
+  const imageUrl = faker.image.url();
+
+  const uploadServiceMock = {
+    upload: jest.fn().mockResolvedValue(imageUrl),
+  };
+
   beforeAll(async () => {
     moduleRef = Test.createTestingModule({
-      imports: [UsersModule, PrismaModule],
-    });
+      imports: [UsersModule, PrismaModule, UploadModule],
+    })
+      .overrideProvider(UploadService)
+      .useValue(uploadServiceMock);
 
     app = await moduleRef.compile();
     usersService = app.get<UsersService>(UsersService);
@@ -139,5 +149,12 @@ describe('UsersService', () => {
     expect(user.firstname).toEqual(updateProfileDTO.firstname);
     expect(user.lastname).toEqual(updateProfileDTO.lastname);
     expect(user.email).toEqual(updateProfileDTO.email);
+  });
+  it('should update a user profile picture', async () => {
+    const user = await usersService.updateProfilePicture(null, testUser.id);
+
+    expect(uploadServiceMock.upload).toHaveBeenCalled();
+    expect(user).toBeDefined();
+    expect(user.imageUrl).toBe(imageUrl);
   });
 });

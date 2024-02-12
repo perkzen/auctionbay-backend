@@ -4,10 +4,14 @@ import { SignupDTO } from '../auth/dtos/signup.dto';
 import { UpdatePasswordDTO } from './dtos/update-password.dto';
 import { comparePasswords, hashPassword } from '../auth/utils/auth.utils';
 import { UpdateProfileDTO } from './dtos/update-profile.dto';
+import { UploadService } from '../upload/upload.service';
 
 @Injectable()
 export class UsersService {
-  constructor(private readonly db: PrismaService) {}
+  constructor(
+    private readonly db: PrismaService,
+    private readonly uploadService: UploadService,
+  ) {}
 
   async findByEmail(email: string) {
     return this.db.user.findUnique({
@@ -62,6 +66,28 @@ export class UsersService {
     await this.db.user.update({
       where: { id: userId },
       data: { password: hashedPassword },
+    });
+  }
+
+  async updateProfilePicture(image: Express.Multer.File, userId: string) {
+    const user = await this.findById(userId);
+
+    if (user.imageUrl) {
+      await this.uploadService.delete(user.imageUrl);
+    }
+
+    const uploadedImage = await this.uploadService.upload(image);
+
+    if (!uploadedImage) {
+      throw new HttpException('Failed to upload image', HttpStatus.BAD_REQUEST);
+    }
+
+    return this.db.user.update({
+      where: { id: userId },
+      data: { imageUrl: uploadedImage },
+      select: {
+        imageUrl: true,
+      },
     });
   }
 }
