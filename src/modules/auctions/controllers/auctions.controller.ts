@@ -36,6 +36,13 @@ export class AuctionsController {
     return this.auctionsService.list();
   }
 
+  @ApiOperation({ summary: 'Get an auction by id' })
+  @Public()
+  @Get(':id')
+  async getById(@Param('id') id: string) {
+    return this.auctionsService.findById(id);
+  }
+
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Creates a new auction' })
   @ApiConsumes('multipart/form-data')

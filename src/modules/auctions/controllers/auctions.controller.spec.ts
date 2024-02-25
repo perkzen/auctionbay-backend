@@ -27,6 +27,7 @@ describe('AuctionsController', () => {
     create: jest.fn().mockResolvedValue(auctionData),
     update: jest.fn().mockResolvedValue(auctionData),
     list: jest.fn().mockResolvedValue([auctionData]),
+    findById: jest.fn().mockResolvedValue(auctionData),
   };
 
   beforeAll(async () => {
@@ -99,5 +100,21 @@ describe('AuctionsController', () => {
 
     expect(auctions).toEqual([auctionData]);
     expect(auctionsServiceMock.list).toHaveBeenCalled();
+  });
+  it('should fail getting an auction by id', async () => {
+    const auction = await controller.getById(auctionData.id);
+
+    expect(auction).toEqual(auctionData);
+  });
+  it('should fail getting an auction by id', async () => {
+    auctionsServiceMock.findById.mockRejectedValue(
+      new Error('Auction not found'),
+    );
+
+    try {
+      await controller.getById('1234');
+    } catch (e) {
+      expect(e.message).toEqual('Auction not found');
+    }
   });
 });

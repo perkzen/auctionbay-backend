@@ -268,4 +268,36 @@ describe('AuctionsController', () => {
         .expect(201);
     });
   });
+  describe('/auctions/:id (GET)', () => {
+    it('should return an auction', async () => {
+      const auction = await auctionService.create(
+        {
+          title: faker.commerce.productName(),
+          description: faker.commerce.productDescription(),
+          startingPrice: 100,
+          endsAt: new Date(),
+        },
+        user.id,
+        null,
+      );
+
+      return request(app.getHttpServer())
+        .get(`/auctions/${auction.id}`)
+        .expect(200)
+        .expect((res) => {
+          expect(res.body.id).toEqual(auction.id);
+        });
+    });
+
+    it('should return 404', async () => {
+      return request(app.getHttpServer())
+        .get(`/auctions/1`)
+        .expect(404)
+        .expect({
+          message: 'Auction not found',
+          error: 'Not Found',
+          statusCode: 404,
+        });
+    });
+  });
 });
