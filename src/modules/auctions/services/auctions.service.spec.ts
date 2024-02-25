@@ -147,4 +147,17 @@ describe('AuctionsService', () => {
     expect(bids.length).toBeGreaterThan(0);
     expect(bids![0].status).toEqual(BidStatus.WON);
   });
+  it('should find an auction by id', async () => {
+    const foundAuction = await auctionsService.findById(auction.id);
+
+    expect(foundAuction).toBeDefined();
+    expect(foundAuction.id).toEqual(auction.id);
+  });
+  it('should fail to find an auction by id', async () => {
+    try {
+      await auctionsService.findById('invalidId');
+    } catch (error) {
+      expect(error).toBeDefined();
+    }
+  });
 });
