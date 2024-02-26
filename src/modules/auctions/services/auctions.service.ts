@@ -73,6 +73,41 @@ export class AuctionsService {
     return auction;
   }
 
+  async findByUserId(userId: string): Promise<Auction[]> {
+    return this.db.auction.findMany({
+      where: {
+        ownerId: userId,
+      },
+    });
+  }
+
+  async findWonAuctionsByUserId(userId: string): Promise<Auction[]> {
+    return this.db.auction.findMany({
+      where: {
+        status: AuctionStatus.CLOSED,
+        bids: {
+          some: {
+            status: BidStatus.WON,
+            bidderId: userId,
+          },
+        },
+      },
+    });
+  }
+
+  async findBiddingAuctionsByUserId(userId: string): Promise<Auction[]> {
+    return this.db.auction.findMany({
+      where: {
+        status: AuctionStatus.ACTIVE,
+        bids: {
+          some: {
+            bidderId: userId,
+          },
+        },
+      },
+    });
+  }
+
   async updateAuctionStatuses() {
     return this.db.$transaction(async (tx) => {
       const closeBids = async (): Promise<number> => {
