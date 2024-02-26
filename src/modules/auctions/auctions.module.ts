@@ -6,10 +6,11 @@ import { NotificationsModule } from '../notifications/notifications.module';
 import { UploadModule } from '../upload/upload.module';
 import { BidsController } from './controllers/bids.controller';
 import { BidsService } from './services/bids.service';
+import { UserAuctionsController } from './controllers/user-auctions.controller';
 
 @Module({
   imports: [NotificationsModule, UploadModule],
-  controllers: [AuctionsController, BidsController],
+  controllers: [UserAuctionsController, AuctionsController, BidsController],
   providers: [AuctionsService, AuctionsJob, BidsService],
 })
 export class AuctionsModule {}

@@ -162,4 +162,64 @@ describe('AuctionsService', () => {
       expect(error).toBeDefined();
     }
   });
+  it("should find auctions by the user's id", async () => {
+    const auctions = await auctionsService.findByUserId(userId);
+
+    expect(auctions).toBeDefined();
+    expect(auctions.length).toBeGreaterThan(0);
+  });
+  it('should fail to find auctions by the user id', async () => {
+    try {
+      await auctionsService.findByUserId('invalidUserId');
+    } catch (error) {
+      expect(error).toBeDefined();
+    }
+  });
+  it("should return an empty array when the user hasn't won any auctions", async () => {
+    const auctions = await auctionsService.findWonAuctionsByUserId(userId);
+
+    expect(auctions).toBeDefined();
+    expect(auctions).toEqual([]);
+    expect(auctions.length).toEqual(0);
+  });
+  it('should find auctions where users has won', async () => {
+    const newUserId = (
+      await userService.create({
+        firstname: faker.person.firstName(),
+        lastname: faker.person.lastName(),
+        email: faker.internet.email(),
+        password: faker.internet.password(),
+      })
+    ).id;
+
+    const newAuction = await auctionsService.create(
+      auctionDTO,
+      newUserId,
+      null,
+    );
+
+    await bidsService.create(newAuction.id, userId, 200);
+    await auctionsService.updateAuctionStatuses();
+
+    const auctions = await auctionsService.findWonAuctionsByUserId(userId);
+    expect(auctions).toBeDefined();
+    expect(auctions.length).toBeGreaterThan(0);
+  });
+  it('should return an empty array when the user has not bid on any auctions', async () => {
+    const auctions = await auctionsService.findBiddingAuctionsByUserId(userId);
+
+    expect(auctions).toBeDefined();
+    expect(auctions).toEqual([]);
+    expect(auctions.length).toEqual(0);
+  });
+  it('should find auctions where the user has bid', async () => {
+    const newAuction = await auctionsService.create(auctionDTO, userId, null);
+
+    await bidsService.create(newAuction.id, userId, 200);
+
+    const auctions = await auctionsService.findBiddingAuctionsByUserId(userId);
+
+    expect(auctions).toBeDefined();
+    expect(auctions.length).toBeGreaterThan(0);
+  });
 });

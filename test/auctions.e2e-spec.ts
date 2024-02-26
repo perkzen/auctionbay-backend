@@ -14,6 +14,7 @@ import { AuctionsService } from '../src/modules/auctions/services/auctions.servi
 import { AuctionStatus } from '@prisma/client';
 import { UploadModule } from '../src/modules/upload/upload.module';
 import { UploadService } from '../src/modules/upload/upload.service';
+import { BidsService } from '../src/modules/auctions/services/bids.service';
 
 describe('AuctionsController', () => {
   let app: INestApplication,
@@ -21,6 +22,7 @@ describe('AuctionsController', () => {
     db: PrismaService,
     authService: AuthService,
     auctionService: AuctionsService,
+    bidService: BidsService,
     user: SanitizedUser;
 
   const signupDTO: SignupDTO = {
@@ -53,6 +55,7 @@ describe('AuctionsController', () => {
     db = app.get<PrismaService>(PrismaService);
     authService = app.get<AuthService>(AuthService);
     auctionService = app.get<AuctionsService>(AuctionsService);
+    bidService = app.get<BidsService>(BidsService);
 
     await app.init();
   });
@@ -68,6 +71,8 @@ describe('AuctionsController', () => {
     expect(authService).toBeDefined();
     expect(user).toBeDefined();
     expect(access_token).toBeDefined();
+    expect(auctionService).toBeDefined();
+    expect(bidService).toBeDefined();
   });
 
   beforeEach(async () => {
@@ -297,6 +302,138 @@ describe('AuctionsController', () => {
           error: 'Not Found',
           statusCode: 404,
         });
+    });
+  });
+  describe('/auctions/me (GET)', () => {
+    it("should return empty array for user's auctions", async () => {
+      return request(app.getHttpServer())
+        .get(`/auctions/me`)
+        .set('Authorization', `Bearer ${access_token}`)
+        .expect(200)
+        .expect((res) => {
+          expect(res.body).toHaveLength(0);
+          expect(res.body).toEqual([]);
+        });
+    });
+
+    it("should return an array of user's auctions", async () => {
+      const newAuction = await auctionService.create(
+        {
+          title: faker.commerce.productName(),
+          description: faker.commerce.productDescription(),
+          startingPrice: 100,
+          endsAt: new Date(),
+        },
+        user.id,
+        null,
+      );
+
+      return request(app.getHttpServer())
+        .get(`/auctions/me`)
+        .set('Authorization', `Bearer ${access_token}`)
+        .expect(200)
+        .expect((res) => {
+          expect(res.body).toHaveLength(1);
+          expect(res.body[0].id).toEqual(newAuction.id);
+        });
+    });
+    it('should return 401', async () => {
+      return request(app.getHttpServer()).get(`/auctions/me`).expect(401);
+    });
+  });
+
+  describe('/auctions/me/won (GET)', () => {
+    it("should return empty array for user's won auctions", async () => {
+      return request(app.getHttpServer())
+        .get(`/auctions/me/won`)
+        .set('Authorization', `Bearer ${access_token}`)
+        .expect(200)
+        .expect((res) => {
+          expect(res.body).toHaveLength(0);
+          expect(res.body).toEqual([]);
+        });
+    });
+
+    it("should return an array of user's won auctions", async () => {
+      return request(app.getHttpServer())
+        .get(`/auctions/me/won`)
+        .set('Authorization', `Bearer ${access_token}`)
+        .expect(200)
+        .expect((res) => {
+          expect(res.body).toHaveLength(0);
+          expect(res.body).toEqual([]);
+        });
+    });
+
+    it("should return an array of user's won auctions", async () => {
+      const newAuction = await auctionService.create(
+        {
+          title: faker.commerce.productName(),
+          description: faker.commerce.productDescription(),
+          startingPrice: 100,
+          endsAt: new Date(),
+        },
+        user.id,
+        null,
+      );
+
+      await bidService.create(newAuction.id, user.id, 200);
+
+      await auctionService.updateAuctionStatuses();
+
+      return request(app.getHttpServer())
+        .get(`/auctions/me/won`)
+        .set('Authorization', `Bearer ${access_token}`)
+        .expect(200)
+        .expect((res) => {
+          expect(res.body).toHaveLength(1);
+          expect(res.body[0].id).toEqual(newAuction.id);
+        });
+    });
+
+    it('should return 401', async () => {
+      return request(app.getHttpServer()).get(`/auctions/me/won`).expect(401);
+    });
+  });
+
+  describe('/auctions/me/bidding (GET)', () => {
+    it("should return empty array for user's bidding auctions", async () => {
+      return request(app.getHttpServer())
+        .get(`/auctions/me/bidding`)
+        .set('Authorization', `Bearer ${access_token}`)
+        .expect(200)
+        .expect((res) => {
+          expect(res.body).toHaveLength(0);
+          expect(res.body).toEqual([]);
+        });
+    });
+    it("should return an array of user's bidding auctions", async () => {
+      const newAuction = await auctionService.create(
+        {
+          title: faker.commerce.productName(),
+          description: faker.commerce.productDescription(),
+          startingPrice: 100,
+          endsAt: new Date(),
+        },
+        user.id,
+        null,
+      );
+
+      await bidService.create(newAuction.id, user.id, 200);
+
+      return request(app.getHttpServer())
+        .get(`/auctions/me/bidding`)
+        .set('Authorization', `Bearer ${access_token}`)
+        .expect(200)
+        .expect((res) => {
+          expect(res.body).toHaveLength(1);
+          expect(res.body[0].id).toEqual(newAuction.id);
+        });
+    });
+    it('should return 401', async () => {
+      return request(app.getHttpServer())
+        .get(`/auctions/me/bidding`)
+        .expect(401);
     });
   });
 });
