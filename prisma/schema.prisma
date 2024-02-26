@@ -27,6 +27,7 @@ model Auction {
   title         String
   description   String
   startingPrice Int
+  closedPrice   Int?
   status        AuctionStatus
   endsAt        DateTime
   bids          Bid[]

@@ -8,12 +8,14 @@ import { CreateAuctionDTO } from '../dtos/create-auction.dto';
 import { Auction, AuctionStatus, BidStatus } from '@prisma/client';
 import { UpdateAuctionDTO } from '../dtos/update-auction.dto';
 import { UploadService } from '../../upload/upload.service';
+import { BidsService } from './bids.service';
 
 @Injectable()
 export class AuctionsService {
   constructor(
     private readonly db: PrismaService,
     private readonly uploadService: UploadService,
+    private readonly bidsService: BidsService,
   ) {}
 
   async create(
@@ -74,19 +76,35 @@ export class AuctionsService {
   async updateAuctionStatuses() {
     return this.db.$transaction(async (tx) => {
       const closeBids = async (): Promise<number> => {
-        return (
-          await tx.auction.updateMany({
-            where: {
-              status: AuctionStatus.ACTIVE,
-              endsAt: {
-                lte: new Date(),
+        const dueAuctions = await tx.auction.findMany({
+          where: {
+            status: AuctionStatus.ACTIVE,
+            endsAt: {
+              lte: new Date(),
+            },
+          },
+          select: {
+            id: true,
+          },
+        });
+
+        await Promise.all(
+          dueAuctions.map(async (auction) => {
+            const wonBid = await this.bidsService.findLastBid(auction.id);
+
+            return tx.auction.update({
+              where: {
+                id: auction.id,
               },
-            },
-            data: {
-              status: AuctionStatus.CLOSED,
-            },
-          })
-        ).count;
+              data: {
+                status: AuctionStatus.CLOSED,
+                closedPrice: wonBid?.amount || 0,
+              },
+            });
+          }),
+        );
+
+        return dueAuctions.length;
       };
 
       const findClosedAuctions = async () => {

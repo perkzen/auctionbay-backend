@@ -90,4 +90,8 @@ export class UsersService {
       },
     });
   }
+
+  async profileStats(userId: string) {
+    // earnings get last bid on closed auctions
+  }
 }

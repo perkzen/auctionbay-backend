@@ -9,7 +9,6 @@ import { faker } from '@faker-js/faker';
 import { SanitizedUser } from '../src/modules/auth/types/auth.types';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
-import { cleanupDatabase } from './utils/cleanup-database';
 import { UploadModule } from '../src/modules/upload/upload.module';
 import { UploadService } from '../src/modules/upload/upload.service';
 
@@ -54,7 +53,7 @@ describe('UsersController (e2e)', () => {
   });
 
   afterAll(async () => {
-    await cleanupDatabase(db);
+    await db.clearDatabase();
     await app.close();
   });
 

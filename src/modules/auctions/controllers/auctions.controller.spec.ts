@@ -21,6 +21,7 @@ describe('AuctionsController', () => {
     ownerId: '123',
     id: '123',
     createdAt: new Date(),
+    closedPrice: null,
   };
 
   const auctionsServiceMock = {

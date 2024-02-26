@@ -12,7 +12,6 @@ import * as request from 'supertest';
 import { AuctionsModule } from '../src/modules/auctions/auctions.module';
 import { AuctionsService } from '../src/modules/auctions/services/auctions.service';
 import { AuctionStatus } from '@prisma/client';
-import { cleanupDatabase } from './utils/cleanup-database';
 import { UploadModule } from '../src/modules/upload/upload.module';
 import { UploadService } from '../src/modules/upload/upload.service';
 
@@ -59,7 +58,7 @@ describe('AuctionsController', () => {
   });
 
   afterAll(async () => {
-    await cleanupDatabase(db);
+    await db.clearDatabase();
     await app.close();
   });
 
@@ -78,7 +77,7 @@ describe('AuctionsController', () => {
   });
 
   afterEach(async () => {
-    await cleanupDatabase(db);
+    await db.user.deleteMany({});
   });
 
   describe('/auctions (GET)', () => {

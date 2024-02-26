@@ -10,6 +10,7 @@ import settings from './app.settings';
 import { ScheduleModule } from '@nestjs/schedule';
 import { NotificationsModule } from './modules/notifications/notifications.module';
 import { UploadModule } from './modules/upload/upload.module';
+import { StatisticsModule } from './modules/statistics/statistics.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { UploadModule } from './modules/upload/upload.module';
     ScheduleModule.forRoot(),
     AuthModule,
     UsersModule,
+    StatisticsModule,
     PrismaModule,
     AuctionsModule,
     NotificationsModule,
