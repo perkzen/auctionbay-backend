@@ -8,7 +8,6 @@ import { SignupDTO } from '../src/modules/auth/dtos/signup.dto';
 import { faker } from '@faker-js/faker';
 import { PrismaService } from '../src/modules/prisma/prisma.service';
 import { UsersService } from '../src/modules/users/users.service';
-import { cleanupDatabase } from './utils/cleanup-database';
 
 describe('AuthController (e2e)', () => {
   let app: INestApplication, userService: UsersService, db: PrismaService;
@@ -32,13 +31,13 @@ describe('AuthController (e2e)', () => {
   });
 
   afterAll(async () => {
-    await cleanupDatabase(db);
+    await db.clearDatabase();
     await app.close();
   });
 
   describe('/auth/login (POST)', () => {
     afterAll(async () => {
-      await db.user.deleteMany();
+      await db.user.deleteMany({});
     });
 
     it('should fail because user is not registered', () => {
