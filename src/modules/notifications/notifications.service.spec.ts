@@ -10,10 +10,7 @@ import { NotificationsModule } from './notifications.module';
 import { AuctionsModule } from '../auctions/auctions.module';
 import { faker } from '@faker-js/faker';
 import { UploadService } from '../upload/upload.service';
-import {
-  AuctionClosedNotification,
-  createAuctionClosedNotification,
-} from './types/create-auction-closed-notification.type';
+import { createAuctionClosedNotification } from './types/create-auction-closed-notification.type';
 import { BidsService } from '../auctions/services/bids.service';
 import { CreateAuctionDTO } from '../auctions/dtos/create-auction.dto';
 import { NotificationsGateway } from './gateway/notifications.gateway';
