@@ -1,6 +1,6 @@
 import { NotificationEvent } from '../events/notification.events';
-import { WonBid } from '../../auctions/types/won-bid.type';
+import { Notification } from '@prisma/client';
 
 export interface EmitEvents {
-  [NotificationEvent.AUCTION_WON]: (data: WonBid) => void;
+  [NotificationEvent.NEW_NOTIFICATION]: (data: Notification) => void;
 }
