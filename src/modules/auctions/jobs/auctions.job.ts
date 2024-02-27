@@ -2,25 +2,32 @@ import { Injectable } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { AuctionsService } from '../services/auctions.service';
 import { Logger } from '@nestjs/common';
-import { NotificationsGateway } from '../../notifications/notifications.gateway';
 import { BidsService } from '../services/bids.service';
+import { NotificationsService } from '../../notifications/notifications.service';
 
 @Injectable()
 export class AuctionsJob {
   constructor(
     private readonly auctionsService: AuctionsService,
-    private readonly notifications: NotificationsGateway,
+    private readonly notificationsService: NotificationsService,
     private readonly bidsService: BidsService,
   ) {}
 
   @Cron('* * * * *')
   async checkAuctions() {
-    const { count, wonBids: wonBidsIds } =
+    const { count, closedAuctions } =
       await this.auctionsService.updateAuctionStatuses();
 
-    const wonBids = await this.bidsService.findWonBids(wonBidsIds);
-
-    await this.notifications.notifyWinners(wonBids);
     Logger.log(`Closed ${count} auctions`, 'AuctionsJob');
+
+    if (count === 0) return;
+
+    for (const auction of closedAuctions) {
+      const bids = await this.bidsService.findLastBidsByEachUser(auction.id);
+      await this.notificationsService.sendAuctionClosedNotification(
+        auction.id,
+        bids,
+      );
+    }
   }
 }

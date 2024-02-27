@@ -186,7 +186,7 @@ export class AuctionsService {
 
       await setWonBids(lastBids);
 
-      return { count: numberOfClosedBids, wonBids: lastBids, closedAuctions };
+      return { count: numberOfClosedBids, closedAuctions };
     });
   }
 }

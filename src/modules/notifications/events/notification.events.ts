@@ -1,3 +1,3 @@
 export enum NotificationEvent {
-  AUCTION_WON = 'auction-won',
+  NEW_NOTIFICATION = 'new_notification',
 }

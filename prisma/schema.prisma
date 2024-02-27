@@ -8,15 +8,16 @@ datasource db {
 }
 
 model User {
-  id        String    @id @default(uuid())
-  email     String    @unique
-  firstname String
-  lastname  String
-  password  String
-  imageUrl  String?
-  auctions  Auction[]
-  bids      Bid[]
-  createdAt DateTime  @default(now())
+  id            String         @id @default(uuid())
+  email         String         @unique
+  firstname     String
+  lastname      String
+  password      String
+  imageUrl      String?
+  auctions      Auction[]
+  bids          Bid[]
+  notifications Notification[]
+  createdAt     DateTime       @default(now())
 
   @@map("users")
 }
@@ -36,6 +37,13 @@ model Auction {
   createdAt     DateTime      @default(now())
 
   @@map("auctions")
+}
+
+enum AuctionStatus {
+  ACTIVE
+  CLOSED
+
+  @@map("auction_status")
 }
 
 model Bid {
@@ -59,9 +67,12 @@ enum BidStatus {
   @@map("bid_status")
 }
 
-enum AuctionStatus {
-  ACTIVE
-  CLOSED
+model Notification {
+  id        String   @id @default(uuid())
+  data      Json
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
 
-  @@map("auction_status")
+  @@map("notifications")
 }

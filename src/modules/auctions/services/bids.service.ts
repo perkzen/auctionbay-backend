@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
-import { WonBid } from '../types/won-bid.type';
-import { Bid, BidStatus } from '@prisma/client';
+import { AuctionStatus, Bid, BidStatus } from '@prisma/client';
 
 @Injectable()
 export class BidsService {
@@ -57,30 +56,29 @@ export class BidsService {
     });
   }
 
-  async findWonBids(wonBids: string[]): Promise<WonBid[]> {
+  async findLastBidsByEachUser(auctionId: string) {
     return this.db.bid.findMany({
       where: {
-        id: {
-          in: wonBids,
+        auctionId,
+        auction: {
+          status: AuctionStatus.CLOSED,
         },
       },
       select: {
         id: true,
+        bidderId: true,
+        status: true,
         amount: true,
-        bidder: {
-          select: {
-            id: true,
-            email: true,
-            firstname: true,
-            lastname: true,
-          },
-        },
         auction: {
           select: {
-            id: true,
             title: true,
+            id: true,
           },
         },
+      },
+      distinct: ['bidderId'],
+      orderBy: {
+        createdAt: 'desc',
       },
     });
   }

@@ -140,46 +140,22 @@ describe('BidsService', () => {
     expect(outbidBids).toBeDefined();
     expect(outbidBids.length).toBeGreaterThan(0);
   });
-  it('should find winners of auctions', async () => {
-    const newAuctionDTO: CreateAuctionDTO = {
-      title: 'Test Auction 2',
-      description: 'Test Description 2',
-      endsAt: new Date(),
-      startingPrice: 10,
-    };
+  it('should return empty array if auction is not closed', async () => {
+    const newAuction = await auctionsService.create(auctionDTO, userId, null);
+    await bidsService.create(newAuction.id, userId, 200);
 
-    const newUserId = (
-      await userService.create({
-        firstname: faker.person.firstName(),
-        lastname: faker.person.lastName(),
-        email: faker.internet.email(),
-        password: faker.internet.password(),
-      })
-    ).id;
+    const lastBid = await bidsService.findLastBidsByEachUser(newAuction.id);
 
-    const newAuction = await auctionsService.create(
-      newAuctionDTO,
-      newUserId,
-      null,
-    );
-
-    expect(newAuction).toBeDefined();
-    expect(newAuction.id).toBeDefined();
-
+    expect(lastBid).toEqual([]);
+  });
+  it('should find last bids by each user on an auction', async () => {
+    const newAuction = await auctionsService.create(auctionDTO, userId, null);
+    await bidsService.create(newAuction.id, userId, 200);
     await bidsService.create(newAuction.id, userId, 200);
     await auctionsService.updateAuctionStatuses();
 
-    const wonBids = (
-      await db.bid.findMany({
-        where: {
-          auctionId: newAuction.id,
-          status: BidStatus.WON,
-        },
-      })
-    ).map((bid) => bid.id);
-
-    const winners = await bidsService.findWonBids(wonBids);
-    expect(winners).toBeDefined();
-    expect(winners.length).toBeGreaterThan(0);
+    const lastBids = await bidsService.findLastBidsByEachUser(newAuction.id);
+    expect(lastBids).toBeDefined();
+    expect(lastBids.length).toBe(1);
   });
 });
