@@ -4,6 +4,7 @@ import { AuctionsService } from '../services/auctions.service';
 import { Auction } from '@prisma/client';
 import { PrismaModule } from '../../prisma/prisma.module';
 import { AuctionsModule } from '../auctions.module';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 
 describe('UserAuctionsController', () => {
   let moduleRef: TestingModuleBuilder,
@@ -36,7 +37,7 @@ describe('UserAuctionsController', () => {
 
   beforeAll(async () => {
     moduleRef = Test.createTestingModule({
-      imports: [AuctionsModule, PrismaModule],
+      imports: [AuctionsModule, PrismaModule, EventEmitterModule.forRoot()],
     })
       .overrideProvider(AuctionsService)
       .useValue(userAuctionsServiceMock);

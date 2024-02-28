@@ -17,9 +17,10 @@ export class PrismaService
 
   async clearDatabase() {
     if (settings.app.environment !== Environment.TEST) return;
-    await this.notification.deleteMany({});
-    await this.bid.deleteMany({});
-    await this.auction.deleteMany({});
-    await this.user.deleteMany({});
+    await this.autoBid.deleteMany();
+    await this.notification.deleteMany();
+    await this.bid.deleteMany();
+    await this.auction.deleteMany();
+    await this.user.deleteMany();
   }
 }

@@ -1,5 +1,7 @@
 import {
   BadRequestException,
+  forwardRef,
+  Inject,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -8,13 +10,14 @@ import { CreateAuctionDTO } from '../dtos/create-auction.dto';
 import { Auction, AuctionStatus, BidStatus } from '@prisma/client';
 import { UpdateAuctionDTO } from '../dtos/update-auction.dto';
 import { UploadService } from '../../upload/upload.service';
-import { BidsService } from './bids.service';
+import { BidsService } from '../../bids/services/bids.service';
 
 @Injectable()
 export class AuctionsService {
   constructor(
     private readonly db: PrismaService,
     private readonly uploadService: UploadService,
+    @Inject(forwardRef(() => BidsService))
     private readonly bidsService: BidsService,
   ) {}
 

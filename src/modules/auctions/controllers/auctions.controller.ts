@@ -18,7 +18,7 @@ import {
 import { AuctionsService } from '../services/auctions.service';
 import { CreateAuctionDTO } from '../dtos/create-auction.dto';
 import { Public, User } from '../../../common/decorators';
-import { AuctionOwnerGuard } from '../guard/auction-owner.guard';
+import { AuctionOwnerGuard } from '../guards/auction-owner.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UploadedImage } from '../../../common/decorators/uploaded-image.decorator';
 

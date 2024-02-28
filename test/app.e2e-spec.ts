@@ -16,6 +16,7 @@ describe('AppController (e2e)', () => {
   });
 
   afterAll(async () => {
+    app.flushLogs();
     await app.close();
   });
 

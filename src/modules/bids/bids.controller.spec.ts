@@ -1,9 +1,11 @@
 import { Test, TestingModule, TestingModuleBuilder } from '@nestjs/testing';
-import { PrismaModule } from '../../prisma/prisma.module';
+import { PrismaModule } from '../prisma/prisma.module';
 import { Bid, BidStatus } from '@prisma/client';
 import { BidsController } from './bids.controller';
-import { BidsService } from '../services/bids.service';
-import { AuctionsModule } from '../auctions.module';
+import { BidsService } from './services/bids.service';
+import { AuctionsModule } from '../auctions/auctions.module';
+import { EventEmitterModule } from '@nestjs/event-emitter';
+import { AutoBidService } from './services/auto-bid.service';
 
 describe('BidsController', () => {
   let moduleRef: TestingModuleBuilder,
@@ -19,17 +21,30 @@ describe('BidsController', () => {
     id: '123',
   };
 
+  const autoBidData = {
+    incrementAmount: 100,
+    maxAmount: 200,
+    bidderId: '123',
+    auctionId: '123',
+  };
+
   const bidsServiceMock = {
     create: jest.fn().mockResolvedValue(bidData),
   } as jest.Mocked<Pick<BidsService, 'create'>>;
 
+  const autoBidServiceMock = {
+    create: jest.fn().mockResolvedValue(autoBidData),
+  } as jest.Mocked<Pick<BidsService, 'create'>>;
+
   beforeAll(async () => {
     moduleRef = Test.createTestingModule({
-      imports: [AuctionsModule, PrismaModule],
+      imports: [AuctionsModule, PrismaModule, EventEmitterModule.forRoot()],
       providers: [BidsService],
     })
       .overrideProvider(BidsService)
-      .useValue(bidsServiceMock);
+      .useValue(bidsServiceMock)
+      .overrideProvider(AutoBidService)
+      .useValue(autoBidServiceMock);
 
     app = await moduleRef.compile();
     controller = app.get<BidsController>(BidsController);
@@ -51,11 +66,8 @@ describe('BidsController', () => {
     const bid = await controller.bid('123', '123', { amount: 100 });
     expect(bid).toEqual(bidData);
   });
-  it('should fail to bid on an auction', async () => {
-    try {
-      await controller.bid('123', '123', { amount: 0 });
-    } catch (e) {
-      expect(e.message).toEqual('Invalid bid amount');
-    }
+  it('should auto-bid on an auction', async () => {
+    const autoBid = await controller.autoBid('123', '123', autoBidData);
+    expect(autoBid).toEqual(autoBidData);
   });
 });

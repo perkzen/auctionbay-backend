@@ -17,6 +17,7 @@ model User {
   auctions      Auction[]
   bids          Bid[]
   notifications Notification[]
+  autoBids      AutoBid[]
   createdAt     DateTime       @default(now())
 
   @@map("users")
@@ -32,6 +33,7 @@ model Auction {
   status        AuctionStatus
   endsAt        DateTime
   bids          Bid[]
+  autoBids      AutoBid[]
   ownerId       String
   owner         User          @relation(fields: [ownerId], references: [id], onDelete: Cascade)
   createdAt     DateTime      @default(now())
@@ -65,6 +67,19 @@ enum BidStatus {
   WON
 
   @@map("bid_status")
+}
+
+model AutoBid {
+  id              String   @id @default(uuid())
+  incrementAmount Int
+  maxAmount       Int
+  auctionId       String
+  bidderId        String
+  auction         Auction  @relation(fields: [auctionId], references: [id], onDelete: Cascade)
+  bidder          User     @relation(fields: [bidderId], references: [id], onDelete: Cascade)
+  createdAt       DateTime @default(now())
+
+  @@map("auto_bids")
 }
 
 model Notification {

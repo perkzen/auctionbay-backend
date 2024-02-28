@@ -9,8 +9,9 @@ import { UsersService } from '../../users/users.service';
 import { faker } from '@faker-js/faker';
 import { UploadService } from '../../upload/upload.service';
 import { UploadModule } from '../../upload/upload.module';
-import { BidsService } from './bids.service';
+import { BidsService } from '../../bids/services/bids.service';
 import { AuctionsModule } from '../auctions.module';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 
 describe('AuctionsService', () => {
   let moduleRef: TestingModuleBuilder,
@@ -20,7 +21,8 @@ describe('AuctionsService', () => {
     userService: UsersService,
     bidsService: BidsService,
     userId: string,
-    auction: Auction;
+    auction: Auction,
+    bidderId: string;
 
   const auctionDTO: CreateAuctionDTO = {
     title: 'Test Auction',
@@ -35,7 +37,14 @@ describe('AuctionsService', () => {
 
   beforeAll(async () => {
     moduleRef = Test.createTestingModule({
-      imports: [PrismaModule, UsersModule, UploadModule, AuctionsModule],
+      imports: [
+        PrismaModule,
+        UsersModule,
+        UploadModule,
+        AuctionsModule,
+        EventEmitterModule.forRoot(),
+      ],
+      providers: [AuctionsService, BidsService],
     })
       .overrideProvider(UploadService)
       .useValue(uploadServiceMock);
@@ -47,6 +56,15 @@ describe('AuctionsService', () => {
     bidsService = app.get<BidsService>(BidsService);
 
     userId = (
+      await userService.create({
+        firstname: faker.person.firstName(),
+        lastname: faker.person.lastName(),
+        email: faker.internet.email(),
+        password: faker.internet.password(),
+      })
+    ).id;
+
+    bidderId = (
       await userService.create({
         firstname: faker.person.firstName(),
         lastname: faker.person.lastName(),
@@ -215,9 +233,10 @@ describe('AuctionsService', () => {
   it('should find auctions where the user has bid', async () => {
     const newAuction = await auctionsService.create(auctionDTO, userId, null);
 
-    await bidsService.create(newAuction.id, userId, 200);
+    await bidsService.create(newAuction.id, bidderId, 200);
 
-    const auctions = await auctionsService.findBiddingAuctionsByUserId(userId);
+    const auctions =
+      await auctionsService.findBiddingAuctionsByUserId(bidderId);
 
     expect(auctions).toBeDefined();
     expect(auctions.length).toBeGreaterThan(0);

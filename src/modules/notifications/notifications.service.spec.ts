@@ -11,9 +11,10 @@ import { AuctionsModule } from '../auctions/auctions.module';
 import { faker } from '@faker-js/faker';
 import { UploadService } from '../upload/upload.service';
 import { createAuctionClosedNotification } from './types/create-auction-closed-notification.type';
-import { BidsService } from '../auctions/services/bids.service';
+import { BidsService } from '../bids/services/bids.service';
 import { CreateAuctionDTO } from '../auctions/dtos/create-auction.dto';
 import { NotificationsGateway } from './gateway/notifications.gateway';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 
 describe('NotificationsService', () => {
   let moduleRef: TestingModuleBuilder,
@@ -25,7 +26,8 @@ describe('NotificationsService', () => {
     bidService: BidsService,
     notificationId: string,
     userId: string,
-    auctionId: string;
+    auctionId: string,
+    bidderId: string;
 
   const auctionDTO: CreateAuctionDTO = {
     title: 'Test Auction',
@@ -42,6 +44,17 @@ describe('NotificationsService', () => {
     notifyUsers: jest.fn(),
   };
 
+  const createNewUser = async () => {
+    return (
+      await userService.create({
+        firstname: faker.person.firstName(),
+        lastname: faker.person.lastName(),
+        email: faker.internet.email(),
+        password: faker.internet.password(),
+      })
+    ).id;
+  };
+
   beforeAll(async () => {
     moduleRef = Test.createTestingModule({
       imports: [
@@ -50,6 +63,7 @@ describe('NotificationsService', () => {
         NotificationsModule,
         AuctionsModule,
         UploadModule,
+        EventEmitterModule.forRoot(),
       ],
     })
       .overrideProvider(UploadService)
@@ -64,19 +78,14 @@ describe('NotificationsService', () => {
     auctionService = app.get<AuctionsService>(AuctionsService);
     bidService = app.get<BidsService>(BidsService);
 
-    userId = (
-      await userService.create({
-        firstname: faker.person.firstName(),
-        lastname: faker.person.lastName(),
-        email: faker.internet.email(),
-        password: faker.internet.password(),
-      })
-    ).id;
+    userId = await createNewUser();
+
+    bidderId = await createNewUser();
 
     const auction = await auctionService.create(auctionDTO, userId, null);
     auctionId = auction.id;
 
-    const bid = await bidService.create(auction.id, userId, 200);
+    const bid = await bidService.create(auction.id, bidderId, 200);
 
     notificationId = (
       await db.notification.create({
@@ -108,7 +117,7 @@ describe('NotificationsService', () => {
     expect(bidService).toBeDefined();
   });
   it('should find notifications by user id', async () => {
-    const notifications = await notificationsService.findByUserId(userId);
+    const notifications = await notificationsService.findByUserId(bidderId);
     expect(notifications).toBeDefined();
     expect(notifications.length).toBeGreaterThan(0);
   });
@@ -133,12 +142,13 @@ describe('NotificationsService', () => {
     expect(notifications.length).toEqual(0);
   });
   it('should clear all notifications for a user', async () => {
-    const notifications = await notificationsService.clearAll(userId);
+    const notifications = await notificationsService.clearAll(bidderId);
     expect(notifications).toBeDefined();
     expect(notifications.count).toBeGreaterThan(0);
   });
   it("should create many notifications and return the created notifications' count", async () => {
-    const bid = await bidService.create(auctionId, userId, 200);
+    const newBidderId = await createNewUser();
+    const bid = await bidService.create(auctionId, newBidderId, 500);
 
     const res = await db.notification.createMany({
       data: [
@@ -163,7 +173,8 @@ describe('NotificationsService', () => {
     expect(notificationGatewayMock.notifyUsers).not.toHaveBeenCalled();
   });
   it('should send auction closed notifications to users', async () => {
-    const bid = await bidService.create(auctionId, userId, 200);
+    const newBidderId = await createNewUser();
+    const bid = await bidService.create(auctionId, newBidderId, 600);
 
     await notificationsService.sendAuctionClosedNotification(auctionId, [
       {
