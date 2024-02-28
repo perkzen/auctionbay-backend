@@ -12,12 +12,13 @@ import { PrismaModule } from '../src/modules/prisma/prisma.module';
 import { UploadModule } from '../src/modules/upload/upload.module';
 import { NotificationsModule } from '../src/modules/notifications/notifications.module';
 import { createAuctionClosedNotification } from '../src/modules/notifications/types/create-auction-closed-notification.type';
-import { BidsService } from '../src/modules/auctions/services/bids.service';
+import { BidsService } from '../src/modules/bids/services/bids.service';
 import { AuctionsService } from '../src/modules/auctions/services/auctions.service';
 import { CreateAuctionDTO } from '../src/modules/auctions/dtos/create-auction.dto';
 import { AuctionsModule } from '../src/modules/auctions/auctions.module';
 import * as request from 'supertest';
 import { EventEmitterModule } from '@nestjs/event-emitter';
+import { createNewUser } from './utils';
 
 describe('NotificationsController (e2e)', () => {
   let app: INestApplication,
@@ -73,11 +74,13 @@ describe('NotificationsController (e2e)', () => {
 
     user = await authService.register(signupDTO);
     const res = await authService.login(user);
-    access_token = res.accessToken;
 
     const auction = await auctionService.create(auctionDTO, user.id, null);
 
-    const bid = await bidService.create(auction.id, user.id, 200);
+    const bidder = await createNewUser(authService);
+    access_token = bidder.access_token;
+
+    const bid = await bidService.create(auction.id, bidder.user.id, 200);
 
     await db.notification.create({
       data: createAuctionClosedNotification({

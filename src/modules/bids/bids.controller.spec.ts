@@ -1,11 +1,11 @@
 import { Test, TestingModule, TestingModuleBuilder } from '@nestjs/testing';
-import { PrismaModule } from '../../prisma/prisma.module';
+import { PrismaModule } from '../prisma/prisma.module';
 import { Bid, BidStatus } from '@prisma/client';
 import { BidsController } from './bids.controller';
-import { BidsService } from '../services/bids.service';
-import { AuctionsModule } from '../auctions.module';
+import { BidsService } from './services/bids.service';
+import { AuctionsModule } from '../auctions/auctions.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
-import { AutoBidService } from '../services/auto-bid.service';
+import { AutoBidService } from './services/auto-bid.service';
 
 describe('BidsController', () => {
   let moduleRef: TestingModuleBuilder,

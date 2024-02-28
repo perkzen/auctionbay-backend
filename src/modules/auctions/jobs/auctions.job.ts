@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { AuctionsService } from '../services/auctions.service';
 import { Logger } from '@nestjs/common';
-import { BidsService } from '../services/bids.service';
+import { BidsService } from '../../bids/services/bids.service';
 import { NotificationsService } from '../../notifications/notifications.service';
 
 @Injectable()

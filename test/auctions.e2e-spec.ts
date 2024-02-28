@@ -14,8 +14,9 @@ import { AuctionsService } from '../src/modules/auctions/services/auctions.servi
 import { Auction, AuctionStatus } from '@prisma/client';
 import { UploadModule } from '../src/modules/upload/upload.module';
 import { UploadService } from '../src/modules/upload/upload.service';
-import { BidsService } from '../src/modules/auctions/services/bids.service';
+import { BidsService } from '../src/modules/bids/services/bids.service';
 import { EventEmitterModule } from '@nestjs/event-emitter';
+import { createNewUser } from './utils';
 
 describe('AuctionsController (e2e)', () => {
   let app: INestApplication,
@@ -200,11 +201,11 @@ describe('AuctionsController (e2e)', () => {
         .post(`/auctions/${auction.id}/bid`)
         .set('Authorization', `Bearer ${access_token}`)
         .send({ amount: 200 })
-        .expect(400)
+        .expect(401)
         .expect({
-          message: 'Owner cannot bid on their own auction',
-          error: 'Bad Request',
-          statusCode: 400,
+          message: 'You are the owner of this auction, you cannot bid on it.',
+          error: 'Unauthorized',
+          statusCode: 401,
         });
     });
 
@@ -234,9 +235,11 @@ describe('AuctionsController (e2e)', () => {
 
       await auctionService.update({ status: AuctionStatus.CLOSED }, auction.id);
 
+      const newUser = await createNewUser(authService);
+
       return request(app.getHttpServer())
         .post(`/auctions/${auction.id}/bid`)
-        .set('Authorization', `Bearer ${access_token}`)
+        .set('Authorization', `Bearer ${newUser.access_token}`)
         .send({ amount: 200 })
         .expect(400)
         .expect({
@@ -380,13 +383,15 @@ describe('AuctionsController (e2e)', () => {
         null,
       );
 
-      await bidService.create(newAuction.id, user.id, 200);
+      const newUser = await createNewUser(authService);
+
+      await bidService.create(newAuction.id, newUser.user.id, 200);
 
       await auctionService.updateAuctionStatuses();
 
       return request(app.getHttpServer())
         .get(`/auctions/me/won`)
-        .set('Authorization', `Bearer ${access_token}`)
+        .set('Authorization', `Bearer ${newUser.access_token}`)
         .expect(200)
         .expect((res) => {
           expect(res.body).toHaveLength(1);
@@ -422,11 +427,13 @@ describe('AuctionsController (e2e)', () => {
         null,
       );
 
-      await bidService.create(newAuction.id, user.id, 200);
+      const newUser = await createNewUser(authService);
+
+      await bidService.create(newAuction.id, newUser.user.id, 200);
 
       return request(app.getHttpServer())
         .get(`/auctions/me/bidding`)
-        .set('Authorization', `Bearer ${access_token}`)
+        .set('Authorization', `Bearer ${newUser.access_token}`)
         .expect(200)
         .expect((res) => {
           expect(res.body).toHaveLength(1);

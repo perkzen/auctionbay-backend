@@ -3,7 +3,7 @@ import {
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
-import { AuctionOwnerGuard } from './auction-owner.guard';
+import { AuctionOwnerGuard } from '../../auctions/guards/auction-owner.guard';
 import { PrismaService } from '../../prisma/prisma.service';
 
 @Injectable()

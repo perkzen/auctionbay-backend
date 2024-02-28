@@ -1,11 +1,11 @@
 import { Body, Controller, Param, Post, UseGuards } from '@nestjs/common';
-import { BidsService } from '../services/bids.service';
+import { BidsService } from './services/bids.service';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { User } from '../../../common/decorators';
-import { CreateBidDTO } from '../dtos/create-bid.dto';
-import { AutoBidService } from '../services/auto-bid.service';
-import { CreateAutoBidDTO } from '../dtos/create-auto-bid.dto';
-import { NotAuctionOwnerGuard } from '../guard/not-auction-owner.guard';
+import { User } from '../../common/decorators';
+import { CreateBidDTO } from './dtos/create-bid.dto';
+import { AutoBidService } from './services/auto-bid.service';
+import { CreateAutoBidDTO } from './dtos/create-auto-bid.dto';
+import { NotAuctionOwnerGuard } from './guards/not-auction-owner.guard';
 
 @ApiTags('Auctions')
 @Controller('auctions')

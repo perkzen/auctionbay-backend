@@ -1,12 +1,12 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { BidsService } from './bids.service';
 import { OnEvent } from '@nestjs/event-emitter';
-import { AuctionEvents } from '../events/auction.events';
+import { AuctionEvents } from '../../auctions/events/auction.events';
 import { NewBidEvent } from '../events/new-bid.event';
 import { PrismaService } from '../../prisma/prisma.service';
 import { CreateAutoBidDTO } from '../dtos/create-auto-bid.dto';
 import { Bid } from '@prisma/client';
-import { AuctionsService } from './auctions.service';
+import { AuctionsService } from '../../auctions/services/auctions.service';
 
 @Injectable()
 export class AutoBidService {
@@ -38,7 +38,6 @@ export class AutoBidService {
     }
   }
 
-  // TODO: refactor this method
   async autoBid(
     auctionId: string,
     bidderId: string,

@@ -1,17 +1,17 @@
 import { Test, TestingModule, TestingModuleBuilder } from '@nestjs/testing';
-import { AuctionsService } from './auctions.service';
+import { AuctionsService } from '../../auctions/services/auctions.service';
 import { PrismaService } from '../../prisma/prisma.service';
 import { UsersService } from '../../users/users.service';
 import { BidsService } from './bids.service';
 import { Auction } from '@prisma/client';
-import { CreateAuctionDTO } from '../dtos/create-auction.dto';
+import { CreateAuctionDTO } from '../../auctions/dtos/create-auction.dto';
 import { faker } from '@faker-js/faker';
 import { PrismaModule } from '../../prisma/prisma.module';
 import { UsersModule } from '../../users/users.module';
 import { UploadModule } from '../../upload/upload.module';
-import { AuctionsModule } from '../auctions.module';
+import { AuctionsModule } from '../../auctions/auctions.module';
 import { UploadService } from '../../upload/upload.service';
-import { EventEmitter2, EventEmitterModule } from '@nestjs/event-emitter';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 import { AutoBidService } from './auto-bid.service';
 
 describe('AutoBidService', () => {
@@ -71,8 +71,14 @@ describe('AutoBidService', () => {
 
     auctionOwnerId = await createNewUser();
     bidderId = await createNewUser();
+  });
 
+  beforeEach(async () => {
     auction = await auctionsService.create(auctionDTO, auctionOwnerId, null);
+  });
+
+  afterEach(async () => {
+    await db.auction.deleteMany();
   });
 
   afterAll(async () => {

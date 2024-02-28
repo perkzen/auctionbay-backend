@@ -1,17 +1,16 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { AuctionsController } from './controllers/auctions.controller';
 import { AuctionsService } from './services/auctions.service';
 import { AuctionsJob } from './jobs/auctions.job';
 import { NotificationsModule } from '../notifications/notifications.module';
 import { UploadModule } from '../upload/upload.module';
-import { BidsController } from './controllers/bids.controller';
-import { BidsService } from './services/bids.service';
 import { UserAuctionsController } from './controllers/user-auctions.controller';
-import { AutoBidService } from './services/auto-bid.service';
+import { BidsModule } from '../bids/bids.module';
 
 @Module({
-  imports: [NotificationsModule, UploadModule],
-  controllers: [UserAuctionsController, AuctionsController, BidsController],
-  providers: [AuctionsService, AuctionsJob, BidsService, AutoBidService],
+  imports: [NotificationsModule, UploadModule, forwardRef(() => BidsModule)],
+  controllers: [UserAuctionsController, AuctionsController],
+  providers: [AuctionsService, AuctionsJob],
+  exports: [AuctionsService],
 })
 export class AuctionsModule {}

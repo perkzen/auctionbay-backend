@@ -1,15 +1,23 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  forwardRef,
+  Inject,
+  Injectable,
+} from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { AuctionStatus, Bid, BidStatus } from '@prisma/client';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { AuctionEvents } from '../events/auction.events';
+import { AuctionEvents } from '../../auctions/events/auction.events';
 import { NewBidEvent } from '../events/new-bid.event';
+import { AuctionsService } from '../../auctions/services/auctions.service';
 
 @Injectable()
 export class BidsService {
   constructor(
     private readonly db: PrismaService,
     private readonly eventEmitter: EventEmitter2,
+    @Inject(forwardRef(() => AuctionsService))
+    private readonly auctionService: AuctionsService,
   ) {}
 
   async findLastBid(auctionId: string): Promise<Bid> {
@@ -29,41 +37,40 @@ export class BidsService {
     amount: number,
   ) {
     let errors: string[] = [];
-    let ok = false;
-    //
-    // const auction = await this.auctionService.findById(auctionId);
-    //
-    // if (auction.status !== AuctionStatus.ACTIVE) {
-    //   errors.push('Auction is not active');
-    // }
-    //
-    // if (auction.ownerId === bidderId) {
-    //   errors.push('Owner cannot bid on their own auction');
-    // }
-    //
-    // if (auction.startingPrice >= amount) {
-    //   errors.push('Bid amount must be greater than the starting price');
-    // }
-    //
-    // const lastBid = await this.findLastBid(auctionId);
-    //
-    // if (lastBid?.amount >= amount) {
-    //   errors.push('Bid amount must be greater than the last bid');
-    // }
-    //
-    // if (lastBid?.bidderId === bidderId) {
-    //   errors.push('You are already the highest bidder');
-    // }
 
-    return { ok, errors };
+    const auction = await this.auctionService.findById(auctionId);
+
+    if (auction.status !== AuctionStatus.ACTIVE) {
+      errors.push('Auction is not active');
+    }
+
+    if (auction.ownerId === bidderId) {
+      errors.push('Owner cannot bid on their own auction');
+    }
+
+    if (auction.startingPrice > amount) {
+      errors.push('Bid amount must be greater than the starting price');
+    }
+
+    const lastBid = await this.findLastBid(auctionId);
+
+    if (lastBid?.amount >= amount) {
+      errors.push('Bid amount must be greater than the last bid');
+    }
+
+    if (lastBid?.bidderId === bidderId) {
+      errors.push('You are already the highest bidder');
+    }
+
+    return { ok: errors.length === 0, errors };
   }
 
   async create(auctionId: string, bidderId: string, amount: number) {
     const result = await this.validateBid(auctionId, bidderId, amount);
 
-    // if (!result.ok) {
-    //   throw new BadRequestException(result.errors.join(', '));
-    // }
+    if (!result.ok) {
+      throw new BadRequestException(result.errors.join(', '));
+    }
 
     return this.db.$transaction(async (tx) => {
       const createBid = async (
