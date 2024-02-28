@@ -20,13 +20,7 @@ export class AutoBidService {
   async handleNewBidEvent(payload: NewBidEvent) {
     const { auctionId, amount, bidderId } = payload;
 
-    const lastBid = await this.bidsService.findLastBid(auctionId);
-
-    const autoBids = await this.findValidAutoBids(
-      auctionId,
-      lastBid.bidderId,
-      lastBid.amount,
-    );
+    const autoBids = await this.findValidAutoBids(auctionId, bidderId, amount);
 
     for (const autoBid of autoBids) {
       await this.autoBid(
@@ -58,17 +52,13 @@ export class AutoBidService {
       }
     } else {
       autoBidAmount = Math.min(lastBid.amount + incrementAmount, maxAmount);
-      // TODO this check need to happen in bids service
-      if (lastBid.amount >= autoBidAmount) {
-        return null;
-      }
-
-      if (lastBid.bidderId === bidderId) {
-        return null;
-      }
     }
 
-    return this.bidsService.create(auctionId, bidderId, autoBidAmount);
+    try {
+      return await this.bidsService.create(auctionId, bidderId, autoBidAmount);
+    } catch (e) {
+      return null;
+    }
   }
 
   async create(auctionId: string, bidderId: string, data: CreateAutoBidDTO) {

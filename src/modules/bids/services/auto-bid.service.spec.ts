@@ -222,7 +222,7 @@ describe('AutoBidService', () => {
   });
   it('should fail to auto bid if last bidder is the same', async () => {
     const newUserId = await createNewUser();
-    await bidsService.create(auction.id, newUserId, 200);
+    await bidsService.create(auction.id, newUserId, 150);
     const bid = await autoBidService.autoBid(auction.id, newUserId, 100, 200);
 
     expect(bid).toBeNull();
