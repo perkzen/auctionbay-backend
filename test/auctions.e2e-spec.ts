@@ -11,12 +11,13 @@ import { UsersModule } from '../src/modules/users/users.module';
 import * as request from 'supertest';
 import { AuctionsModule } from '../src/modules/auctions/auctions.module';
 import { AuctionsService } from '../src/modules/auctions/services/auctions.service';
-import { AuctionStatus } from '@prisma/client';
+import { Auction, AuctionStatus } from '@prisma/client';
 import { UploadModule } from '../src/modules/upload/upload.module';
 import { UploadService } from '../src/modules/upload/upload.service';
 import { BidsService } from '../src/modules/auctions/services/bids.service';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 
-describe('AuctionsController', () => {
+describe('AuctionsController (e2e)', () => {
   let app: INestApplication,
     access_token: string,
     db: PrismaService,
@@ -44,6 +45,7 @@ describe('AuctionsController', () => {
         UsersModule,
         PrismaModule,
         UploadModule,
+        EventEmitterModule.forRoot(),
       ],
     })
       .overrideProvider(UploadService)
@@ -60,7 +62,18 @@ describe('AuctionsController', () => {
     await app.init();
   });
 
+  beforeEach(async () => {
+    user = await authService.register(signupDTO);
+    const res = await authService.login(user);
+    access_token = res.accessToken;
+  });
+
+  afterEach(async () => {
+    await db.user.delete({ where: { id: user.id } });
+  });
+
   afterAll(async () => {
+    app.flushLogs();
     await db.clearDatabase();
     await app.close();
   });
@@ -73,16 +86,6 @@ describe('AuctionsController', () => {
     expect(access_token).toBeDefined();
     expect(auctionService).toBeDefined();
     expect(bidService).toBeDefined();
-  });
-
-  beforeEach(async () => {
-    user = await authService.register(signupDTO);
-    const res = await authService.login(user);
-    access_token = res.accessToken;
-  });
-
-  afterEach(async () => {
-    await db.user.deleteMany({});
   });
 
   describe('/auctions (GET)', () => {
@@ -434,6 +437,66 @@ describe('AuctionsController', () => {
       return request(app.getHttpServer())
         .get(`/auctions/me/bidding`)
         .expect(401);
+    });
+  });
+
+  describe('/auctions/:id/auto-bid (POST)', () => {
+    let newAuction: Auction,
+      newUser: SanitizedUser,
+      newAccessToken: string,
+      auctionOwnerId: string;
+
+    beforeAll(async () => {
+      auctionOwnerId = (
+        await authService.register({
+          ...signupDTO,
+          email: faker.internet.email(),
+        })
+      ).id;
+
+      newAuction = await auctionService.create(
+        {
+          title: faker.commerce.productName(),
+          description: faker.commerce.productDescription(),
+          startingPrice: 100,
+          endsAt: new Date(),
+        },
+        auctionOwnerId,
+        null,
+      );
+
+      newUser = await authService.register({
+        ...signupDTO,
+        email: faker.internet.email(),
+      });
+      const res = await authService.login(newUser);
+      newAccessToken = res.accessToken;
+    });
+
+    it('should fail because of missing authorization header', async () => {
+      return request(app.getHttpServer())
+        .post(`/auctions/${newAuction.id}/auto-bid`)
+        .send({ incrementAmount: 100, maxAmount: 200 })
+        .expect(401);
+    });
+    it('should fail if invalid data', async () => {
+      return request(app.getHttpServer())
+        .post(`/auctions/${newAuction.id}/auto-bid`)
+        .set('Authorization', `Bearer ${newAccessToken}`)
+        .send({ incrementAmount: 100, maxAmount: 50 })
+        .expect(400)
+        .expect({
+          message: 'Max amount should be greater than increment amount.',
+          error: 'Bad Request',
+          statusCode: 400,
+        });
+    });
+    it('should create an auto bid', async () => {
+      return request(app.getHttpServer())
+        .post(`/auctions/${newAuction.id}/auto-bid`)
+        .set('Authorization', `Bearer ${newAccessToken}`)
+        .send({ incrementAmount: 100, maxAmount: 200 })
+        .expect(201);
     });
   });
 });

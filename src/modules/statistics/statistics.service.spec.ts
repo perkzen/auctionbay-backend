@@ -7,6 +7,7 @@ import { UsersModule } from '../users/users.module';
 import { faker } from '@faker-js/faker';
 import { AuctionStatus, BidStatus } from '@prisma/client';
 import { AuctionsModule } from '../auctions/auctions.module';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 
 describe('StatisticsService', () => {
   let moduleRef: TestingModuleBuilder,
@@ -33,7 +34,13 @@ describe('StatisticsService', () => {
 
   beforeAll(async () => {
     moduleRef = Test.createTestingModule({
-      imports: [PrismaModule, UsersModule, StatisticsModule, AuctionsModule],
+      imports: [
+        PrismaModule,
+        UsersModule,
+        StatisticsModule,
+        AuctionsModule,
+        EventEmitterModule.forRoot(),
+      ],
     });
 
     app = await moduleRef.compile();

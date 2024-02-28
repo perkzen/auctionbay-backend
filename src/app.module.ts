@@ -11,6 +11,8 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { NotificationsModule } from './modules/notifications/notifications.module';
 import { UploadModule } from './modules/upload/upload.module';
 import { StatisticsModule } from './modules/statistics/statistics.module';
+import { EventEmitterModule } from '@nestjs/event-emitter';
+import { BidsModule } from './modules/bids/bids.module';
 
 @Module({
   imports: [
@@ -19,6 +21,7 @@ import { StatisticsModule } from './modules/statistics/statistics.module';
       isGlobal: true,
       load: [() => settings],
     }),
+    EventEmitterModule.forRoot(),
     ScheduleModule.forRoot(),
     AuthModule,
     UsersModule,
@@ -27,6 +30,7 @@ import { StatisticsModule } from './modules/statistics/statistics.module';
     AuctionsModule,
     NotificationsModule,
     UploadModule,
+    BidsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

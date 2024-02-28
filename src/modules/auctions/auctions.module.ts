@@ -7,10 +7,11 @@ import { UploadModule } from '../upload/upload.module';
 import { BidsController } from './controllers/bids.controller';
 import { BidsService } from './services/bids.service';
 import { UserAuctionsController } from './controllers/user-auctions.controller';
+import { AutoBidService } from './services/auto-bid.service';
 
 @Module({
   imports: [NotificationsModule, UploadModule],
   controllers: [UserAuctionsController, AuctionsController, BidsController],
-  providers: [AuctionsService, AuctionsJob, BidsService],
+  providers: [AuctionsService, AuctionsJob, BidsService, AutoBidService],
 })
 export class AuctionsModule {}

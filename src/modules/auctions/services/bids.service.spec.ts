@@ -11,6 +11,7 @@ import { UsersModule } from '../../users/users.module';
 import { UploadModule } from '../../upload/upload.module';
 import { UploadService } from '../../upload/upload.service';
 import { AuctionsModule } from '../auctions.module';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 
 describe('BidsService', () => {
   let moduleRef: TestingModuleBuilder,
@@ -35,8 +36,13 @@ describe('BidsService', () => {
 
   beforeAll(async () => {
     moduleRef = Test.createTestingModule({
-      imports: [PrismaModule, UsersModule, UploadModule, AuctionsModule],
-      providers: [BidsService],
+      imports: [
+        PrismaModule,
+        UsersModule,
+        UploadModule,
+        AuctionsModule,
+        EventEmitterModule.forRoot(),
+      ],
     })
       .overrideProvider(UploadService)
       .useValue(uploadServiceMock);

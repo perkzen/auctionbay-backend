@@ -17,6 +17,7 @@ import { AuctionsService } from '../src/modules/auctions/services/auctions.servi
 import { CreateAuctionDTO } from '../src/modules/auctions/dtos/create-auction.dto';
 import { AuctionsModule } from '../src/modules/auctions/auctions.module';
 import * as request from 'supertest';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 
 describe('NotificationsController (e2e)', () => {
   let app: INestApplication,
@@ -56,6 +57,7 @@ describe('NotificationsController (e2e)', () => {
         UploadModule,
         NotificationsModule,
         AuctionsModule,
+        EventEmitterModule.forRoot(),
       ],
     })
       .overrideProvider(UploadService)
@@ -89,6 +91,7 @@ describe('NotificationsController (e2e)', () => {
 
   afterAll(async () => {
     await db.clearDatabase();
+    app.flushLogs();
     await app.close();
   });
 
