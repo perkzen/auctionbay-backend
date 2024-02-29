@@ -12,6 +12,7 @@ import {
   ApiBearerAuth,
   ApiBody,
   ApiConsumes,
+  ApiOkResponse,
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
@@ -21,6 +22,7 @@ import { Public, User } from '../../../common/decorators';
 import { AuctionOwnerGuard } from '../guards/auction-owner.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UploadedImage } from '../../../common/decorators/uploaded-image.decorator';
+import { AuctionDTO } from '../dtos/auction.dto';
 
 @ApiTags('Auctions')
 @Controller('auctions')
@@ -30,22 +32,35 @@ export class AuctionsController {
   @ApiOperation({
     summary: 'List all active auctions in descending order by createdAt',
   })
+  @ApiOkResponse({
+    description: 'Auctions retrieved successfully',
+    type: AuctionDTO,
+    isArray: true,
+  })
   @Public()
   @Get()
-  async list() {
+  async list(): Promise<AuctionDTO[]> {
     return this.auctionsService.list();
   }
 
   @ApiOperation({ summary: 'Get an auction by id' })
+  @ApiOkResponse({
+    description: 'Auction retrieved successfully',
+    type: AuctionDTO,
+  })
   @Public()
   @Get(':id')
-  async getById(@Param('id') id: string) {
+  async getById(@Param('id') id: string): Promise<AuctionDTO> {
     return this.auctionsService.findById(id);
   }
 
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Creates a new auction' })
   @ApiConsumes('multipart/form-data')
+  @ApiOkResponse({
+    description: 'Auction created successfully',
+    type: AuctionDTO,
+  })
   @ApiBody({
     schema: {
       type: 'object',
@@ -67,15 +82,22 @@ export class AuctionsController {
     @Body() data: CreateAuctionDTO,
     @User('userId') userId: string,
     @UploadedImage() image: Express.Multer.File,
-  ) {
+  ): Promise<AuctionDTO> {
     return this.auctionsService.create(data, userId, image);
   }
 
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Updates an auction' })
+  @ApiOkResponse({
+    description: 'Auction updated successfully',
+    type: AuctionDTO,
+  })
   @UseGuards(AuctionOwnerGuard)
   @Put(':id')
-  async update(@Body() data: CreateAuctionDTO, @Param('id') auctionId: string) {
+  async update(
+    @Body() data: CreateAuctionDTO,
+    @Param('id') auctionId: string,
+  ): Promise<AuctionDTO> {
     return this.auctionsService.update(data, auctionId);
   }
 }

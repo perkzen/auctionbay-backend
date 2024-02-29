@@ -11,7 +11,19 @@ export class AppController {
   @Public()
   @Get()
   @ApiOperation({ summary: 'Application Health Check' })
-  @ApiResponse({ status: 200, description: 'Health check passed' })
+  @ApiResponse({
+    status: 200,
+    description: 'Health check passed',
+    schema: {
+      type: 'object',
+      properties: {
+        status: { type: 'string' },
+        uptime: { type: 'string' },
+        timestamp: { type: 'string' },
+        environment: { type: 'string' },
+      },
+    },
+  })
   getHealthCheck() {
     return this.appService.healthCheck();
   }
