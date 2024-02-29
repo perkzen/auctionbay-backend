@@ -137,6 +137,7 @@ export class BidsService {
           select: {
             title: true,
             id: true,
+            imageUrl: true,
           },
         },
       },

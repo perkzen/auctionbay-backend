@@ -91,7 +91,7 @@ describe('NotificationsService', () => {
       await db.notification.create({
         data: createAuctionClosedNotification({
           ...bid,
-          auction: { title: auction.title, id: auction.id },
+          auction: { title: auction.title, id: auction.id, imageUrl: '' },
         }),
       })
     ).id;
@@ -154,11 +154,11 @@ describe('NotificationsService', () => {
       data: [
         createAuctionClosedNotification({
           ...bid,
-          auction: { title: 'test', id: auctionId },
+          auction: { title: 'test', id: auctionId, imageUrl: '' },
         }),
         createAuctionClosedNotification({
           ...bid,
-          auction: { title: 'test', id: auctionId },
+          auction: { title: 'test', id: auctionId, imageUrl: '' },
         }),
       ],
     });
@@ -179,11 +179,11 @@ describe('NotificationsService', () => {
     await notificationsService.sendAuctionClosedNotification(auctionId, [
       {
         ...bid,
-        auction: { title: 'test', id: auctionId },
+        auction: { title: 'test', id: auctionId, imageUrl: '' },
       },
       {
         ...bid,
-        auction: { title: 'test', id: auctionId },
+        auction: { title: 'test', id: auctionId, imageUrl: '' },
       },
     ]);
 
