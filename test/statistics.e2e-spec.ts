@@ -167,7 +167,7 @@ describe('StatisticsController (e2e)', () => {
         .get('/statistics/me/winning-bids')
         .set('Authorization', `Bearer ${access_token}`)
         .expect(200)
-        .expect({ currentlyWinningBids: 5 });
+        .expect({ winningBids: 5 });
     });
   });
 });
