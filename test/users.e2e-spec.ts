@@ -99,7 +99,11 @@ describe('UsersController (e2e)', () => {
           newPassword: 'newPassword',
         })
         .expect(401)
-        .expect({ statusCode: 401, message: "Password doesn't match" });
+        .expect({
+          message: "Password doesn't match",
+          error: 'Unauthorized',
+          statusCode: 401,
+        });
     });
     it('should update password successfully', async () => {
       request(app.getHttpServer())

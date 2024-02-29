@@ -1,4 +1,9 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { SignupDTO } from '../auth/dtos/signup.dto';
 import { UpdatePasswordDTO } from './dtos/update-password.dto';
@@ -20,9 +25,15 @@ export class UsersService {
   }
 
   async findById(id: string) {
-    return this.db.user.findUnique({
+    const user = await this.db.user.findUnique({
       where: { id },
     });
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    return user;
   }
 
   async create(user: SignupDTO) {
@@ -55,10 +66,7 @@ export class UsersService {
     );
 
     if (!isCorrectPassword) {
-      throw new HttpException(
-        "Password doesn't match",
-        HttpStatus.UNAUTHORIZED,
-      );
+      throw new UnauthorizedException("Password doesn't match");
     }
 
     const hashedPassword = await hashPassword(data.newPassword);
@@ -79,7 +87,7 @@ export class UsersService {
     const uploadedImage = await this.uploadService.upload(image);
 
     if (!uploadedImage) {
-      throw new HttpException('Failed to upload image', HttpStatus.BAD_REQUEST);
+      throw new BadRequestException('Failed to upload image');
     }
 
     return this.db.user.update({

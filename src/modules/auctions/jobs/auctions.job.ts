@@ -7,6 +7,8 @@ import { NotificationsService } from '../../notifications/notifications.service'
 
 @Injectable()
 export class AuctionsJob {
+  private readonly logger = new Logger(AuctionsJob.name);
+
   constructor(
     private readonly auctionsService: AuctionsService,
     private readonly notificationsService: NotificationsService,
@@ -15,14 +17,12 @@ export class AuctionsJob {
 
   @Cron('* * * * *')
   async checkAuctions() {
-    const { count, closedAuctions } =
+    const { count, auctions } =
       await this.auctionsService.updateAuctionStatuses();
 
-    Logger.log(`Closed ${count} auctions`, 'AuctionsJob');
+    this.logger.log(`Closed ${count} auctions`);
 
-    if (count === 0) return;
-
-    for (const auction of closedAuctions) {
+    for (const auction of auctions) {
       const bids = await this.bidsService.findLastBidsByEachUser(auction.id);
       await this.notificationsService.sendAuctionClosedNotification(
         auction.id,
