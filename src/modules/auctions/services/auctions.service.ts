@@ -3,6 +3,7 @@ import {
   forwardRef,
   Inject,
   Injectable,
+  Logger,
   NotFoundException,
 } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
@@ -14,6 +15,8 @@ import { BidsService } from '../../bids/services/bids.service';
 
 @Injectable()
 export class AuctionsService {
+  private readonly logger = new Logger(AuctionsService.name);
+
   constructor(
     private readonly db: PrismaService,
     private readonly uploadService: UploadService,
@@ -32,14 +35,19 @@ export class AuctionsService {
       throw new BadRequestException('Failed to create auction');
     }
 
-    return this.db.auction.create({
-      data: {
-        ...data,
-        imageUrl: imageUrl,
-        status: AuctionStatus.ACTIVE,
-        ownerId,
-      },
-    });
+    try {
+      return this.db.auction.create({
+        data: {
+          ...data,
+          imageUrl: imageUrl,
+          status: AuctionStatus.ACTIVE,
+          ownerId,
+        },
+      });
+    } catch (e) {
+      await this.uploadService.delete(imageUrl);
+      this.logger.error(e);
+    }
   }
 
   async update(data: UpdateAuctionDTO, auctionId: string) {
