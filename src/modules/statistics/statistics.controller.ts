@@ -10,7 +10,7 @@ export class StatisticsController {
 
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get earnings by user' })
-  @Get('earnings/me')
+  @Get('me/earnings')
   async getEarningsByUser(@User('userId') userId: string) {
     const earnings = await this.statisticsService.earningsByUser(userId);
     return { earnings };
@@ -18,7 +18,7 @@ export class StatisticsController {
 
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get posted auctions by user' })
-  @Get('posted-auctions/me')
+  @Get('me/posted-auctions')
   async getPostedAuctionsByUser(@User('userId') userId: string) {
     const postedAuctions =
       await this.statisticsService.postedAuctionsByUser(userId);
@@ -27,7 +27,7 @@ export class StatisticsController {
 
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get active bids by user' })
-  @Get('active-bids/me')
+  @Get('me/active-bids')
   async getActiveBidsByUser(@User('userId') userId: string) {
     const activeBids = await this.statisticsService.activeBidsByUser(userId);
     return { activeBids };
@@ -35,7 +35,7 @@ export class StatisticsController {
 
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get currently winning bids by user' })
-  @Get('winning-bids/me')
+  @Get('me/winning-bids')
   async getCurrentlyWinningBidsByUser(@User('userId') userId: string) {
     const currentlyWinningBids =
       await this.statisticsService.currentlyWinningBidsByUser(userId);
