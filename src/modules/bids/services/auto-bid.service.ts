@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { BidsService } from './bids.service';
 import { OnEvent } from '@nestjs/event-emitter';
 import { AuctionEvents } from '../../auctions/events/auction.events';
@@ -10,6 +10,8 @@ import { AuctionsService } from '../../auctions/services/auctions.service';
 
 @Injectable()
 export class AutoBidService {
+  private readonly logger = new Logger(AutoBidService.name);
+
   constructor(
     private readonly db: PrismaService,
     private readonly bidsService: BidsService,
@@ -18,17 +20,24 @@ export class AutoBidService {
 
   @OnEvent(AuctionEvents.NEW_BID)
   async handleNewBidEvent(payload: NewBidEvent) {
+    this.logger.log('New bid event received');
+
     const { auctionId, amount, bidderId } = payload;
 
     const autoBids = await this.findValidAutoBids(auctionId, bidderId, amount);
 
     for (const autoBid of autoBids) {
-      await this.autoBid(
+      const newBid = await this.autoBid(
         auctionId,
         autoBid.bidderId,
         autoBid.incrementAmount,
         autoBid.maxAmount,
       );
+
+      newBid &&
+        this.logger.log(
+          `Auto-bid placed for bidder ${newBid.bidderId} on auction ${newBid.auctionId} with amount ${newBid.amount}`,
+        );
     }
   }
 

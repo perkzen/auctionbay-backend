@@ -3,6 +3,7 @@ import {
   forwardRef,
   Inject,
   Injectable,
+  Logger,
 } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { AuctionStatus, Bid, BidStatus } from '@prisma/client';
@@ -13,6 +14,8 @@ import { AuctionsService } from '../../auctions/services/auctions.service';
 
 @Injectable()
 export class BidsService {
+  private readonly logger = new Logger(BidsService.name);
+
   constructor(
     private readonly db: PrismaService,
     private readonly eventEmitter: EventEmitter2,
@@ -110,6 +113,8 @@ export class BidsService {
         AuctionEvents.NEW_BID,
         new NewBidEvent(auctionId, bidderId, amount),
       );
+
+      this.logger.log(`New bid on auction ${auctionId} by ${bidderId}`);
 
       return bid;
     });

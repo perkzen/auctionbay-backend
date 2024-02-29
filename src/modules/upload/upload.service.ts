@@ -4,6 +4,8 @@ import settings from '../../app.settings';
 
 @Injectable()
 export class UploadService {
+  private readonly logger = new Logger(UploadService.name);
+
   private readonly s3 = new S3({
     region: settings.aws.s3.region,
     credentials: {
@@ -11,8 +13,6 @@ export class UploadService {
       secretAccessKey: settings.aws.secretAccessKey,
     },
   });
-
-  private readonly logger = new Logger(UploadService.name);
 
   private getFileUrl(name: string) {
     return `https://${settings.aws.s3.bucket}.s3.${settings.aws.s3.region}.amazonaws.com/${name}`;

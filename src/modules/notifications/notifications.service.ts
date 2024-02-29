@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { NotificationsGateway } from './gateway/notifications.gateway';
 import {
@@ -9,6 +9,8 @@ import { CreateNotification } from './types/notification.types';
 
 @Injectable()
 export class NotificationsService {
+  private readonly logger = new Logger(NotificationsService.name);
+
   constructor(
     private readonly db: PrismaService,
     private readonly notificationsGateway: NotificationsGateway,
@@ -58,12 +60,16 @@ export class NotificationsService {
       createAuctionClosedNotification(bid),
     );
 
-    await this.createMany(notifications);
+    const { count } = await this.createMany(notifications);
+    this.logger.log(`Created ${count} notifications`);
 
     const newNotifications = await this.findByAuctionId(auctionId);
 
     if (newNotifications.length > 0) {
       await this.notificationsGateway.notifyUsers(newNotifications);
+      this.logger.log(
+        `Notifying ${notifications.length} users about auction ${auctionId}`,
+      );
     }
   }
 }
