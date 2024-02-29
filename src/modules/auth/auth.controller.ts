@@ -8,7 +8,7 @@ import {
 } from '@nestjs/common';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 import { AuthService } from './auth.service';
-import { ApiBody, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { LoginDTO } from './dtos/login.dto';
 import { SignupDTO } from './dtos/signup.dto';
 import { JwtUser, SanitizedUser } from './types/auth.types';
@@ -21,8 +21,9 @@ import { RefreshTokenDTO } from './dtos/refresh-token.dto';
 export class AuthController {
   constructor(private authService: AuthService) {}
 
-  @Public()
+  @ApiOperation({ summary: 'Login' })
   @ApiBody({ type: LoginDTO })
+  @Public()
   @HttpCode(HttpStatus.OK)
   @UseGuards(LocalAuthGuard)
   @Post('login')
@@ -30,12 +31,14 @@ export class AuthController {
     return this.authService.login(user);
   }
 
+  @ApiOperation({ summary: 'Signup' })
   @Public()
   @Post('signup')
   async signup(@Body() data: SignupDTO) {
     return this.authService.register(data);
   }
 
+  @ApiOperation({ summary: 'Refresh token' })
   @Public()
   @ApiBody({ type: RefreshTokenDTO })
   @UseGuards(RefreshTokenAuthGuard)
