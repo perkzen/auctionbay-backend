@@ -21,6 +21,7 @@ export class CreateAuctionDTO {
   @ApiProperty()
   @IsDateString({
     strict: false,
+    strictSeparator: false,
   })
   endsAt: Date;
 }
