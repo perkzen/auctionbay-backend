@@ -11,6 +11,7 @@ import {
   ApiBearerAuth,
   ApiBody,
   ApiConsumes,
+  ApiOkResponse,
   ApiOperation,
   ApiResponse,
   ApiTags,
@@ -21,6 +22,7 @@ import { User } from '../../common/decorators';
 import { UpdateProfileDTO } from './dtos/update-profile.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UploadedImage } from '../../common/decorators/uploaded-image.decorator';
+import { UserDTO } from './dtos/user.dto';
 
 @ApiTags('Users')
 @Controller('users')
@@ -29,6 +31,10 @@ export class UserController {
 
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get user profile' })
+  @ApiOkResponse({
+    description: 'User profile retrieved successfully',
+    type: UserDTO,
+  })
   @Get('me')
   async me(@User('userId') userId: string) {
     return sanitizeUser(await this.usersService.findById(userId));
@@ -36,9 +42,16 @@ export class UserController {
 
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Update user profile' })
-  @ApiResponse({
-    status: HttpStatus.OK,
+  @ApiOkResponse({
     description: 'Profile updated successfully',
+    schema: {
+      type: 'object',
+      properties: {
+        email: { type: 'string' },
+        firstname: { type: 'string' },
+        lastname: { type: 'string' },
+      },
+    },
   })
   @Put('me')
   async updateProfile(
@@ -50,8 +63,7 @@ export class UserController {
 
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Update user password' })
-  @ApiResponse({
-    status: HttpStatus.OK,
+  @ApiOkResponse({
     description: 'Password updated successfully',
   })
   @Put('me/update-password')

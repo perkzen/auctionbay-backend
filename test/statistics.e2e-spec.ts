@@ -91,10 +91,10 @@ describe('StatisticsController (e2e)', () => {
     expect(access_token).toBeDefined();
   });
 
-  describe('/statistics/earnings/me (GET)', () => {
+  describe('/statistics/me/earnings (GET)', () => {
     it('should fail because user is not authorized', () => {
       return request(app.getHttpServer())
-        .get('/statistics/earnings/me')
+        .get('/statistics/me/earnings')
         .expect(401)
         .expect({
           message: "You don't have access to this",
@@ -104,17 +104,17 @@ describe('StatisticsController (e2e)', () => {
     });
     it('should return earnings by user', async () => {
       return request(app.getHttpServer())
-        .get('/statistics/earnings/me')
+        .get('/statistics/me/earnings')
         .set('Authorization', `Bearer ${access_token}`)
         .expect(200)
         .expect({ earnings: 100 });
     });
   });
 
-  describe('/statistics/posted-auctions/me (GET)', () => {
+  describe('/statistics/me/posted-auctions (GET)', () => {
     it('should fail because user is not authorized', () => {
       return request(app.getHttpServer())
-        .get('/statistics/posted-auctions/me')
+        .get('/statistics/me/posted-auctions')
         .expect(401)
         .expect({
           message: "You don't have access to this",
@@ -124,17 +124,17 @@ describe('StatisticsController (e2e)', () => {
     });
     it('should return posted auctions by user', async () => {
       return request(app.getHttpServer())
-        .get('/statistics/posted-auctions/me')
+        .get('/statistics/me/posted-auctions')
         .set('Authorization', `Bearer ${access_token}`)
         .expect(200)
         .expect({ postedAuctions: 20 });
     });
   });
 
-  describe('/statistics/active-bids/me (GET)', () => {
+  describe('/statistics/me/active-bids (GET)', () => {
     it('should fail because user is not authorized', () => {
       return request(app.getHttpServer())
-        .get('/statistics/active-bids/me')
+        .get('/statistics/me/active-bids ')
         .expect(401)
         .expect({
           message: "You don't have access to this",
@@ -144,17 +144,17 @@ describe('StatisticsController (e2e)', () => {
     });
     it('should return active bids by user', async () => {
       return request(app.getHttpServer())
-        .get('/statistics/active-bids/me')
+        .get('/statistics/me/active-bids ')
         .set('Authorization', `Bearer ${access_token}`)
         .expect(200)
         .expect({ activeBids: 10 });
     });
   });
 
-  describe('/statistics/winning-bids/me (GET)', () => {
+  describe('/statistics/me/winning-bids (GET)', () => {
     it('should fail because user is not authorized', () => {
       return request(app.getHttpServer())
-        .get('/statistics/winning-bids/me')
+        .get('/statistics/me/winning-bids')
         .expect(401)
         .expect({
           message: "You don't have access to this",
@@ -164,10 +164,10 @@ describe('StatisticsController (e2e)', () => {
     });
     it('should return currently winning bids by user', async () => {
       return request(app.getHttpServer())
-        .get('/statistics/winning-bids/me')
+        .get('/statistics/me/winning-bids')
         .set('Authorization', `Bearer ${access_token}`)
         .expect(200)
-        .expect({ currentlyWinningBids: 5 });
+        .expect({ winningBids: 5 });
     });
   });
 });
