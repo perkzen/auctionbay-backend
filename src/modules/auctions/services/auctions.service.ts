@@ -65,7 +65,7 @@ export class AuctionsService {
         status: AuctionStatus.ACTIVE,
       },
       orderBy: {
-        createdAt: 'desc',
+        endsAt: 'desc',
       },
     });
   }
