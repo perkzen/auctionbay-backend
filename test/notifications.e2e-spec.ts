@@ -73,7 +73,6 @@ describe('NotificationsController (e2e)', () => {
     auctionService = app.get<AuctionsService>(AuctionsService);
 
     user = await authService.register(signupDTO);
-    const res = await authService.login(user);
 
     const auction = await auctionService.create(auctionDTO, user.id, null);
 
@@ -85,7 +84,7 @@ describe('NotificationsController (e2e)', () => {
     await db.notification.create({
       data: createAuctionClosedNotification({
         ...bid,
-        auction: { title: auction.title, id: auction.id },
+        auction: { title: auction.title, id: auction.id, imageUrl },
       }),
     });
 
