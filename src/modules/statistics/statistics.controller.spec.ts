@@ -75,7 +75,7 @@ describe('StatisticsController', () => {
     const userId = 'user-id';
     const { winningBids } =
       await controller.getCurrentlyWinningBidsByUser(userId);
-    expect(window).toBe(5);
+    expect(winningBids).toBe(5);
     expect(
       statisticsServiceMock.currentlyWinningBidsByUser,
     ).toHaveBeenCalledWith(userId);
