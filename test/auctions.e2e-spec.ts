@@ -90,11 +90,18 @@ describe('AuctionsController (e2e)', () => {
   });
 
   describe('/auctions (GET)', () => {
+    it('should fail because of missing authorization header', async () => {
+      return request(app.getHttpServer()).get('/auctions').expect(401);
+    });
     it('should return an empty array', () => {
       return request(app.getHttpServer())
         .get('/auctions')
+        .set('Authorization', `Bearer ${access_token}`)
         .expect(200)
-        .expect([]);
+        .expect((res) => {
+          expect(res.body).toHaveLength(0);
+          expect(res.body).toEqual([]);
+        });
     });
     it('should return an array of auctions', async () => {
       const auction = await auctionService.create(
@@ -110,6 +117,7 @@ describe('AuctionsController (e2e)', () => {
 
       return request(app.getHttpServer())
         .get('/auctions')
+        .set('Authorization', `Bearer ${access_token}`)
         .expect(200)
         .expect((res) => {
           expect(res.body).toHaveLength(1);
@@ -279,6 +287,9 @@ describe('AuctionsController (e2e)', () => {
     });
   });
   describe('/auctions/:id (GET)', () => {
+    it('should fail because of missing authorization header', async () => {
+      return request(app.getHttpServer()).get('/auctions/1').expect(401);
+    });
     it('should return an auction', async () => {
       const auction = await auctionService.create(
         {
@@ -293,6 +304,7 @@ describe('AuctionsController (e2e)', () => {
 
       return request(app.getHttpServer())
         .get(`/auctions/${auction.id}`)
+        .set('Authorization', `Bearer ${access_token}`)
         .expect(200)
         .expect((res) => {
           expect(res.body.id).toEqual(auction.id);
@@ -302,6 +314,7 @@ describe('AuctionsController (e2e)', () => {
     it('should return 404', async () => {
       return request(app.getHttpServer())
         .get(`/auctions/1`)
+        .set('Authorization', `Bearer ${access_token}`)
         .expect(404)
         .expect({
           message: 'Auction not found',

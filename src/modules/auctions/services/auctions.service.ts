@@ -12,6 +12,7 @@ import { Auction, AuctionStatus, BidStatus } from '@prisma/client';
 import { UpdateAuctionDTO } from '../dtos/update-auction.dto';
 import { UploadService } from '../../upload/upload.service';
 import { BidsService } from '../../bids/services/bids.service';
+import { AuctionListDTO } from '../dtos/auction-list.dto';
 
 @Injectable()
 export class AuctionsService {
@@ -59,13 +60,34 @@ export class AuctionsService {
     });
   }
 
-  async list(): Promise<Auction[]> {
+  async list(userId: string): Promise<AuctionListDTO[]> {
     return this.db.auction.findMany({
       where: {
         status: AuctionStatus.ACTIVE,
       },
       orderBy: {
         endsAt: 'desc',
+      },
+      select: {
+        id: true,
+        title: true,
+        imageUrl: true,
+        status: true,
+        endsAt: true,
+        startingPrice: true,
+        bids: {
+          where: {
+            bidderId: userId,
+          },
+          orderBy: {
+            amount: 'desc',
+          },
+          select: {
+            status: true,
+            amount: true,
+          },
+          take: 1,
+        },
       },
     });
   }

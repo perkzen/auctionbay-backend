@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { BidStatus } from '@prisma/client';
 
 export class BidDTO {
   @ApiProperty()
@@ -7,8 +8,8 @@ export class BidDTO {
   @ApiProperty()
   amount: number;
 
-  @ApiProperty()
-  status: string;
+  @ApiProperty({ enum: Object.values(BidStatus) })
+  status: BidStatus;
 
   @ApiProperty()
   auctionId: string;

@@ -98,7 +98,7 @@ describe('AuctionsController', () => {
   });
 
   it('should list all auctions', async () => {
-    const auctions = await controller.list();
+    const auctions = await controller.list('123');
 
     expect(auctions).toEqual([auctionData]);
     expect(auctionsServiceMock.list).toHaveBeenCalled();
