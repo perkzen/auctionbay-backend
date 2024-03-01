@@ -4,11 +4,12 @@ import { BidsService } from './services/bids.service';
 import { AutoBidService } from './services/auto-bid.service';
 import { AuctionsModule } from '../auctions/auctions.module';
 import { BidsGateway } from './gateway/bids.gateway';
+import { AuthModule } from '../auth/auth.module';
 
 @Module({
-  imports: [forwardRef(() => AuctionsModule)],
+  imports: [forwardRef(() => AuctionsModule), AuthModule],
   controllers: [BidsController],
-  providers: [BidsService, AutoBidService, BidsGateway],
+  providers: [BidsGateway, BidsService, AutoBidService],
   exports: [BidsService, AutoBidService],
 })
 export class BidsModule {}

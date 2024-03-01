@@ -4,13 +4,14 @@ import {
   WebSocketServer,
 } from '@nestjs/websockets';
 import { Server } from 'socket.io';
-import { Logger } from '@nestjs/common';
+import { Logger, UseGuards } from '@nestjs/common';
 import { AuthWsMiddleware } from '../../auth/middlewares/auth-ws.middleware';
 import settings from '../../../app.settings';
 import { OnEvent } from '@nestjs/event-emitter';
 import { NewBidEventPayload } from '../events/new-bid.event';
 import { BidsGatewayEmitEvents } from '../types/bids-server.types';
 import { AuctionEvent } from '../../auctions/events/auctionEvent';
+import { WsJwtGuard } from '../../auth/guards/ws-jwt.guard';
 
 @WebSocketGateway({
   path: '/bids',
@@ -19,6 +20,7 @@ import { AuctionEvent } from '../../auctions/events/auctionEvent';
     origin: settings.app.corsOrigin,
   },
 })
+@UseGuards(WsJwtGuard)
 export class BidsGateway implements OnGatewayInit {
   private readonly logger: Logger = new Logger(BidsGateway.name);
 
