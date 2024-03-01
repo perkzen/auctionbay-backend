@@ -1,8 +1,8 @@
 import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { BidsService } from './bids.service';
 import { OnEvent } from '@nestjs/event-emitter';
-import { AuctionEvents } from '../../auctions/events/auction.events';
-import { NewBidEvent } from '../events/new-bid.event';
+import { AuctionEvent } from '../../auctions/events/auctionEvent';
+import { NewBidEventPayload } from '../events/new-bid.event';
 import { PrismaService } from '../../prisma/prisma.service';
 import { CreateAutoBidDTO } from '../dtos/create-auto-bid.dto';
 import { Bid } from '@prisma/client';
@@ -18,8 +18,8 @@ export class AutoBidService {
     private readonly auctionService: AuctionsService,
   ) {}
 
-  @OnEvent(AuctionEvents.NEW_BID)
-  async handleNewBidEvent(payload: NewBidEvent) {
+  @OnEvent(AuctionEvent.NEW_BID)
+  async handleNewBidEvent(payload: NewBidEventPayload) {
     this.logger.log('New bid event received');
 
     const { auctionId, amount, bidderId } = payload;

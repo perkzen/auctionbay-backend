@@ -1,4 +1,4 @@
-export class NewBidEvent {
+export class NewBidEventPayload {
   constructor(
     public readonly auctionId: string,
     public readonly bidderId: string,

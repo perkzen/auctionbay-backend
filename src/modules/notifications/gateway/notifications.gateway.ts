@@ -12,10 +12,11 @@ import { Logger, UseGuards } from '@nestjs/common';
 import { AuthenticatedSocket } from '../../auth/types/auth.types';
 import { WsJwtGuard } from '../../auth/guards/ws-jwt.guard';
 import settings from '../../../app.settings';
-import { EmitEvents } from '../types/notification-server.types';
+import { NotificationsGatewayEmitEvents } from '../types/notification-server.types';
 import { Notification } from '@prisma/client';
 
 @WebSocketGateway({
+  path: '/live-notifications',
   transport: ['websocket'],
   cors: {
     origin: settings.app.corsOrigin,
@@ -26,7 +27,7 @@ export class NotificationsGateway
   implements OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit
 {
   @WebSocketServer()
-  server: Server<unknown, EmitEvents>;
+  server: Server<unknown, NotificationsGatewayEmitEvents>;
 
   private readonly connections = new Map<string, Socket>();
 
@@ -40,15 +41,10 @@ export class NotificationsGateway
 
   async handleConnection(client: AuthenticatedSocket) {
     this.connections.set(client.userId, client);
-    this.logger.log(`User connected: ${client.userId}`, 'NotificationsGateway');
   }
 
   handleDisconnect(client: AuthenticatedSocket) {
     this.connections.delete(client.userId);
-    this.logger.log(
-      `User disconnected: ${client.userId}`,
-      'NotificationsGateway',
-    );
   }
 
   async notifyUsers(notifications: Notification[]) {
@@ -62,10 +58,7 @@ export class NotificationsGateway
         .to(socket.id)
         .emit(NotificationEvent.NEW_NOTIFICATION, notification);
 
-      this.logger.log(
-        `Notification sent to user ${userId}`,
-        'NotificationsGateway',
-      );
+      this.logger.log(`Notification sent to user ${userId}`);
     }
   }
 }

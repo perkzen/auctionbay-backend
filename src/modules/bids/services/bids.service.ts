@@ -8,9 +8,9 @@ import {
 import { PrismaService } from '../../prisma/prisma.service';
 import { AuctionStatus, Bid, BidStatus } from '@prisma/client';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { AuctionEvents } from '../../auctions/events/auction.events';
-import { NewBidEvent } from '../events/new-bid.event';
+import { NewBidEventPayload } from '../events/new-bid.event';
 import { AuctionsService } from '../../auctions/services/auctions.service';
+import { AuctionEvent } from '../../auctions/events/auctionEvent';
 
 @Injectable()
 export class BidsService {
@@ -110,8 +110,8 @@ export class BidsService {
       await updateBidStatuses(bid.id);
 
       this.eventEmitter.emit(
-        AuctionEvents.NEW_BID,
-        new NewBidEvent(auctionId, bidderId, amount),
+        AuctionEvent.NEW_BID,
+        new NewBidEventPayload(auctionId, bidderId, amount),
       );
 
       this.logger.log(`New bid on auction ${auctionId} by ${bidderId}`);
