@@ -18,37 +18,38 @@ import {
 } from '@nestjs/swagger';
 import { AuctionsService } from '../services/auctions.service';
 import { CreateAuctionDTO } from '../dtos/create-auction.dto';
-import { Public, User } from '../../../common/decorators';
+import { User } from '../../../common/decorators';
 import { AuctionOwnerGuard } from '../guards/auction-owner.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UploadedImage } from '../../../common/decorators/uploaded-image.decorator';
 import { AuctionDTO } from '../dtos/auction.dto';
+import { AuctionListDTO } from '../dtos/auction-list.dto';
 
 @ApiTags('Auctions')
 @Controller('auctions')
 export class AuctionsController {
   constructor(private readonly auctionsService: AuctionsService) {}
 
+  @ApiBearerAuth()
   @ApiOperation({
     summary: 'List all active auctions in descending order by createdAt',
   })
   @ApiOkResponse({
     description: 'Auctions retrieved successfully',
-    type: AuctionDTO,
+    type: AuctionListDTO,
     isArray: true,
   })
-  @Public()
   @Get()
-  async list(): Promise<AuctionDTO[]> {
-    return this.auctionsService.list();
+  async list(@User('userId') userId: string): Promise<AuctionListDTO[]> {
+    return this.auctionsService.list(userId);
   }
 
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Get an auction by id' })
   @ApiOkResponse({
     description: 'Auction retrieved successfully',
     type: AuctionDTO,
   })
-  @Public()
   @Get(':id')
   async getById(@Param('id') id: string): Promise<AuctionDTO> {
     return this.auctionsService.findById(id);
