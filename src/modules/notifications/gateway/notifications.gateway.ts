@@ -16,7 +16,7 @@ import { NotificationsGatewayEmitEvents } from '../types/notification-server.typ
 import { Notification } from '@prisma/client';
 
 @WebSocketGateway({
-  path: '/notifications',
+  path: '/live-notifications',
   transport: ['websocket'],
   cors: {
     origin: settings.app.corsOrigin,

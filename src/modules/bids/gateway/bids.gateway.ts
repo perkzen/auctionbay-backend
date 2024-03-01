@@ -14,7 +14,7 @@ import { AuctionEvent } from '../../auctions/events/auctionEvent';
 import { WsJwtGuard } from '../../auth/guards/ws-jwt.guard';
 
 @WebSocketGateway({
-  path: '/bids',
+  path: '/live-bids',
   transport: ['websocket'],
   cors: {
     origin: settings.app.corsOrigin,
