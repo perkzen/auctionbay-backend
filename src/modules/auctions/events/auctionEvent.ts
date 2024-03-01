@@ -1,3 +1,3 @@
-export enum AuctionEvents {
+export enum AuctionEvent {
   NEW_BID = 'auction.new-bid',
 }
