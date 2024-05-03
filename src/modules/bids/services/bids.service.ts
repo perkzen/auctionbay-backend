@@ -11,6 +11,7 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 import { NewBidEventPayload } from '../events/new-bid.event';
 import { AuctionsService } from '../../auctions/services/auctions.service';
 import { AuctionEvent } from '../../auctions/events/auctionEvent';
+import { AuctionBidDTO } from '../dtos/auction-bid.dto';
 
 @Injectable()
 export class BidsService {
@@ -142,6 +143,28 @@ export class BidsService {
         },
       },
       distinct: ['bidderId'],
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
+  }
+
+  async findBidsByAuctionId(auctionId: string): Promise<AuctionBidDTO[]> {
+    return this.db.bid.findMany({
+      where: {
+        auctionId,
+      },
+      select: {
+        bidder: {
+          select: {
+            firstname: true,
+            lastname: true,
+            imageUrl: true,
+          },
+        },
+        amount: true,
+        createdAt: true,
+      },
       orderBy: {
         createdAt: 'desc',
       },

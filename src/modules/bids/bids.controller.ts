@@ -1,4 +1,4 @@
-import { Body, Controller, Param, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { BidsService } from './services/bids.service';
 import {
   ApiBearerAuth,
@@ -13,6 +13,7 @@ import { CreateAutoBidDTO } from './dtos/create-auto-bid.dto';
 import { NotAuctionOwnerGuard } from './guards/not-auction-owner.guard';
 import { BidDTO } from './dtos/bid.dto';
 import { AutoBidDTO } from './dtos/auto-bid.dto';
+import { AuctionBidDTO } from './dtos/auction-bid.dto';
 
 @ApiTags('Auctions')
 @Controller('auctions')
@@ -46,5 +47,16 @@ export class BidsController {
     @Body() data: CreateAutoBidDTO,
   ): Promise<AutoBidDTO> {
     return this.autoBidService.create(auctionId, bidderId, data);
+  }
+
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get all bids for an auction' })
+  @ApiOkResponse({
+    description: 'Bids retrieved successfully',
+    type: [AuctionBidDTO],
+  })
+  @Get(':id/bids')
+  async getBids(@Param('id') auctionId: string): Promise<AuctionBidDTO[]> {
+    return this.bidsService.findBidsByAuctionId(auctionId);
   }
 }
