@@ -25,7 +25,7 @@ export class BidsController {
 
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Bid on an auction' })
-  @ApiOkResponse({ description: 'Bid created successfully', type: AutoBidDTO })
+  @ApiOkResponse({ description: 'Bid created successfully', type: BidDTO })
   @UseGuards(NotAuctionOwnerGuard)
   @Post(':id/bid')
   async bid(
@@ -38,7 +38,10 @@ export class BidsController {
 
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Creates a Auto-bid on an auction' })
-  @ApiOkResponse({ description: 'Auto-bid created successfully', type: BidDTO })
+  @ApiOkResponse({
+    description: 'Auto-bid created successfully',
+    type: AutoBidDTO,
+  })
   @UseGuards(NotAuctionOwnerGuard)
   @Post(':id/auto-bid')
   async autoBid(
