@@ -519,4 +519,44 @@ describe('AuctionsController (e2e)', () => {
         .expect(201);
     });
   });
+  describe('auctions/:id/bids (GET)', () => {
+    it('should fail because of missing authorization header', async () => {
+      return request(app.getHttpServer()).get('/auctions/1/bids').expect(401);
+    });
+    it('should return an array of bids', async () => {
+      const newAuction = await auctionService.create(
+        {
+          title: faker.commerce.productName(),
+          description: faker.commerce.productDescription(),
+          startingPrice: 100,
+          endsAt: new Date(),
+        },
+        user.id,
+        null,
+      );
+
+      const newUser = await createNewUser(authService);
+
+      await bidService.create(newAuction.id, newUser.user.id, 200);
+
+      return request(app.getHttpServer())
+        .get(`/auctions/${newAuction.id}/bids`)
+        .set('Authorization', `Bearer ${newUser.access_token}`)
+        .expect(200)
+        .expect((res) => {
+          expect(res.body).toHaveLength(1);
+          expect(res.body[0].amount).toEqual(200);
+        });
+    });
+    it('should return empty array if auction not found', async () => {
+      return request(app.getHttpServer())
+        .get('/auctions/1/bids')
+        .set('Authorization', `Bearer ${access_token}`)
+        .expect(200)
+        .expect((res) => {
+          expect(res.body).toHaveLength(0);
+          expect(res.body).toEqual([]);
+        });
+    });
+  });
 });

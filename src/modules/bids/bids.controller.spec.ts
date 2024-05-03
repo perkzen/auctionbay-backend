@@ -30,7 +30,8 @@ describe('BidsController', () => {
 
   const bidsServiceMock = {
     create: jest.fn().mockResolvedValue(bidData),
-  } as jest.Mocked<Pick<BidsService, 'create'>>;
+    findBidsByAuctionId: jest.fn().mockResolvedValue([]),
+  } as jest.Mocked<Pick<BidsService, 'create' | 'findBidsByAuctionId'>>;
 
   const autoBidServiceMock = {
     create: jest.fn().mockResolvedValue(autoBidData),
@@ -69,5 +70,9 @@ describe('BidsController', () => {
   it('should auto-bid on an auction', async () => {
     const autoBid = await controller.autoBid('123', '123', autoBidData);
     expect(autoBid).toEqual(autoBidData);
+  });
+  it('should get all bids for an auction', async () => {
+    const bids = await controller.getBids('123');
+    expect(bids).toEqual([]);
   });
 });

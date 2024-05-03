@@ -177,4 +177,15 @@ describe('BidsService', () => {
     expect(lastBids).toBeDefined();
     expect(lastBids.length).toBe(2);
   });
+  it('should find 0 bids by auction id', async () => {
+    const bids = await bidsService.findBidsByAuctionId(auction.id);
+    expect(bids).toBeDefined();
+    expect(bids.length).toEqual(0);
+  });
+  it('should find bids by auction id', async () => {
+    await bidsService.create(auction.id, bidderId, 200);
+    const bids = await bidsService.findBidsByAuctionId(auction.id);
+    expect(bids).toBeDefined();
+    expect(bids.length).toEqual(1);
+  });
 });
