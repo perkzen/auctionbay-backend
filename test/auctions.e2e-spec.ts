@@ -559,4 +559,53 @@ describe('AuctionsController (e2e)', () => {
         });
     });
   });
+  describe('auctions/:id (DELETE)', () => {
+    it('should fail because of missing authorization header', async () => {
+      return request(app.getHttpServer()).delete('/auctions/1').expect(401);
+    });
+    it('should delete acutoin', async () => {
+      const newAuction = await auctionService.create(
+        {
+          title: faker.commerce.productName(),
+          description: faker.commerce.productDescription(),
+          startingPrice: 100,
+          endsAt: new Date(),
+        },
+        user.id,
+        null,
+      );
+
+      return request(app.getHttpServer())
+        .delete(`/auctions/${newAuction.id}`)
+        .set('Authorization', `Bearer ${access_token}`)
+        .expect(200)
+        .expect((res) => {
+          expect(res.body.id).toEqual(newAuction.id);
+        });
+    });
+    it('should only allow owner to delete auction', async () => {
+      const newAuction = await auctionService.create(
+        {
+          title: faker.commerce.productName(),
+          description: faker.commerce.productDescription(),
+          startingPrice: 100,
+          endsAt: new Date(),
+        },
+        user.id,
+        null,
+      );
+
+      const newUser = await createNewUser(authService);
+
+      return request(app.getHttpServer())
+        .delete(`/auctions/${newAuction.id}`)
+        .set('Authorization', `Bearer ${newUser.access_token}`)
+        .expect(401)
+        .expect({
+          message: 'You do not have permission for this auction.',
+          error: 'Unauthorized',
+          statusCode: 401,
+        });
+    });
+  });
 });

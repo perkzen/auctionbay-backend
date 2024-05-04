@@ -222,4 +222,14 @@ export class AuctionsService {
       return { count: numberOfClosedBids, auctions: closedAuctions };
     });
   }
+
+  async delete(id: string) {
+    const foundAuction = await this.findById(id);
+
+    return this.db.auction.delete({
+      where: {
+        id: foundAuction.id,
+      },
+    });
+  }
 }

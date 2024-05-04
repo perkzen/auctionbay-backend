@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Post,
@@ -100,5 +101,17 @@ export class AuctionsController {
     @Param('id') auctionId: string,
   ): Promise<AuctionDTO> {
     return this.auctionsService.update(data, auctionId);
+  }
+
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Deletes an auction' })
+  @ApiOkResponse({
+    description: 'Auction deleted successfully',
+    type: AuctionDTO,
+  })
+  @UseGuards(AuctionOwnerGuard)
+  @Delete(':id')
+  async delete(@Param('id') auctionId: string): Promise<AuctionDTO> {
+    return this.auctionsService.delete(auctionId);
   }
 }
