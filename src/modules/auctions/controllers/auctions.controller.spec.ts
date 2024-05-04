@@ -6,6 +6,7 @@ import { AuctionsService } from '../services/auctions.service';
 import { PrismaModule } from '../../prisma/prisma.module';
 import { Auction } from '@prisma/client';
 import { EventEmitterModule } from '@nestjs/event-emitter';
+import { UpdateAuctionDTO } from '../dtos/update-auction.dto';
 
 describe('AuctionsController', () => {
   let moduleRef: TestingModuleBuilder,
@@ -71,31 +72,29 @@ describe('AuctionsController', () => {
   });
 
   it('should update an auction', async () => {
-    const data: CreateAuctionDTO = {
+    const data: UpdateAuctionDTO = {
       title: 'Test Auction',
       description: 'Test Description',
-      startingPrice: 100,
       endsAt: new Date(),
     };
-    const auction = await controller.update(data, '123');
+    const auction = await controller.update(data, '123', null);
 
     expect(auction).toEqual(auctionData);
-    expect(auctionsServiceMock.update).toHaveBeenCalledWith(data, '123');
+    expect(auctionsServiceMock.update).toHaveBeenCalledWith(data, '123', null);
   });
 
   it('should fail to update an auction', async () => {
-    const data: CreateAuctionDTO = {
+    const data: UpdateAuctionDTO = {
       title: 'Test Auction',
       description: 'Test Description',
-      startingPrice: 100,
       endsAt: new Date(),
     };
     try {
-      await controller.update(data, '1233');
+      await controller.update(data, '1233', null);
     } catch (e) {
       expect(e.message).toEqual('Auction not found');
     }
-    expect(auctionsServiceMock.update).toHaveBeenCalledWith(data, '1233');
+    expect(auctionsServiceMock.update).toHaveBeenCalledWith(data, '1233', null);
   });
 
   it('should list all auctions', async () => {
