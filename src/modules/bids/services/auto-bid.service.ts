@@ -77,7 +77,7 @@ export class AutoBidService {
       );
     }
 
-    return this.db.autoBid.create({
+    const autoBid = await this.db.autoBid.create({
       data: {
         auctionId,
         bidderId,
@@ -85,6 +85,16 @@ export class AutoBidService {
         incrementAmount: data.incrementAmount,
       },
     });
+
+    // check if the auto-bidder can place a bid immediately
+    await this.autoBid(
+      auctionId,
+      bidderId,
+      data.incrementAmount,
+      data.maxAmount,
+    );
+
+    return autoBid;
   }
 
   async findValidAutoBids(auctionId: string, bidderId: string, amount: number) {
