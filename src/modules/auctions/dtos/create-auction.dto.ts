@@ -1,12 +1,6 @@
-import {
-  IsDateString,
-  IsISO8601,
-  IsPositive,
-  IsString,
-  Length,
-} from 'class-validator';
+import { IsDateString, IsPositive, IsString, Length } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { Transform, Type } from 'class-transformer';
+import { Transform } from 'class-transformer';
 
 export class CreateAuctionDTO {
   @ApiProperty()
