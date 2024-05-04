@@ -241,4 +241,17 @@ describe('AuctionsService', () => {
     expect(auctions).toBeDefined();
     expect(auctions.length).toBeGreaterThan(0);
   });
+  it('should delete auction by id', async () => {
+    const deleteAuction = await auctionsService.delete(auction.id);
+    expect(deleteAuction).toBeDefined();
+    expect(deleteAuction.id).toEqual(auction.id);
+  });
+  it('should throws error when deleting auction if it does not exists ', async () => {
+    try {
+      await auctionsService.delete('invalidId');
+    } catch (error) {
+      expect(error).toBeDefined();
+      expect(error.message).toEqual('Auction not found');
+    }
+  });
 });

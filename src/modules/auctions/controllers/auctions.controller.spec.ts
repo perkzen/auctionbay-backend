@@ -30,6 +30,7 @@ describe('AuctionsController', () => {
     update: jest.fn().mockResolvedValue(auctionData),
     list: jest.fn().mockResolvedValue([auctionData]),
     findById: jest.fn().mockResolvedValue(auctionData),
+    delete: jest.fn().mockResolvedValue(auctionData),
   };
 
   beforeAll(async () => {
@@ -118,5 +119,17 @@ describe('AuctionsController', () => {
     } catch (e) {
       expect(e.message).toEqual('Auction not found');
     }
+  });
+  it('should delete auction', async () => {
+    const auction = await controller.delete('123');
+
+    expect(auction).toEqual(auctionData);
+    expect(auctionsServiceMock.delete).toHaveBeenCalledWith('123');
+  });
+  it('should throw error deleting non existing auction', () => {
+    auctionsServiceMock.delete.mockRejectedValue(
+      new Error('Auction not found'),
+    );
+    expect(controller.delete('1234')).rejects.toThrow('Auction not found');
   });
 });
