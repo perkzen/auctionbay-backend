@@ -111,13 +111,17 @@ describe('AuctionsService', () => {
   });
 
   it('should update an auction', async () => {
+    const endDate = new Date();
+
     const updatedAuction = await auctionsService.update(
-      { startingPrice: 200 },
+      { title: 'test', endsAt: endDate, description: 'test' },
       auction.id,
     );
 
     expect(updatedAuction).toBeDefined();
-    expect(updatedAuction.startingPrice).toEqual(200);
+    expect(updatedAuction.title).toEqual('test');
+    expect(updatedAuction.description).toEqual('test');
+    expect(updatedAuction.endsAt).toEqual(endDate);
   });
 
   it('should list auctions', async () => {

@@ -11,7 +11,7 @@ import { UsersModule } from '../src/modules/users/users.module';
 import * as request from 'supertest';
 import { AuctionsModule } from '../src/modules/auctions/auctions.module';
 import { AuctionsService } from '../src/modules/auctions/services/auctions.service';
-import { Auction, AuctionStatus } from '@prisma/client';
+import { Auction } from '@prisma/client';
 import { UploadModule } from '../src/modules/upload/upload.module';
 import { UploadService } from '../src/modules/upload/upload.service';
 import { BidsService } from '../src/modules/bids/services/bids.service';
@@ -241,7 +241,10 @@ describe('AuctionsController (e2e)', () => {
         null,
       );
 
-      await auctionService.update({ status: AuctionStatus.CLOSED }, auction.id);
+      await db.auction.update({
+        where: { id: auction.id },
+        data: { status: 'CLOSED' },
+      });
 
       const newUser = await createNewUser(authService);
 
@@ -606,6 +609,44 @@ describe('AuctionsController (e2e)', () => {
           error: 'Unauthorized',
           statusCode: 401,
         });
+    });
+  });
+  describe('/auctions/:id (PUT)', () => {
+    it('should fail because of missing authorization header', async () => {
+      return request(app.getHttpServer()).put('/auctions/1').expect(401);
+    });
+    it('should fail because of user does not have permission to change auction', async () => {
+      return request(app.getHttpServer())
+        .put('/auctions/some-other-id')
+        .set('Authorization', `Bearer ${access_token}`)
+        .send({
+          title: faker.commerce.productName(),
+          description: faker.commerce.productDescription(),
+          endsAt: new Date(),
+        })
+        .expect(401);
+    });
+    it('should update an auction', async () => {
+      const newAuction = await auctionService.create(
+        {
+          title: faker.commerce.productName(),
+          description: faker.commerce.productDescription(),
+          startingPrice: 100,
+          endsAt: new Date(),
+        },
+        user.id,
+        null,
+      );
+
+      return request(app.getHttpServer())
+        .put(`/auctions/${newAuction.id}`)
+        .set('Authorization', `Bearer ${access_token}`)
+        .send({
+          title: faker.commerce.productName(),
+          description: faker.commerce.productDescription(),
+          endsAt: new Date(),
+        })
+        .expect(200);
     });
   });
 });

@@ -25,6 +25,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { UploadedImage } from '../../../common/decorators/uploaded-image.decorator';
 import { AuctionDTO } from '../dtos/auction.dto';
 import { AuctionListDTO } from '../dtos/auction-list.dto';
+import { UpdateAuctionDTO } from '../dtos/update-auction.dto';
 
 @ApiTags('Auctions')
 @Controller('auctions')
@@ -94,13 +95,30 @@ export class AuctionsController {
     description: 'Auction updated successfully',
     type: AuctionDTO,
   })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        title: { type: 'string' },
+        description: { type: 'string' },
+        endsAt: { type: 'string', format: 'date-time' },
+        image: {
+          type: 'string',
+          format: 'binary',
+        },
+      },
+      required: ['title', 'description', 'endsAt'],
+    },
+  })
+  @UseInterceptors(FileInterceptor('image'))
   @UseGuards(AuctionOwnerGuard)
   @Put(':id')
   async update(
-    @Body() data: CreateAuctionDTO,
+    @Body() data: UpdateAuctionDTO,
     @Param('id') auctionId: string,
+    @UploadedImage() image?: Express.Multer.File,
   ): Promise<AuctionDTO> {
-    return this.auctionsService.update(data, auctionId);
+    return this.auctionsService.update(data, auctionId, image);
   }
 
   @ApiBearerAuth()

@@ -51,7 +51,29 @@ export class AuctionsService {
     }
   }
 
-  async update(data: UpdateAuctionDTO, auctionId: string) {
+  async update(
+    data: UpdateAuctionDTO,
+    auctionId: string,
+    image?: Express.Multer.File,
+  ) {
+    let imageUrl: string;
+
+    if (image) {
+      const auction = await this.findById(auctionId);
+
+      await this.uploadService.delete(auction.imageUrl);
+
+      imageUrl = await this.uploadService.upload(image);
+
+      if (!imageUrl) {
+        throw new BadRequestException('Failed to update auction');
+      }
+    }
+
+    if (imageUrl) {
+      data.imageUrl = imageUrl;
+    }
+
     return this.db.auction.update({
       where: {
         id: auctionId,
