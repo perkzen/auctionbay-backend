@@ -91,6 +91,7 @@ export class AuctionsController {
 
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Updates an auction' })
+  @ApiConsumes('multipart/form-data')
   @ApiOkResponse({
     description: 'Auction updated successfully',
     type: AuctionDTO,
