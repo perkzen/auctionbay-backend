@@ -6,18 +6,17 @@ import {
   OnGatewayInit,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { NotificationEvent } from '../events/notification.events';
-import { AuthWsMiddleware } from '../../auth/middlewares/auth-ws.middleware';
 import { Logger, UseGuards } from '@nestjs/common';
-import { AuthenticatedSocket } from '../../auth/types/auth.types';
-import { WsJwtGuard } from '../../auth/guards/ws-jwt.guard';
-import settings from '../../../app.settings';
+import settings from '@app/app.settings';
 import { NotificationsGatewayEmitEvents } from '../types/notification-server.types';
 import { Notification } from '@prisma/client';
+import { WsJwtGuard } from '@app/modules/auth/guards/ws-jwt.guard';
+import { AuthWsMiddleware } from '@app/modules/auth/middlewares/auth-ws.middleware';
+import { AuthenticatedSocket } from '@app/modules/auth/types/auth.types';
+import { NotificationEvent } from '@app/modules/notifications/events/notification.events';
 
-@WebSocketGateway({
-  path: '/live-notifications',
-  transport: ['websocket'],
+@WebSocketGateway(8001, {
+  namespace: '/live-notifications',
   cors: {
     origin: settings.app.corsOrigin,
   },
@@ -41,6 +40,7 @@ export class NotificationsGateway
 
   async handleConnection(client: AuthenticatedSocket) {
     this.connections.set(client.userId, client);
+    this.logger.log(`Client connected: ${client.id}`);
   }
 
   handleDisconnect(client: AuthenticatedSocket) {

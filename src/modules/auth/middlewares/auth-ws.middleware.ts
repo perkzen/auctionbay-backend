@@ -21,7 +21,6 @@ export class AuthWsMiddleware {
         if (!user) return next(new WsException('Unauthorized'));
 
         (socket as AuthenticatedSocket).userId = user.id;
-
         next();
       } catch (e) {
         next(new WsException('Unauthorized'));
