@@ -61,7 +61,7 @@ export class NotificationsService {
     );
 
     const { count } = await this.createMany(notifications);
-    this.logger.log(`Created ${count} notifications`);
+    this.logger.log(`Created ${count} notifications for auction ${auctionId}`);
 
     const newNotifications = await this.findByAuctionId(auctionId);
 

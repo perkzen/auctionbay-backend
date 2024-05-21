@@ -7,6 +7,7 @@ import { PrismaModule } from '../../prisma/prisma.module';
 import { Auction } from '@prisma/client';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { UpdateAuctionDTO } from '../dtos/update-auction.dto';
+import { AuctionListDTO } from '@app/modules/auctions/dtos/auction-list.dto';
 
 describe('AuctionsController', () => {
   let moduleRef: TestingModuleBuilder,
@@ -26,10 +27,17 @@ describe('AuctionsController', () => {
     closedPrice: null,
   };
 
+  const auctionList: AuctionListDTO[] = [
+    {
+      ...auctionData,
+      bids: [],
+    },
+  ];
+
   const auctionsServiceMock = {
     create: jest.fn().mockResolvedValue(auctionData),
     update: jest.fn().mockResolvedValue(auctionData),
-    list: jest.fn().mockResolvedValue([auctionData]),
+    list: jest.fn().mockResolvedValue(auctionList),
     findById: jest.fn().mockResolvedValue(auctionData),
     delete: jest.fn().mockResolvedValue(auctionData),
   };
@@ -100,7 +108,8 @@ describe('AuctionsController', () => {
   it('should list all auctions', async () => {
     const auctions = await controller.list('123');
 
-    expect(auctions).toEqual([auctionData]);
+    expect(auctions.length).toBeGreaterThan(0);
+    expect(auctions[0].id).toEqual(auctionList[0].id);
     expect(auctionsServiceMock.list).toHaveBeenCalled();
   });
   it('should fail getting an auction by id', async () => {

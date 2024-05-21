@@ -20,11 +20,13 @@ import {
 import { LoginDTO } from './dtos/login.dto';
 import { SignupDTO } from './dtos/signup.dto';
 import { JwtUser, SanitizedUser } from './types/auth.types';
-import { Public, User } from '../../common/decorators';
+import { Public, User } from '@app/common/decorators';
 import { RefreshTokenAuthGuard } from './guards/refresh-token-auth.guard';
 import { RefreshTokenDTO } from './dtos/refresh-token.dto';
 import { LoginResponseDTO } from './dtos/login-response.dto';
 import { UserDTO } from '../users/dtos/user.dto';
+import { serializeToDto } from '@app/common/utils/serialize-to-dto';
+import { AuthTokensDTO } from '@app/modules/auth/dtos/auth-tokens.dto';
 
 @ApiTags('Authentication')
 @Controller('auth')
@@ -43,8 +45,9 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @UseGuards(LocalAuthGuard)
   @Post('login')
-  async login(@User() user: SanitizedUser): Promise<LoginResponseDTO> {
-    return this.authService.login(user);
+  async login(@User() user: SanitizedUser) {
+    const authUser = await this.authService.login(user);
+    return serializeToDto(LoginResponseDTO, authUser);
   }
 
   @ApiOperation({ summary: 'Signup' })
@@ -55,7 +58,7 @@ export class AuthController {
   @ApiBadRequestResponse({ description: 'Invalid data' })
   @Public()
   @Post('signup')
-  async signup(@Body() data: SignupDTO): Promise<UserDTO> {
+  async signup(@Body() data: SignupDTO) {
     return this.authService.register(data);
   }
 
@@ -75,6 +78,7 @@ export class AuthController {
   @UseGuards(RefreshTokenAuthGuard)
   @Post('refresh-token')
   async refreshToken(@User() user: JwtUser) {
-    return this.authService.refreshToken(user);
+    const tokens = await this.authService.refreshToken(user);
+    return serializeToDto(AuthTokensDTO, tokens);
   }
 }

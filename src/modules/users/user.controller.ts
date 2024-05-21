@@ -18,10 +18,10 @@ import {
 } from '@nestjs/swagger';
 import { sanitizeUser } from '../auth/utils/auth.utils';
 import { UpdatePasswordDTO } from './dtos/update-password.dto';
-import { User } from '../../common/decorators';
+import { User } from '@app/common/decorators';
 import { UpdateProfileDTO } from './dtos/update-profile.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { UploadedImage } from '../../common/decorators/uploaded-image.decorator';
+import { UploadedImage } from '@app/common/decorators/uploaded-image.decorator';
 import { UserDTO } from './dtos/user.dto';
 
 @ApiTags('Users')

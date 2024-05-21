@@ -1,13 +1,13 @@
 import { INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import * as request from 'supertest';
-import { AuthModule } from '../src/modules/auth/auth.module';
-import { UsersModule } from '../src/modules/users/users.module';
-import { PrismaModule } from '../src/modules/prisma/prisma.module';
-import { SignupDTO } from '../src/modules/auth/dtos/signup.dto';
+import request from 'supertest';
+import { AuthModule } from '@app/modules/auth/auth.module';
+import { UsersModule } from '@app/modules/users/users.module';
+import { PrismaModule } from '@app/modules/prisma/prisma.module';
+import { SignupDTO } from '@app/modules/auth/dtos/signup.dto';
 import { faker } from '@faker-js/faker';
-import { PrismaService } from '../src/modules/prisma/prisma.service';
-import { UsersService } from '../src/modules/users/users.service';
+import { PrismaService } from '@app/modules/prisma/prisma.service';
+import { UsersService } from '@app/modules/users/users.service';
 
 describe('AuthController (e2e)', () => {
   let app: INestApplication, userService: UsersService, db: PrismaService;

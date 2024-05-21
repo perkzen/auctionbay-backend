@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { BidsService } from './bids.service';
-import { OnEvent } from '@nestjs/event-emitter';
+import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
 import { AuctionEvent } from '../../auctions/events/auctionEvent';
 import { NewBidEventPayload } from '../events/new-bid.event';
 import { PrismaService } from '../../prisma/prisma.service';
@@ -16,6 +16,7 @@ export class AutoBidService {
     private readonly db: PrismaService,
     private readonly bidsService: BidsService,
     private readonly auctionService: AuctionsService,
+    private readonly eventEmitter: EventEmitter2,
   ) {}
 
   @OnEvent(AuctionEvent.NEW_BID)
@@ -86,12 +87,9 @@ export class AutoBidService {
       },
     });
 
-    // check if the auto-bidder can place a bid immediately
-    await this.autoBid(
-      auctionId,
-      bidderId,
-      data.incrementAmount,
-      data.maxAmount,
+    this.eventEmitter.emit(
+      AuctionEvent.NEW_BID,
+      new NewBidEventPayload(auctionId, bidderId, data.maxAmount),
     );
 
     return autoBid;

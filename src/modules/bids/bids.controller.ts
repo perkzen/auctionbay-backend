@@ -6,7 +6,7 @@ import {
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
-import { User } from '../../common/decorators';
+import { User } from '@app/common/decorators';
 import { CreateBidDTO } from './dtos/create-bid.dto';
 import { AutoBidService } from './services/auto-bid.service';
 import { CreateAutoBidDTO } from './dtos/create-auto-bid.dto';
@@ -14,6 +14,7 @@ import { NotAuctionOwnerGuard } from './guards/not-auction-owner.guard';
 import { BidDTO } from './dtos/bid.dto';
 import { AutoBidDTO } from './dtos/auto-bid.dto';
 import { AuctionBidDTO } from './dtos/auction-bid.dto';
+import { serializeToDto } from '@app/common/utils/serialize-to-dto';
 
 @ApiTags('Auctions')
 @Controller('auctions')
@@ -32,8 +33,9 @@ export class BidsController {
     @Param('id') auctionId: string,
     @User('userId') bidderId: string,
     @Body() { amount }: CreateBidDTO,
-  ): Promise<BidDTO> {
-    return this.bidsService.create(auctionId, bidderId, amount);
+  ) {
+    const bid = this.bidsService.create(auctionId, bidderId, amount);
+    return serializeToDto(BidDTO, bid);
   }
 
   @ApiBearerAuth()
@@ -48,8 +50,9 @@ export class BidsController {
     @Param('id') auctionId: string,
     @User('userId') bidderId: string,
     @Body() data: CreateAutoBidDTO,
-  ): Promise<AutoBidDTO> {
-    return this.autoBidService.create(auctionId, bidderId, data);
+  ) {
+    const autoBid = await this.autoBidService.create(auctionId, bidderId, data);
+    return serializeToDto(AutoBidDTO, autoBid);
   }
 
   @ApiBearerAuth()
@@ -59,7 +62,8 @@ export class BidsController {
     type: [AuctionBidDTO],
   })
   @Get(':id/bids')
-  async getBids(@Param('id') auctionId: string): Promise<AuctionBidDTO[]> {
-    return this.bidsService.findBidsByAuctionId(auctionId);
+  async getBids(@Param('id') auctionId: string) {
+    const list = await this.bidsService.findBidsByAuctionId(auctionId);
+    return serializeToDto(AuctionBidDTO, list);
   }
 }
