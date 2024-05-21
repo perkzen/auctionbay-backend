@@ -14,7 +14,7 @@ import { BidsGatewayEmitEvents } from '../types/bids-server.types';
 import { AuctionEvent } from '../../auctions/events/auctionEvent';
 import { WsJwtGuard } from '../../auth/guards/ws-jwt.guard';
 
-@WebSocketGateway(8001, {
+@WebSocketGateway({
   namespace: '/live-bids',
   cors: {
     origin: settings.app.corsOrigin,

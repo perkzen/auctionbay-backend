@@ -15,7 +15,7 @@ import { AuthWsMiddleware } from '@app/modules/auth/middlewares/auth-ws.middlewa
 import { AuthenticatedSocket } from '@app/modules/auth/types/auth.types';
 import { NotificationEvent } from '@app/modules/notifications/events/notification.events';
 
-@WebSocketGateway(8001, {
+@WebSocketGateway({
   namespace: '/live-notifications',
   cors: {
     origin: settings.app.corsOrigin,
