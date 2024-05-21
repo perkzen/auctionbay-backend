@@ -6,8 +6,9 @@ import {
 } from '@nestjs/swagger';
 import { Controller, Get } from '@nestjs/common';
 import { AuctionsService } from '../services/auctions.service';
-import { User } from '../../../common/decorators';
+import { User } from '@app/common/decorators';
 import { AuctionDTO } from '../dtos/auction.dto';
+import { serializeToDto } from '@app/common/utils/serialize-to-dto';
 
 @ApiTags('Auctions')
 @Controller('auctions/me')
@@ -22,8 +23,9 @@ export class UserAuctionsController {
     isArray: true,
   })
   @Get()
-  async getUserAuctions(@User('userId') userId: string): Promise<AuctionDTO[]> {
-    return await this.auctionsService.findByUserId(userId);
+  async getUserAuctions(@User('userId') userId: string) {
+    const list = await this.auctionsService.findByUserId(userId);
+    return serializeToDto(AuctionDTO, list);
   }
 
   @ApiBearerAuth()
@@ -34,10 +36,9 @@ export class UserAuctionsController {
     isArray: true,
   })
   @Get('won')
-  async getUserWonAuctions(
-    @User('userId') userId: string,
-  ): Promise<AuctionDTO[]> {
-    return await this.auctionsService.findWonAuctionsByUserId(userId);
+  async getUserWonAuctions(@User('userId') userId: string) {
+    const list = await this.auctionsService.findWonAuctionsByUserId(userId);
+    return serializeToDto(AuctionDTO, list);
   }
 
   @ApiBearerAuth()
@@ -50,9 +51,8 @@ export class UserAuctionsController {
     isArray: true,
   })
   @Get('bidding')
-  async getUserBiddingAuctions(
-    @User('userId') userId: string,
-  ): Promise<AuctionDTO[]> {
-    return await this.auctionsService.findBiddingAuctionsByUserId(userId);
+  async getUserBiddingAuctions(@User('userId') userId: string) {
+    const list = await this.auctionsService.findBiddingAuctionsByUserId(userId);
+    return serializeToDto(AuctionDTO, list);
   }
 }

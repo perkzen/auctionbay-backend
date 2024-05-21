@@ -1,16 +1,16 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { PrismaModule } from '../src/modules/prisma/prisma.module';
-import { UsersModule } from '../src/modules/users/users.module';
-import { PrismaService } from '../src/modules/prisma/prisma.service';
-import { AuthService } from '../src/modules/auth/auth.service';
-import { AuthModule } from '../src/modules/auth/auth.module';
-import { SignupDTO } from '../src/modules/auth/dtos/signup.dto';
 import { faker } from '@faker-js/faker';
-import { SanitizedUser } from '../src/modules/auth/types/auth.types';
 import { INestApplication } from '@nestjs/common';
-import * as request from 'supertest';
-import { UploadModule } from '../src/modules/upload/upload.module';
-import { UploadService } from '../src/modules/upload/upload.service';
+import request from 'supertest';
+import { PrismaService } from '@app/modules/prisma/prisma.service';
+import { AuthService } from '@app/modules/auth/auth.service';
+import { SanitizedUser } from '@app/modules/auth/types/auth.types';
+import { SignupDTO } from '@app/modules/auth/dtos/signup.dto';
+import { UsersModule } from '@app/modules/users/users.module';
+import { AuthModule } from '@app/modules/auth/auth.module';
+import { PrismaModule } from '@app/modules/prisma/prisma.module';
+import { UploadModule } from '@app/modules/upload/upload.module';
+import { UploadService } from '@app/modules/upload/upload.service';
 
 describe('UsersController (e2e)', () => {
   let app: INestApplication,

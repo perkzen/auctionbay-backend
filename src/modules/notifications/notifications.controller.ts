@@ -6,8 +6,9 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { NotificationsService } from './notifications.service';
-import { User } from '../../common/decorators';
+import { User } from '@app/common/decorators';
 import { NotificationDTO } from './dtos/notification.dto';
+import { serializeToDto } from '@app/common/utils/serialize-to-dto';
 
 @ApiTags('Notifications')
 @Controller('notifications')
@@ -22,10 +23,9 @@ export class NotificationsController {
     isArray: true,
   })
   @Get('/me')
-  async getNotifications(
-    @User('userId') userId: string,
-  ): Promise<NotificationDTO[]> {
-    return this.notificationsService.findByUserId(userId);
+  async getNotifications(@User('userId') userId: string) {
+    const list = await this.notificationsService.findByUserId(userId);
+    return serializeToDto(NotificationDTO, list);
   }
 
   @ApiBearerAuth()

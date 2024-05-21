@@ -4,7 +4,7 @@ import { HttpAdapterHost } from '@nestjs/core';
 import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
 import { HttpExceptionFilter } from './common/filters';
 import helmet from 'helmet';
-import * as compression from 'compression';
+import compression from 'compression';
 import settings from './app.settings';
 
 export const bootstrapSwagger = (app: INestApplication) => {

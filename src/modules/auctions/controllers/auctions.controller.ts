@@ -19,13 +19,14 @@ import {
 } from '@nestjs/swagger';
 import { AuctionsService } from '../services/auctions.service';
 import { CreateAuctionDTO } from '../dtos/create-auction.dto';
-import { User } from '../../../common/decorators';
+import { User } from '@app/common/decorators';
 import { AuctionOwnerGuard } from '../guards/auction-owner.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { UploadedImage } from '../../../common/decorators/uploaded-image.decorator';
+import { UploadedImage } from '@app/common/decorators/uploaded-image.decorator';
 import { AuctionDTO } from '../dtos/auction.dto';
 import { AuctionListDTO } from '../dtos/auction-list.dto';
 import { UpdateAuctionDTO } from '../dtos/update-auction.dto';
+import { serializeToDto } from '@app/common/utils/serialize-to-dto';
 
 @ApiTags('Auctions')
 @Controller('auctions')
@@ -42,8 +43,9 @@ export class AuctionsController {
     isArray: true,
   })
   @Get()
-  async list(@User('userId') userId: string): Promise<AuctionListDTO[]> {
-    return this.auctionsService.list(userId);
+  async list(@User('userId') userId: string) {
+    const list = await this.auctionsService.list(userId);
+    return serializeToDto(AuctionListDTO, list);
   }
 
   @ApiBearerAuth()
@@ -53,8 +55,9 @@ export class AuctionsController {
     type: AuctionDTO,
   })
   @Get(':id')
-  async getById(@Param('id') id: string): Promise<AuctionDTO> {
-    return this.auctionsService.findById(id);
+  async getById(@Param('id') id: string) {
+    const auction = await this.auctionsService.findById(id);
+    return serializeToDto(AuctionDTO, auction);
   }
 
   @ApiBearerAuth()
@@ -85,8 +88,9 @@ export class AuctionsController {
     @Body() data: CreateAuctionDTO,
     @User('userId') userId: string,
     @UploadedImage() image: Express.Multer.File,
-  ): Promise<AuctionDTO> {
-    return this.auctionsService.create(data, userId, image);
+  ) {
+    const auction = await this.auctionsService.create(data, userId, image);
+    return serializeToDto(AuctionDTO, auction);
   }
 
   @ApiBearerAuth()
@@ -118,8 +122,9 @@ export class AuctionsController {
     @Body() data: UpdateAuctionDTO,
     @Param('id') auctionId: string,
     @UploadedImage() image?: Express.Multer.File,
-  ): Promise<AuctionDTO> {
-    return this.auctionsService.update(data, auctionId, image);
+  ) {
+    const auction = await this.auctionsService.update(data, auctionId, image);
+    return serializeToDto(AuctionDTO, auction);
   }
 
   @ApiBearerAuth()
@@ -130,7 +135,8 @@ export class AuctionsController {
   })
   @UseGuards(AuctionOwnerGuard)
   @Delete(':id')
-  async delete(@Param('id') auctionId: string): Promise<AuctionDTO> {
-    return this.auctionsService.delete(auctionId);
+  async delete(@Param('id') auctionId: string) {
+    const auction = await this.auctionsService.delete(auctionId);
+    return serializeToDto(AuctionDTO, auction);
   }
 }

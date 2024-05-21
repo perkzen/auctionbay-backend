@@ -7,6 +7,8 @@ import { PrismaModule } from '../prisma/prisma.module';
 import { SignupDTO } from './dtos/signup.dto';
 import { AuthService } from './auth.service';
 import { SanitizedUser } from './types/auth.types';
+import { UserDTO } from '@app/modules/users/dtos/user.dto';
+import { LoginResponseDTO } from '@app/modules/auth/dtos/login-response.dto';
 
 describe('AuthController', () => {
   let moduleRef: TestingModuleBuilder,
@@ -27,19 +29,27 @@ describe('AuthController', () => {
     password: faker.internet.password(),
   };
 
-  const userData = {
+  const userData: UserDTO = {
     id: faker.string.uuid(),
     email: faker.internet.email(),
     firstname: faker.person.firstName(),
     lastname: faker.person.lastName(),
+    imageUrl: faker.image.url(),
+    createdAt: faker.date.recent(),
   };
   const refreshTokenResponse = {
     accessToken: faker.string.uuid(),
     refreshToken: faker.string.uuid(),
   };
 
+  const loginResponse: LoginResponseDTO = {
+    ...userData,
+    accessToken: 'test',
+    refreshToken: 'test',
+  };
+
   const authServiceMock = {
-    login: jest.fn().mockResolvedValue({ accessToken: faker.string.uuid() }),
+    login: jest.fn().mockResolvedValue(loginResponse),
     register: jest.fn().mockResolvedValue(userData),
     validateUser: jest.fn().mockResolvedValue(userData),
     refreshToken: jest.fn().mockResolvedValue(refreshTokenResponse),
@@ -79,7 +89,8 @@ describe('AuthController', () => {
 
   it('should login a user', async () => {
     const user = await controller.login(loginReq);
-    expect(user).toEqual({ accessToken: expect.any(String) });
+    expect(user.accessToken).toBeDefined();
+    expect(user.refreshToken).toBeDefined();
     expect(authServiceMock.login).toHaveBeenCalledWith(loginReq);
   });
   it("should refresh a user's token", async () => {
