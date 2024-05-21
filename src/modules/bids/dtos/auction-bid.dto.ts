@@ -23,6 +23,7 @@ export class AuctionBidDTO {
   @ApiProperty({
     type: Bidder,
   })
+  @Expose()
   bidder: Bidder;
 
   @ApiProperty()
