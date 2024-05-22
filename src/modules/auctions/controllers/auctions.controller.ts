@@ -43,8 +43,8 @@ export class AuctionsController {
     isArray: true,
   })
   @Get()
-  async list(@User('userId') userId: string) {
-    const list = await this.auctionsService.list(userId);
+  async list() {
+    const list = await this.auctionsService.list();
     return serializeToDto(AuctionListDTO, list);
   }
 

@@ -125,7 +125,7 @@ describe('AuctionsService', () => {
   });
 
   it('should list auctions', async () => {
-    const auctions = await auctionsService.list(userId);
+    const auctions = await auctionsService.list();
 
     expect(auctions).toBeDefined();
     expect(auctions.length).toBeGreaterThan(0);
