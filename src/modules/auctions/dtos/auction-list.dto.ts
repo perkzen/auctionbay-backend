@@ -20,6 +20,11 @@ class Bid {
   @Expose()
   @IsPositive()
   amount: number;
+
+  @ApiProperty()
+  @Expose()
+  @IsString()
+  bidderId: string;
 }
 
 export class AuctionListDTO {
@@ -54,6 +59,15 @@ export class AuctionListDTO {
   @IsPositive()
   @Expose()
   startingPrice: number;
+
+  @ApiProperty()
+  @IsString()
+  @Expose()
+  ownerId: string;
+
+  @ApiProperty()
+  @Expose()
+  closedPrice: number | null;
 
   @ApiProperty({
     isArray: true,

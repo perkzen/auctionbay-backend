@@ -95,6 +95,8 @@ export class AuctionsService {
         title: true,
         imageUrl: true,
         status: true,
+        ownerId: true,
+        closedPrice: true,
         endsAt: true,
         startingPrice: true,
         bids: {
@@ -126,10 +128,33 @@ export class AuctionsService {
     return auction;
   }
 
-  async findByUserId(userId: string): Promise<Auction[]> {
+  async findByUserId(userId: string): Promise<AuctionListDTO[]> {
     return this.db.auction.findMany({
       where: {
         ownerId: userId,
+      },
+      select: {
+        id: true,
+        title: true,
+        imageUrl: true,
+        status: true,
+        endsAt: true,
+        startingPrice: true,
+        ownerId: true,
+        createdAt: true,
+        description: true,
+        closedPrice: true,
+        bids: {
+          orderBy: {
+            amount: 'desc',
+          },
+          select: {
+            status: true,
+            amount: true,
+            bidderId: true,
+          },
+          take: 1,
+        },
       },
     });
   }
@@ -148,7 +173,7 @@ export class AuctionsService {
     });
   }
 
-  async findBiddingAuctionsByUserId(userId: string): Promise<Auction[]> {
+  async findBiddingAuctionsByUserId(userId: string): Promise<AuctionListDTO[]> {
     return this.db.auction.findMany({
       where: {
         status: AuctionStatus.ACTIVE,
@@ -156,6 +181,29 @@ export class AuctionsService {
           some: {
             bidderId: userId,
           },
+        },
+      },
+      select: {
+        id: true,
+        title: true,
+        imageUrl: true,
+        status: true,
+        endsAt: true,
+        startingPrice: true,
+        ownerId: true,
+        createdAt: true,
+        description: true,
+        closedPrice: true,
+        bids: {
+          orderBy: {
+            amount: 'desc',
+          },
+          select: {
+            status: true,
+            amount: true,
+            bidderId: true,
+          },
+          take: 1,
         },
       },
     });

@@ -5,28 +5,41 @@ import { Auction } from '@prisma/client';
 import { PrismaModule } from '../../prisma/prisma.module';
 import { AuctionsModule } from '../auctions.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
+import { AuctionListDTO } from '@app/modules/auctions/dtos/auction-list.dto';
 
 describe('UserAuctionsController', () => {
   let moduleRef: TestingModuleBuilder,
     app: TestingModule,
     controller: UserAuctionsController;
 
-  const auction: Auction = {
+  const auctionList: AuctionListDTO = {
     title: 'Test Auction',
-    description: 'Test Description',
     startingPrice: 100,
     imageUrl: 'https://test.com/image.jpg',
     endsAt: new Date(),
     status: 'ACTIVE',
     ownerId: '123',
     id: '123',
-    createdAt: new Date(),
     closedPrice: null,
+    bids: [],
+  };
+
+  const auction: Auction = {
+    id: '123',
+    title: 'Test Auction',
+    description: 'Test Description',
+    imageUrl: 'https://test.com/image.jpg',
+    ownerId: '123',
+    createdAt: new Date(),
+    startingPrice: 100,
+    closedPrice: null,
+    endsAt: new Date(),
+    status: 'ACTIVE',
   };
 
   const userAuctionsServiceMock = {
-    findByUserId: jest.fn().mockResolvedValue([auction]),
-    findBiddingAuctionsByUserId: jest.fn().mockResolvedValue([auction]),
+    findByUserId: jest.fn().mockResolvedValue([auctionList]),
+    findBiddingAuctionsByUserId: jest.fn().mockResolvedValue([auctionList]),
     findWonAuctionsByUserId: jest.fn().mockResolvedValue([auction]),
   } as jest.Mocked<
     Pick<
@@ -61,11 +74,11 @@ describe('UserAuctionsController', () => {
 
   it('should get user auctions', async () => {
     const auctions = await controller.getUserAuctions('123');
-    expect(auctions).toEqual([auction]);
+    expect(auctions).toEqual([auctionList]);
   });
   it('should get user bidding auctions', async () => {
     const auctions = await controller.getUserBiddingAuctions('123');
-    expect(auctions).toEqual([auction]);
+    expect(auctions).toEqual([auctionList]);
   });
   it('should get user won auctions', async () => {
     const auctions = await controller.getUserWonAuctions('123');
