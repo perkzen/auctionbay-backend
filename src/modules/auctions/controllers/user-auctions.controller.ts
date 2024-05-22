@@ -9,6 +9,7 @@ import { AuctionsService } from '../services/auctions.service';
 import { User } from '@app/common/decorators';
 import { AuctionDTO } from '../dtos/auction.dto';
 import { serializeToDto } from '@app/common/utils/serialize-to-dto';
+import { AuctionListDTO } from '@app/modules/auctions/dtos/auction-list.dto';
 
 @ApiTags('Auctions')
 @Controller('auctions/me')
@@ -25,7 +26,7 @@ export class UserAuctionsController {
   @Get()
   async getUserAuctions(@User('userId') userId: string) {
     const list = await this.auctionsService.findByUserId(userId);
-    return serializeToDto(AuctionDTO, list);
+    return serializeToDto(AuctionListDTO, list);
   }
 
   @ApiBearerAuth()
@@ -53,6 +54,6 @@ export class UserAuctionsController {
   @Get('bidding')
   async getUserBiddingAuctions(@User('userId') userId: string) {
     const list = await this.auctionsService.findBiddingAuctionsByUserId(userId);
-    return serializeToDto(AuctionDTO, list);
+    return serializeToDto(AuctionListDTO, list);
   }
 }

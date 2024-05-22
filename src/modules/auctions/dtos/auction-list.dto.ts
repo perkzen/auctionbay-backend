@@ -20,6 +20,11 @@ class Bid {
   @Expose()
   @IsPositive()
   amount: number;
+
+  @ApiProperty()
+  @Expose()
+  @IsString()
+  bidderId: string;
 }
 
 export class AuctionListDTO {
