@@ -8,7 +8,7 @@ import {
 import { PrismaService } from '../../prisma/prisma.service';
 import { AuctionStatus, Bid, BidStatus } from '@prisma/client';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { NewBidEventPayload } from '../events/new-bid.event';
+import { NewBidEventPayload } from '../dtos/new-bid-event-payload';
 import { AuctionsService } from '../../auctions/services/auctions.service';
 import { AuctionEvent } from '../../auctions/events/auctionEvent';
 import { AuctionBidDTO } from '../dtos/auction-bid.dto';

@@ -1,4 +1,4 @@
-import { NewBidEventPayload } from '../events/new-bid.event';
+import { NewBidEventPayload } from '../dtos/new-bid-event-payload';
 import { AuctionEvent } from '../../auctions/events/auctionEvent';
 
 export interface BidsGatewayEmitEvents {

@@ -48,17 +48,26 @@ export class NotificationsGateway
   }
 
   async notifyUsers(notifications: Notification[]) {
+    this.logger.log(`Received ${notifications.length} notifications to send`);
+
     for (const notification of notifications) {
       const userId = notification.userId;
       const socket = this.connections.get(userId);
 
-      if (!socket) continue;
+      if (!socket) {
+        this.logger.log(
+          `User ${userId} is not connected, skipping notification`,
+        );
+        continue;
+      }
 
       this.server
         .to(socket.id)
         .emit(NotificationEvent.NEW_NOTIFICATION, notification);
 
-      this.logger.log(`Notification sent to user ${userId}`);
+      this.logger.log(
+        `Notification sent to user ${userId} with socket ${socket.id}`,
+      );
     }
   }
 }

@@ -2,7 +2,7 @@ import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { BidsService } from './bids.service';
 import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
 import { AuctionEvent } from '../../auctions/events/auctionEvent';
-import { NewBidEventPayload } from '../events/new-bid.event';
+import { NewBidEventPayload } from '../dtos/new-bid-event-payload';
 import { PrismaService } from '../../prisma/prisma.service';
 import { CreateAutoBidDTO } from '../dtos/create-auto-bid.dto';
 import { Bid } from '@prisma/client';
