@@ -138,6 +138,10 @@ export class AuctionsService {
         status: true,
         endsAt: true,
         startingPrice: true,
+        ownerId: true,
+        createdAt: true,
+        description: true,
+        closedPrice: true,
         bids: {
           orderBy: {
             amount: 'desc',
@@ -184,6 +188,10 @@ export class AuctionsService {
         status: true,
         endsAt: true,
         startingPrice: true,
+        ownerId: true,
+        createdAt: true,
+        description: true,
+        closedPrice: true,
         bids: {
           orderBy: {
             amount: 'desc',
