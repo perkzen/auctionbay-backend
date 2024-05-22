@@ -10,7 +10,7 @@ import { Logger, UseGuards } from '@nestjs/common';
 import { AuthWsMiddleware } from '@app/modules/auth/middlewares/auth-ws.middleware';
 import settings from '@app//app.settings';
 import { OnEvent } from '@nestjs/event-emitter';
-import { NewBidEventPayload } from '../events/new-bid.event';
+import { NewBidEventPayload } from '../dtos/new-bid-event-payload';
 import {
   BidsGatewayEmitEvents,
   BidsGatewayListenEvents,

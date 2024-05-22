@@ -32,7 +32,7 @@ export class NotificationsService {
       where: {
         data: {
           path: ['auctionId'],
-          string_contains: auctionId,
+          equals: auctionId,
         },
       },
     });
