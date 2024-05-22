@@ -165,7 +165,7 @@ export class AuctionsService {
 
   async updateAuctionStatuses() {
     return this.db.$transaction(async (tx) => {
-      const closeBids = async (): Promise<number> => {
+      const closeBids = async () => {
         const dueAuctions = await tx.auction.findMany({
           where: {
             status: AuctionStatus.ACTIVE,
@@ -194,7 +194,10 @@ export class AuctionsService {
           }),
         );
 
-        return dueAuctions.length;
+        return {
+          count: dueAuctions.length,
+          auctions: dueAuctions,
+        };
       };
 
       const findClosedAuctions = async () => {
@@ -231,8 +234,9 @@ export class AuctionsService {
         });
       };
 
-      const numberOfClosedBids = await closeBids();
+      const { auctions, count } = await closeBids();
 
+      // could do better
       const closedAuctions = await findClosedAuctions();
 
       const lastBids = closedAuctions
@@ -241,7 +245,7 @@ export class AuctionsService {
 
       await setWonBids(lastBids);
 
-      return { count: numberOfClosedBids, auctions: closedAuctions };
+      return { count, auctions };
     });
   }
 

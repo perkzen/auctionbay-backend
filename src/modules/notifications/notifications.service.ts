@@ -32,7 +32,7 @@ export class NotificationsService {
       where: {
         data: {
           path: ['auctionId'],
-          equals: auctionId,
+          string_contains: auctionId,
         },
       },
     });
@@ -50,7 +50,7 @@ export class NotificationsService {
     return this.db.notification.createMany({
       data: notifications.map((n) => ({
         userId: n.userId,
-        data: JSON.stringify(n.data),
+        data: n.data,
       })),
     });
   }
