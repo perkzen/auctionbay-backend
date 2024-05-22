@@ -60,6 +60,15 @@ export class AuctionListDTO {
   @Expose()
   startingPrice: number;
 
+  @ApiProperty()
+  @IsString()
+  @Expose()
+  ownerId: string;
+
+  @ApiProperty()
+  @Expose()
+  closedPrice: number | null;
+
   @ApiProperty({
     isArray: true,
     type: Bid,

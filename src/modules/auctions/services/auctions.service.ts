@@ -95,6 +95,8 @@ export class AuctionsService {
         title: true,
         imageUrl: true,
         status: true,
+        ownerId: true,
+        closedPrice: true,
         endsAt: true,
         startingPrice: true,
         bids: {
