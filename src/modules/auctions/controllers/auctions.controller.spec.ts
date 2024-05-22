@@ -106,7 +106,7 @@ describe('AuctionsController', () => {
   });
 
   it('should list all auctions', async () => {
-    const auctions = await controller.list('123');
+    const auctions = await controller.list();
 
     expect(auctions.length).toBeGreaterThan(0);
     expect(auctions[0].id).toEqual(auctionList[0].id);

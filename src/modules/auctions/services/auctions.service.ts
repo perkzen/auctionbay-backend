@@ -82,7 +82,7 @@ export class AuctionsService {
     });
   }
 
-  async list(userId: string): Promise<AuctionListDTO[]> {
+  async list(): Promise<AuctionListDTO[]> {
     return this.db.auction.findMany({
       where: {
         status: AuctionStatus.ACTIVE,
@@ -98,15 +98,13 @@ export class AuctionsService {
         endsAt: true,
         startingPrice: true,
         bids: {
-          where: {
-            bidderId: userId,
-          },
           orderBy: {
             amount: 'desc',
           },
           select: {
             status: true,
             amount: true,
+            bidderId: true,
           },
           take: 1,
         },
