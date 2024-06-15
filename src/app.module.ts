@@ -6,20 +6,21 @@ import { AuthModule } from './modules/auth/auth.module';
 import { UsersModule } from './modules/users/users.module';
 import { PrismaModule } from './modules/prisma/prisma.module';
 import { AuctionsModule } from './modules/auctions/auctions.module';
-import settings from './app.settings';
 import { ScheduleModule } from '@nestjs/schedule';
 import { NotificationsModule } from './modules/notifications/notifications.module';
 import { UploadModule } from './modules/upload/upload.module';
 import { StatisticsModule } from './modules/statistics/statistics.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { BidsModule } from './modules/bids/bids.module';
+import { validateEnv } from '@app/config/environment-variables/env-var.validation';
+import { isTestEnv } from '@app/common/utils/env-check';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: `${process.cwd()}/.env.${process.env.NODE_ENV}`,
+      envFilePath: isTestEnv() ? '.env.test' : '.env',
       isGlobal: true,
-      load: [() => settings],
+      validate: validateEnv,
     }),
     EventEmitterModule.forRoot(),
     ScheduleModule.forRoot(),
