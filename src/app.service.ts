@@ -1,8 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import settings from './app.settings';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AppService {
+  constructor(private readonly configService: ConfigService) {}
+
   healthCheck() {
     const uptime = process.uptime();
     const uptimeHours = Math.floor(uptime / 60 / 60);
@@ -16,7 +18,7 @@ export class AppService {
       status: 'ok',
       uptime: uptimeString,
       timestamp: timestamp,
-      environment: settings.app.environment,
+      environment: this.configService.get('NODE_ENV'),
     };
   }
 }

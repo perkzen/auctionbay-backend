@@ -7,7 +7,6 @@ import {
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { Logger, UseGuards } from '@nestjs/common';
-import settings from '@app/app.settings';
 import { NotificationsGatewayEmitEvents } from '../types/notification-server.types';
 import { Notification } from '@prisma/client';
 import { WsJwtGuard } from '@app/modules/auth/guards/ws-jwt.guard';
@@ -18,7 +17,7 @@ import { NotificationEvent } from '@app/modules/notifications/events/notificatio
 @WebSocketGateway({
   namespace: '/live-notifications',
   cors: {
-    origin: settings.app.corsOrigin,
+    origin: '*',
   },
 })
 @UseGuards(WsJwtGuard)

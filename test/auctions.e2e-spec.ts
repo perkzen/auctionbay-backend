@@ -17,6 +17,7 @@ import { UploadService } from '@app/modules/upload/upload.service';
 import { BidsService } from '@app/modules/bids/services/bids.service';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { createNewUser } from './utils';
+import { ConfigModule } from '@nestjs/config';
 
 describe('AuctionsController (e2e)', () => {
   let app: INestApplication,

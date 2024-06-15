@@ -8,7 +8,6 @@ import {
 import { Server, Socket } from 'socket.io';
 import { Logger, UseGuards } from '@nestjs/common';
 import { AuthWsMiddleware } from '@app/modules/auth/middlewares/auth-ws.middleware';
-import settings from '@app//app.settings';
 import { OnEvent } from '@nestjs/event-emitter';
 import { NewBidEventPayload } from '../dtos/new-bid-event-payload';
 import {
@@ -21,7 +20,7 @@ import { WsJwtGuard } from '@app/modules/auth/guards/ws-jwt.guard';
 @WebSocketGateway({
   namespace: '/live-bids',
   cors: {
-    origin: settings.app.corsOrigin,
+    origin: '*',
   },
 })
 @UseGuards(WsJwtGuard)

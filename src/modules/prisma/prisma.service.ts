@@ -1,6 +1,6 @@
 import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { PrismaClient } from '@prisma/client';
-import settings, { Environment } from '../../app.settings';
+import { isTestEnv } from '@app/common/utils/env-check';
 
 @Injectable()
 export class PrismaService
@@ -16,7 +16,7 @@ export class PrismaService
   }
 
   async clearDatabase() {
-    if (settings.app.environment !== Environment.TEST) return;
+    if (!isTestEnv()) return;
     await this.autoBid.deleteMany();
     await this.notification.deleteMany();
     await this.bid.deleteMany();

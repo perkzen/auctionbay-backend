@@ -1,27 +1,27 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { Logger } from '@nestjs/common';
-import settings from './app.settings';
-import {
-  bootstrapGlobalFilters,
-  bootstrapGlobalInterceptors,
-  bootstrapGlobalPipe,
-  bootstrapMiddlewares,
-  bootstrapSwagger,
-} from './app.bootstrap';
+import { ConfigService } from '@nestjs/config';
+import { loadEnv } from '@app/config/environment-variables/dotenv';
+import { NestExpressApplication } from '@nestjs/platform-express';
+import { MiddlewareSetup } from '@app/config/setups/middleware.setup';
+import { SwaggerSetup } from '@app/config/setups/swagger.setup';
+
+loadEnv();
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  const configService = app.get(ConfigService);
 
-  bootstrapSwagger(app);
-  bootstrapGlobalPipe(app);
-  bootstrapGlobalFilters(app);
-  bootstrapGlobalInterceptors(app);
-  bootstrapMiddlewares(app);
+  new MiddlewareSetup(app).init();
+  new SwaggerSetup(app).init();
 
-  await app.listen(settings.app.port);
+  const PORT = configService.get('PORT');
+  const SWAGGER_PATH = configService.get('SWAGGER_PATH');
+
+  await app.listen(PORT);
   Logger.log(
-    `Documentation is available at http://localhost:${settings.app.port}/${settings.app.swaggerPath}`,
+    `Documentation is available at http://localhost:${PORT}/${SWAGGER_PATH}`,
     'Bootstrap',
   );
 }
