@@ -8,6 +8,7 @@ import { SignupDTO } from '@app/modules/auth/dtos/signup.dto';
 import { faker } from '@faker-js/faker';
 import { PrismaService } from '@app/modules/prisma/prisma.service';
 import { UsersService } from '@app/modules/users/users.service';
+import { ConfigModule } from '@nestjs/config';
 
 describe('AuthController (e2e)', () => {
   let app: INestApplication, userService: UsersService, db: PrismaService;
@@ -21,7 +22,12 @@ describe('AuthController (e2e)', () => {
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [AuthModule, UsersModule, PrismaModule],
+      imports: [
+        AuthModule,
+        UsersModule,
+        PrismaModule,
+        ConfigModule.forRoot({ isGlobal: true }),
+      ],
     }).compile();
 
     app = moduleFixture.createNestApplication();

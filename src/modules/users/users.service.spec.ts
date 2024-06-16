@@ -8,6 +8,7 @@ import { SignupDTO } from '../auth/dtos/signup.dto';
 import { User } from '@prisma/client';
 import { UploadModule } from '../upload/upload.module';
 import { UploadService } from '../upload/upload.service';
+import { ConfigModule } from '@nestjs/config';
 
 describe('UsersService', () => {
   let moduleRef: TestingModuleBuilder,
@@ -31,7 +32,12 @@ describe('UsersService', () => {
 
   beforeAll(async () => {
     moduleRef = Test.createTestingModule({
-      imports: [UsersModule, PrismaModule, UploadModule],
+      imports: [
+        UsersModule,
+        PrismaModule,
+        UploadModule,
+        ConfigModule.forRoot({ isGlobal: true }),
+      ],
     })
       .overrideProvider(UploadService)
       .useValue(uploadServiceMock);

@@ -8,6 +8,7 @@ import { faker } from '@faker-js/faker';
 import { AuctionStatus, BidStatus } from '@prisma/client';
 import { AuctionsModule } from '../auctions/auctions.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
+import { ConfigModule } from '@nestjs/config';
 
 describe('StatisticsService', () => {
   let moduleRef: TestingModuleBuilder,
@@ -40,6 +41,7 @@ describe('StatisticsService', () => {
         StatisticsModule,
         AuctionsModule,
         EventEmitterModule.forRoot(),
+        ConfigModule.forRoot({ isGlobal: true }),
       ],
     });
 

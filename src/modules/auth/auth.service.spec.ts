@@ -8,6 +8,7 @@ import { PrismaModule } from '../prisma/prisma.module';
 import { UsersModule } from '../users/users.module';
 import { UsersService } from '../users/users.service';
 import { User } from '@prisma/client';
+import { ConfigModule } from '@nestjs/config';
 
 describe('AuthService', () => {
   let moduleRef: TestingModuleBuilder,
@@ -26,7 +27,12 @@ describe('AuthService', () => {
 
   beforeAll(async () => {
     moduleRef = Test.createTestingModule({
-      imports: [UsersModule, PrismaModule, AuthModule],
+      imports: [
+        UsersModule,
+        PrismaModule,
+        AuthModule,
+        ConfigModule.forRoot({ isGlobal: true }),
+      ],
     });
 
     app = await moduleRef.compile();

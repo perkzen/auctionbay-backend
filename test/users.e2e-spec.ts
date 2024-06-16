@@ -11,6 +11,7 @@ import { AuthModule } from '@app/modules/auth/auth.module';
 import { PrismaModule } from '@app/modules/prisma/prisma.module';
 import { UploadModule } from '@app/modules/upload/upload.module';
 import { UploadService } from '@app/modules/upload/upload.service';
+import { ConfigModule } from '@nestjs/config';
 
 describe('UsersController (e2e)', () => {
   let app: INestApplication,
@@ -34,7 +35,13 @@ describe('UsersController (e2e)', () => {
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [AuthModule, UsersModule, PrismaModule, UploadModule],
+      imports: [
+        AuthModule,
+        UsersModule,
+        PrismaModule,
+        UploadModule,
+        ConfigModule.forRoot({ isGlobal: true }),
+      ],
     })
       .overrideProvider(UploadService)
       .useValue(uploadServiceMock)

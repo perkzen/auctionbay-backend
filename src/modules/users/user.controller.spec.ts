@@ -3,7 +3,7 @@ import { UserController } from './user.controller';
 import { faker } from '@faker-js/faker';
 import { UsersModule } from './users.module';
 import { UsersService } from './users.service';
-import { UploadService } from '../upload/upload.service';
+import { ConfigModule } from '@nestjs/config';
 
 describe('UserController', () => {
   let moduleRef: TestingModuleBuilder,
@@ -31,7 +31,7 @@ describe('UserController', () => {
 
   beforeAll(async () => {
     moduleRef = Test.createTestingModule({
-      imports: [UsersModule],
+      imports: [UsersModule, ConfigModule.forRoot({ isGlobal: true })],
     })
       .overrideProvider(UsersService)
       .useValue(userServiceMock);

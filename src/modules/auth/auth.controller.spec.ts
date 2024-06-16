@@ -9,6 +9,7 @@ import { AuthService } from './auth.service';
 import { SanitizedUser } from './types/auth.types';
 import { UserDTO } from '@app/modules/users/dtos/user.dto';
 import { LoginResponseDTO } from '@app/modules/auth/dtos/login-response.dto';
+import { ConfigModule } from '@nestjs/config';
 
 describe('AuthController', () => {
   let moduleRef: TestingModuleBuilder,
@@ -59,7 +60,12 @@ describe('AuthController', () => {
 
   beforeAll(async () => {
     moduleRef = Test.createTestingModule({
-      imports: [AuthModule, UsersModule, PrismaModule],
+      imports: [
+        AuthModule,
+        UsersModule,
+        PrismaModule,
+        ConfigModule.forRoot({ isGlobal: true }),
+      ],
     })
       .overrideProvider(AuthService)
       .useValue(authServiceMock);

@@ -6,6 +6,7 @@ import { PrismaModule } from '../../prisma/prisma.module';
 import { AuctionsModule } from '../auctions.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { AuctionListDTO } from '@app/modules/auctions/dtos/auction-list.dto';
+import { ConfigModule } from '@nestjs/config';
 
 describe('UserAuctionsController', () => {
   let moduleRef: TestingModuleBuilder,
@@ -50,7 +51,12 @@ describe('UserAuctionsController', () => {
 
   beforeAll(async () => {
     moduleRef = Test.createTestingModule({
-      imports: [AuctionsModule, PrismaModule, EventEmitterModule.forRoot()],
+      imports: [
+        AuctionsModule,
+        PrismaModule,
+        EventEmitterModule.forRoot(),
+        ConfigModule.forRoot({ isGlobal: true }),
+      ],
     })
       .overrideProvider(AuctionsService)
       .useValue(userAuctionsServiceMock);

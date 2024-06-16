@@ -19,6 +19,7 @@ import { AuctionsModule } from '@app/modules/auctions/auctions.module';
 import request from 'supertest';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { createNewUser } from './utils';
+import { ConfigModule } from '@nestjs/config';
 
 describe('NotificationsController (e2e)', () => {
   let app: INestApplication,
@@ -59,6 +60,7 @@ describe('NotificationsController (e2e)', () => {
         NotificationsModule,
         AuctionsModule,
         EventEmitterModule.forRoot(),
+        ConfigModule.forRoot({ isGlobal: true }),
       ],
     })
       .overrideProvider(UploadService)
