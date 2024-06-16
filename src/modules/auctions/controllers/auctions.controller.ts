@@ -24,9 +24,9 @@ import { AuctionOwnerGuard } from '../guards/auction-owner.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UploadedImage } from '@app/common/decorators/uploaded-image.decorator';
 import { AuctionDTO } from '../dtos/auction.dto';
-import { AuctionListDTO } from '../dtos/auction-list.dto';
 import { UpdateAuctionDTO } from '../dtos/update-auction.dto';
 import { serializeToDto } from '@app/common/utils/serialize-to-dto';
+import { UsersAuctionListDTO } from '@app/modules/auctions/dtos/users-auction-list';
 
 @ApiTags('Auctions')
 @Controller('auctions')
@@ -39,13 +39,13 @@ export class AuctionsController {
   })
   @ApiOkResponse({
     description: 'Auctions retrieved successfully',
-    type: AuctionListDTO,
+    type: UsersAuctionListDTO,
     isArray: true,
   })
   @Get()
   async list() {
     const list = await this.auctionsService.list();
-    return serializeToDto(AuctionListDTO, list);
+    return serializeToDto(UsersAuctionListDTO, list);
   }
 
   @ApiBearerAuth()

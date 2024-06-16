@@ -39,11 +39,6 @@ export class AuctionListDTO {
   title: string;
 
   @ApiProperty()
-  @IsString()
-  @Expose()
-  description: string;
-
-  @ApiProperty()
   @IsUrl()
   @Expose()
   imageUrl: string;
