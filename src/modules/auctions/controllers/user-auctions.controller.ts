@@ -10,6 +10,7 @@ import { User } from '@app/common/decorators';
 import { AuctionDTO } from '../dtos/auction.dto';
 import { serializeToDto } from '@app/common/utils/serialize-to-dto';
 import { AuctionListDTO } from '@app/modules/auctions/dtos/auction-list.dto';
+import { UsersAuctionListDTO } from '@app/modules/auctions/dtos/users-auction-list';
 
 @ApiTags('Auctions')
 @Controller('auctions/me')
@@ -20,13 +21,13 @@ export class UserAuctionsController {
   @ApiOperation({ summary: 'List all auctions created by the user' })
   @ApiOkResponse({
     description: 'Auctions retrieved successfully',
-    type: AuctionDTO,
+    type: UsersAuctionListDTO,
     isArray: true,
   })
   @Get()
   async getUserAuctions(@User('userId') userId: string) {
     const list = await this.auctionsService.findByUserId(userId);
-    return serializeToDto(AuctionListDTO, list);
+    return serializeToDto(UsersAuctionListDTO, list);
   }
 
   @ApiBearerAuth()

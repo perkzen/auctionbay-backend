@@ -26,7 +26,7 @@ import { UploadedImage } from '@app/common/decorators/uploaded-image.decorator';
 import { AuctionDTO } from '../dtos/auction.dto';
 import { UpdateAuctionDTO } from '../dtos/update-auction.dto';
 import { serializeToDto } from '@app/common/utils/serialize-to-dto';
-import { UsersAuctionListDTO } from '@app/modules/auctions/dtos/users-auction-list';
+import { AuctionListDTO } from '@app/modules/auctions/dtos/auction-list.dto';
 
 @ApiTags('Auctions')
 @Controller('auctions')
@@ -39,13 +39,13 @@ export class AuctionsController {
   })
   @ApiOkResponse({
     description: 'Auctions retrieved successfully',
-    type: UsersAuctionListDTO,
+    type: AuctionListDTO,
     isArray: true,
   })
   @Get()
   async list() {
     const list = await this.auctionsService.list();
-    return serializeToDto(UsersAuctionListDTO, list);
+    return serializeToDto(AuctionListDTO, list);
   }
 
   @ApiBearerAuth()
