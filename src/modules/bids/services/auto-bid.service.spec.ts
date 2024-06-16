@@ -13,6 +13,7 @@ import { AuctionsModule } from '../../auctions/auctions.module';
 import { UploadService } from '../../upload/upload.service';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { AutoBidService } from './auto-bid.service';
+import { ConfigModule } from '@nestjs/config';
 
 describe('AutoBidService', () => {
   let moduleRef: TestingModuleBuilder,
@@ -56,6 +57,7 @@ describe('AutoBidService', () => {
         UploadModule,
         AuctionsModule,
         EventEmitterModule.forRoot(),
+        ConfigModule.forRoot({ isGlobal: true }),
       ],
       providers: [BidsService],
     })

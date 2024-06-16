@@ -8,6 +8,7 @@ import { Auction } from '@prisma/client';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { UpdateAuctionDTO } from '../dtos/update-auction.dto';
 import { AuctionListDTO } from '@app/modules/auctions/dtos/auction-list.dto';
+import { ConfigModule } from '@nestjs/config';
 
 describe('AuctionsController', () => {
   let moduleRef: TestingModuleBuilder,
@@ -44,7 +45,12 @@ describe('AuctionsController', () => {
 
   beforeAll(async () => {
     moduleRef = Test.createTestingModule({
-      imports: [AuctionsModule, PrismaModule, EventEmitterModule.forRoot()],
+      imports: [
+        AuctionsModule,
+        PrismaModule,
+        EventEmitterModule.forRoot(),
+        ConfigModule.forRoot({ isGlobal: true }),
+      ],
     })
       .overrideProvider(AuctionsService)
       .useValue(auctionsServiceMock);

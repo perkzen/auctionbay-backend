@@ -3,6 +3,7 @@ import { NotificationsController } from './notifications.controller';
 import { NotificationsService } from './notifications.service';
 import { NotificationsModule } from './notifications.module';
 import { PrismaModule } from '../prisma/prisma.module';
+import { ConfigModule } from '@nestjs/config';
 
 describe('NotificationsController', () => {
   let moduleRef: TestingModuleBuilder,
@@ -16,7 +17,11 @@ describe('NotificationsController', () => {
 
   beforeEach(async () => {
     moduleRef = Test.createTestingModule({
-      imports: [NotificationsModule, PrismaModule],
+      imports: [
+        NotificationsModule,
+        PrismaModule,
+        ConfigModule.forRoot({ isGlobal: true }),
+      ],
     })
       .overrideProvider(NotificationsService)
       .useValue(notificationsServiceMock);

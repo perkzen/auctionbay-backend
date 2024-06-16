@@ -15,6 +15,7 @@ import { BidsService } from '../bids/services/bids.service';
 import { CreateAuctionDTO } from '../auctions/dtos/create-auction.dto';
 import { NotificationsGateway } from './gateway/notifications.gateway';
 import { EventEmitterModule } from '@nestjs/event-emitter';
+import { ConfigModule } from '@nestjs/config';
 
 describe('NotificationsService', () => {
   let moduleRef: TestingModuleBuilder,
@@ -64,6 +65,7 @@ describe('NotificationsService', () => {
         AuctionsModule,
         UploadModule,
         EventEmitterModule.forRoot(),
+        ConfigModule.forRoot({ isGlobal: true }),
       ],
     })
       .overrideProvider(UploadService)

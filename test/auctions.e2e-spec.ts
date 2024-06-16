@@ -48,6 +48,7 @@ describe('AuctionsController (e2e)', () => {
         PrismaModule,
         UploadModule,
         EventEmitterModule.forRoot(),
+        ConfigModule.forRoot({ isGlobal: true }),
       ],
     })
       .overrideProvider(UploadService)

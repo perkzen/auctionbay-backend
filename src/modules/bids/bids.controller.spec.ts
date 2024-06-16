@@ -6,6 +6,7 @@ import { BidsService } from './services/bids.service';
 import { AuctionsModule } from '../auctions/auctions.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { AutoBidService } from './services/auto-bid.service';
+import { ConfigModule } from '@nestjs/config';
 
 describe('BidsController', () => {
   let moduleRef: TestingModuleBuilder,
@@ -39,7 +40,12 @@ describe('BidsController', () => {
 
   beforeAll(async () => {
     moduleRef = Test.createTestingModule({
-      imports: [AuctionsModule, PrismaModule, EventEmitterModule.forRoot()],
+      imports: [
+        AuctionsModule,
+        PrismaModule,
+        EventEmitterModule.forRoot(),
+        ConfigModule.forRoot({ isGlobal: true }),
+      ],
       providers: [BidsService],
     })
       .overrideProvider(BidsService)

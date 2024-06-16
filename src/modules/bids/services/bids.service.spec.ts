@@ -13,6 +13,7 @@ import { UploadService } from '../../upload/upload.service';
 import { AuctionsModule } from '../../auctions/auctions.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { BidsModule } from '../bids.module';
+import { ConfigModule } from '@nestjs/config';
 
 describe('BidsService', () => {
   let moduleRef: TestingModuleBuilder,
@@ -56,6 +57,7 @@ describe('BidsService', () => {
         AuctionsModule,
         BidsModule,
         EventEmitterModule.forRoot(),
+        ConfigModule.forRoot({ isGlobal: true }),
       ],
     })
       .overrideProvider(UploadService)

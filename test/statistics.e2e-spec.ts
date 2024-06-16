@@ -13,6 +13,7 @@ import { UploadModule } from '@app/modules/upload/upload.module';
 import request from 'supertest';
 import { StatisticsModule } from '@app/modules/statistics/statistics.module';
 import { StatisticsService } from '@app/modules/statistics/statistics.service';
+import { ConfigModule } from '@nestjs/config';
 
 describe('StatisticsController (e2e)', () => {
   let app: INestApplication,
@@ -57,6 +58,7 @@ describe('StatisticsController (e2e)', () => {
         PrismaModule,
         UploadModule,
         StatisticsModule,
+        ConfigModule.forRoot({ isGlobal: true }),
       ],
     })
       .overrideProvider(UploadService)

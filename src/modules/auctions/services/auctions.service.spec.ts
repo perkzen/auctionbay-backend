@@ -12,6 +12,7 @@ import { UploadModule } from '../../upload/upload.module';
 import { BidsService } from '../../bids/services/bids.service';
 import { AuctionsModule } from '../auctions.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
+import { ConfigModule } from '@nestjs/config';
 
 describe('AuctionsService', () => {
   let moduleRef: TestingModuleBuilder,
@@ -43,6 +44,7 @@ describe('AuctionsService', () => {
         UploadModule,
         AuctionsModule,
         EventEmitterModule.forRoot(),
+        ConfigModule.forRoot({ isGlobal: true }),
       ],
       providers: [AuctionsService, BidsService],
     })

@@ -6,6 +6,7 @@ import { UploadModule } from '../upload/upload.module';
 import { PrismaModule } from '../prisma/prisma.module';
 import { StatisticsModule } from './statistics.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
+import { ConfigModule } from '@nestjs/config';
 
 describe('StatisticsController', () => {
   let moduleRef: TestingModuleBuilder,
@@ -35,6 +36,7 @@ describe('StatisticsController', () => {
         PrismaModule,
         StatisticsModule,
         EventEmitterModule.forRoot(),
+        ConfigModule.forRoot({ isGlobal: true }),
       ],
     })
       .overrideProvider(StatisticsService)
