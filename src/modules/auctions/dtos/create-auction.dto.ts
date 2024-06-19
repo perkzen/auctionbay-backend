@@ -10,7 +10,7 @@ export class CreateAuctionDTO {
 
   @ApiProperty()
   @IsString()
-  @Length(1, 255)
+  @Length(1, 1000)
   description: string;
 
   @ApiProperty()
