@@ -25,20 +25,13 @@ AuctionBay is a full-stack auction web application that enables users to create 
 
 ## Setup Instructions
 
-### 1. Clone the repository
-
-```bash
-git clone https://github.com/yourusername/auctionbay-backend.git
-cd auctionbay-backend
-```
-
-### 2. Install dependencies
+### 1. Install dependencies
 
 ```bash
 npm install
 ```
 
-### 3. Set up environment variables
+### 2. Set up environment variables
 
 Create a `.env` file in the root directory with the following content:
 
@@ -56,13 +49,13 @@ AWS_ACCESS_KEY_ID=
 AWS_SECRET_ACCESS_KEY=
 ```
 
-### 4. Run database migrations
+### 3. Run database migrations
 
 ```bash
 npx prisma migrate dev
 ```
 
-### 5. Run the development server
+### 4. Run the development server
 
 ```bash
 npm run start:dev
